@@ -5,3 +5,7 @@ Work in progress!
 ## Where do I go to read the full instructions?
 
 Check out the [official link](https://github.com/python-discord/code-jam-template/blob/main/README.md)!
+
+## Team
+
+- [@NoblySP](https://github.com/NoblySP)
