@@ -1,13 +1,15 @@
-from asciimatics.effects import Cog, Print, Cycle
+import os
+import sys
+
+from asciimatics.effects import Cog, Cycle, Print
+from asciimatics.exceptions import ResizeScreenError
 from asciimatics.renderers import FigletText
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
-from asciimatics.exceptions import ResizeScreenError
-import sys
-import os
 
 
-def demo(screen):
+def menu(screen: object) -> None:
+    """Menu screen"""
     # basic configs
     figfont = 'puffy'
 
@@ -40,11 +42,11 @@ def demo(screen):
         effects = [
             Cog(screen, 20, 10, 10),
             Cog(screen, 60, 30, 15, direction=-1),
-            Print(screen, FigletText("ascii", font="smkeyboard"),
+            Print(screen, FigletText("MENU", font="smkeyboard"),
                   attr=Screen.A_BOLD, x=47, y=3, start_frame=50),
-            Print(screen, FigletText("matics", font="smkeyboard"),
+            Print(screen, FigletText("SOON", font="smkeyboard"),
                   attr=Screen.A_BOLD, x=45, y=7, start_frame=100),
-            Print(screen, FigletText("by Peter Brittain", font="term"),
+            Print(screen, FigletText("by ponte-vecchio", font="term"),
                   x=8, y=22, start_frame=150)
         ]
     screen.play([Scene(effects, -1)], stop_on_resize=True)
@@ -52,7 +54,7 @@ def demo(screen):
 
 while True:
     try:
-        Screen.wrapper(demo)
+        Screen.wrapper(menu)
         sys.exit(0)
     except ResizeScreenError:
         pass
