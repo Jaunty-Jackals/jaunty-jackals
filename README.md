@@ -10,3 +10,4 @@ Check out the [official link](https://github.com/python-discord/code-jam-templat
 
 - [@NoblySP](https://github.com/NoblySP)
 - [@vguo2037](https://github.com/vguo2037)
+- [@aphkyle](https://github.com/aphkyle)
