@@ -26,8 +26,8 @@ def game() -> None:
     while not dead:
         length = len(body)
         while not apple:
-            y, x = secrets.randbelow(dims[0]-2)+1,
-            secrets.randbelow(dims[1]-2)+1
+            y = secrets.randbelow(dims[0] - 2) + 1
+            x = secrets.randbelow(dims[1] - 2) + 1
             if chr(screen.inch(y, x)) == " ":
                 apple = 1
                 screen.addstr(y, x, "@", )
