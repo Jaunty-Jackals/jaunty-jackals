@@ -1,22 +1,29 @@
 #!/usr/bin/python3.9
 
 import curses
+from typing import Any
+
 
 class Rect:
-    def __init__(self, x, y, width, height):
+    """Basic class to store rect attributes"""
+
+    def __init__(self, x: int, y: int, width: int, height: int) -> None:
         self.x = x
         self.y = y
         self.width = width
         self.height = height
 
-def minmax(val, minval, maxval):
+
+def minmax(val: Any, minval: Any, maxval: Any) -> Any:
+    """Return bound for the value within min and max"""
     return max(min(val, maxval), minval)
 
-def draw_rect(curse_context, rect, header = ""):
-    template = [["\u250C", "\u2500", "\u2510"],
-            ["\u2502", " ", "\u2502"],
-            ["\u2514", "\u2500", "\u2518"]]
 
+def draw_rect(curse_context: Any, rect: Any, header: str = "") -> Any:
+    """Function to  return lines for any rect"""
+    template = [["\u250C", "\u2500", "\u2510"],
+                ["\u2502", " ", "\u2502"],
+                ["\u2514", "\u2500", "\u2518"]]
 
     for h in range(rect.height):
         fillheader = 0
@@ -36,9 +43,10 @@ def draw_rect(curse_context, rect, header = ""):
     return Rect(rect.x+1, rect.y+1, rect.width-2, rect.height-2)
 
 
-def open_menu(curse_context, items, header=''):
+def open_menu(curse_context: Any, items: tuple, header: str = '') -> Any:
+    """General function to display any menu and return selected"""
     width = len(items) + 20
-    height = len(items * 2)-1 +4
+    height = len(items * 2) - 1 + 4
     curses.curs_set(False)
     sel = 0
 
@@ -48,10 +56,10 @@ def open_menu(curse_context, items, header=''):
         rect = draw_rect(curse_context, rect, header)
 
         for i, item in enumerate(items):
-            attr = curses.A_NORMAL 
+            attr = curses.A_NORMAL
             if i == sel:
                 attr = curses.A_STANDOUT
-            curse_context.addstr(rect.y + 1 + i*2, center[0] - len(items)//2, item, attr )
+            curse_context.addstr(rect.y + 1 + i * 2, center[0] - len(items)//2, item, attr)
 
         c = curse_context.getch()
         if c == curses.KEY_UP:
@@ -64,4 +72,3 @@ def open_menu(curse_context, items, header=''):
 
     curses.curs_set(True)
     return items[sel]
-

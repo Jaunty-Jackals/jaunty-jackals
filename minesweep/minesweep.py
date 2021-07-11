@@ -5,17 +5,86 @@ import random
 from collections import namedtuple
 from enum import Enum
 from math import sqrt
-from utils import open_menu, draw_rect, minmax, Rect
+from typing import Any, Generator
+
+from utils import Rect, draw_rect, minmax, open_menu
 
 
 class Flags(Enum):
+    """Enum to define all possible state related flags"""
+
     INITIAL = 0
     MARKED = 1
     REVEALED = 2
 
 
+class Table:
+    """Table class to have rows * cols as a list"""
+
+    def __init__(self, cols: int, rows: int, default: int = 0):
+        if (cols <= 0) or (rows <= 0):
+            raise ValueError('Invalid rows/cols provided for table')
+        self.table = [default for c in range(cols * rows)]
+        self.num_cols = cols
+        self.num_rows = rows
+
+    def size(self) -> int:
+        """Returns total size of table"""
+        return self.num_cols * self.num_rows
+
+    def __getitem__(self, key: tuple) -> list:
+        try:
+            x, y = key
+            if x >= self.num_cols or y >= self.num_rows:
+                raise IndexError('list index out of range')
+            return self.table[self.subscript_to_linear(x, y)]
+        except TypeError:
+            return self.table[key]
+
+    def __setitem__(self, key: tuple, value: int):
+        try:
+            x, y = key
+            if x >= self.num_cols or y >= self.num_rows:
+                raise IndexError('list index out of range')
+            self.table[self.subscript_to_linear(x, y)] = value
+        except TypeError:
+            self.table[key] = value
+
+    def neighbours(self, x: int, y: int) -> Generator[int, int, int]:
+        """Yields all current neighbours of cell"""
+        for c in range(max(x-1, 0), min(x+2, self.num_cols)):
+            for r in range(max(y-1, 0), min(y+2, self.num_rows)):
+                if c != x or r != y:
+                    yield(c, r)
+
+    def linear_to_subscript(self, index: int) -> tuple:
+        """Convert string to tuple"""
+        return (index % self.num_cols, index // self.num_cols)
+
+    def subscript_to_linear(self, col: int, row: int) -> int:
+        """Convert tuple back to string"""
+        return col + row*self.num_cols
+
+    def count(self, value: int) -> int:
+        """Returns number of values in the table"""
+        return self.table.count(value)
+
+    def row(self, r: int) -> list:
+        """Returns particular row from the table"""
+        start = self.subscript_to_linear(0, r)
+        return self.table[start: start + self.num_cols]
+
+    def __iter__(self):
+        for y in range(self.num_rows):
+            for x in range(self.num_cols):
+                yield self[x, y]
+
+
 class MineSweeper:
-    def __init__(self, mines, flags=None):
+    """Main minesweeper class to define the minesweeper game"""
+
+    def __init__(self, mines: Table, flags: Table = None):
+        """Default init function"""
         if flags is None:
             flags = Table(mines.num_cols, mines.num_rows, Flags.INITIAL)
         if mines.size() != flags.size():
@@ -27,13 +96,16 @@ class MineSweeper:
         for i, _ in enumerate(self.hints):
             self.hints[i] = self.hint(*self.hints.linear_to_subscript(i))
 
-    def rows(self):
+    def rows(self) -> int:
+        """Returns num of rows in game"""
         return self.mines.num_rows
 
-    def columns(self):
+    def columns(self) -> int:
+        """Returns num of columns in game"""
         return self.mines.num_cols
 
-    def hint(self, x, y):
+    def hint(self, x: int, y: int) -> int:
+        """Returns number of mines around current cell"""
         if self.mines[x, y]:
             return -1
         else:
@@ -43,19 +115,22 @@ class MineSweeper:
                     h += 1
             return h
 
-    def is_solved(self):
+    def is_solved(self) -> bool:
+        """Function to check if it's solved"""
         for mine, flag in zip(self.mines, self.flags):
             if mine and flag != Flags.MARKED:
                 return False
         return True
 
-    def is_lost(self):
+    def is_lost(self) -> bool:
+        """Function to check if outcome is lost"""
         for mine, flag in zip(self.mines, self.flags):
             if mine and flag == Flags.REVEALED:
                 return True
         return False
 
-    def auto_mark(self):
+    def auto_mark(self) -> None:
+        """Marks cell for flag/mine"""
         for mine, flag in zip(self.mines, self.flags):
             if not mine and flag != Flags.REVEALED:
                 return False
@@ -66,12 +141,14 @@ class MineSweeper:
             else:
                 self.flags[i] = Flags.REVEALED
 
-    def reveal_all(self):
+    def reveal_all(self) -> None:
+        """Function to reveal the final board"""
         for i, flag in enumerate(self.flags):
             if flag != Flags.MARKED:
                 self.flags[i] = Flags.REVEALED
 
-    def reveal(self, x, y, reveal_known=True):
+    def reveal(self, x: int, y: int, reveal_known: bool = True) -> bool:
+        """Function to reveal individual box"""
         if self.flags[x, y] == Flags.MARKED:
             self.flags[x, y] = Flags.INITIAL
         elif self.flags[x, y] == Flags.REVEALED:
@@ -91,37 +168,21 @@ class MineSweeper:
                 if self.hint(x, y) == 0:
                     for nx, ny in self.mines.neighbours(x, y):
                         if self.flags[nx, ny] == Flags.INITIAL:
-                            ok = self.reveal(nx, ny, reveal_known=False)
-                            assert ok
+                            self.reveal(nx, ny, reveal_known=False)
                 self.auto_mark()
         return True
 
-    def toggle_mark(self, x, y):
+    def toggle_mark(self, x: int, y: int) -> None:
+        """Toggle state of non-mine cells"""
         if self.flags[x, y] == Flags.INITIAL:
             self.flags[x, y] = Flags.MARKED
         elif self.flags[x, y] == Flags.MARKED:
             self.flags[x, y] = Flags.INITIAL
         self.auto_mark()
 
-    def print_field(self):
-        s = ''
-        for y in range(self.mines.num_rows):
-            for x in range(self.mines.num_cols):
-                f, m = self.flags[x, y], self.mines[x, y]
-                if f == Flags.INITIAL:
-                    s += '?'
-                elif f == Flags.MARKED:
-                    s += '!'
-                elif f == Flags.REVEALED:
-                    if m:
-                        s += '*'
-                    else:
-                        s += str(self.hint(x, y))
-            s += '\n'
-        print(s)
-
     @classmethod
-    def create_random(cls, cols, rows, num_mines):
+    def create_random(cls, cols: int, rows: int, num_mines: int):
+        """Creates random minesweeper for start"""
         mines = Table(cols, rows, False)
         flags = Table(cols, rows, Flags.INITIAL)
 
@@ -131,61 +192,8 @@ class MineSweeper:
         return MineSweeper(mines, flags)
 
 
-class Table:
-    def __init__(self, cols, rows, default=0):
-        if (cols <= 0) or (rows <= 0):
-            raise ValueError('Invalid rows/cols provided for table')
-        self.table = [default for c in range(cols * rows)]
-        self.num_cols = cols
-        self.num_rows = rows
-
-    def size(self):
-        return self.num_cols * self.num_rows
-
-    def __getitem__(self, key):
-        try:
-            x, y = key
-            if x >= self.num_cols or y >= self.num_rows:
-                raise IndexError('list index out of range')
-            return self.table[self.subscript_to_linear(x, y)]
-        except TypeError:
-            return self.table[key]
-
-    def __setitem__(self, key, value):
-        try:
-            x, y = key
-            if x >= self.num_cols or y >= self.num_rows:
-                raise IndexError('list index out of range')
-            self.table[self.subscript_to_linear(x, y)] = value
-        except TypeError:
-            self.table[key] = value
-
-    def neighbours(self, x, y):
-        for c in range(max(x-1, 0), min(x+2, self.num_cols)):
-            for r in range(max(y-1, 0), min(y+2, self.num_rows)):
-                if c != x or r != y:
-                    yield(c, r)
-
-    def linear_to_subscript(self, index):
-        return (index % self.num_cols, index // self.num_cols)
-
-    def subscript_to_linear(self, col, row):
-        return col + row*self.num_cols
-
-    def count(self, value):
-        return self.table.count(value)
-
-    def row(self, r):
-        start = self.subscript_to_linear(0, r)
-        return self.table[start: start + self.num_cols]
-
-    def __iter__(self):
-        for y in range(self.num_rows):
-            for x in range(self.num_cols):
-                yield self[x, y]
-
-
-def start_new_game(curse_context):
+def start_new_game(curse_context: Any) -> None:
+    """Menu to start a new game"""
     boxes = int(open_menu(curse_context, items=("100", "400", "625"), header="Number of Boxes"))
     mine_percents = [0.1, 0.2, 0.4, 0.6]
     mines = [str(int(boxes * mp)) for mp in mine_percents]
@@ -197,20 +205,13 @@ def start_new_game(curse_context):
     start_game(curse_context, final_cols, final_rows, sel_mines)
 
 
-def cursor_to_index(cursor_pos, game_rect):
+def cursor_to_index(cursor_pos: Any, game_rect: Rect) -> Any:
+    """Returns window position to table index"""
     return ((cursor_pos.x - game_rect.x)//2, cursor_pos.y - game_rect.y)
 
 
-def main(curse_context):
-    while True:
-        selection = open_menu(curse_context, items=("New Game", "Exit"), header="Main Menu")
-        if selection == "Exit":
-            return  # to load back main menu
-        if selection == "New Game":
-            start_new_game(curse_context)
-
-
-def get_header(curse_context, game):
+def get_header(curse_context: Any, game: Any) -> Rect:
+    """Returns the header for the game"""
     if game.is_solved():
         text = "Congratulations, You Won!"
     elif game.is_lost():
@@ -222,7 +223,8 @@ def get_header(curse_context, game):
     return Rect(0, 0, curses.COLS-1, 1)
 
 
-def get_footer(curse_context, game):
+def get_footer(curse_context: Any, game: Any) -> Rect:
+    """Returns the footer for the game"""
     if game.is_lost() or game.is_solved():
         controls = [("Press any key to continue", "")]
     else:
@@ -241,7 +243,8 @@ def get_footer(curse_context, game):
     return Rect(0, curses.LINES-1, curses.COLS-1, 1)
 
 
-def get_game(curse_context, game, game_rect):
+def get_game(curse_context: Any, game: Any, game_rect: Rect) -> Rect:
+    """Returns main body of the game"""
     rect = Rect(game_rect.x, game_rect.y, game.columns()*2+1, game.rows()+2)
     rect = draw_rect(curse_context, rect)
 
@@ -264,7 +267,8 @@ def get_game(curse_context, game, game_rect):
     return rect
 
 
-def draw_all(curse_context, game):
+def draw_all(curse_context: Any, game: Any) -> Any:
+    """Draws the main game"""
     game_head = get_header(curse_context, game)
     game_foot = get_footer(curse_context, game)
     game_body = Rect(0, game_head.height, curses.COLS-1, curses.LINES-1-game_head.height-game_foot.height)
@@ -272,7 +276,8 @@ def draw_all(curse_context, game):
     return full_game
 
 
-def start_game(curse_context, cols, rows, mines):
+def start_game(curse_context: Any, cols: int, rows: int, mines: int) -> None:
+    """Main loop to create and start the game"""
     game = MineSweeper.create_random(cols, rows, mines)
 
     Point = namedtuple('Point', ['x', 'y'])
@@ -318,6 +323,16 @@ def start_game(curse_context, cols, rows, mines):
             input_ch = curse_context.getch()
             curses.curs_set(True)
             break
+
+
+def main(curse_context: Any) -> None:
+    """Main function called from outside"""
+    while True:
+        selection = open_menu(curse_context, items=("New Game", "Exit"), header="Main Menu")
+        if selection == "Exit":
+            return  # to load back main menu
+        if selection == "New Game":
+            start_new_game(curse_context)
 
 
 if __name__ == "__main__":
