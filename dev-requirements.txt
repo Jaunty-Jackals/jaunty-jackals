@@ -13,6 +13,9 @@ flake8-bandit~=2.1
 flake8-docstrings~=1.5
 flake8-isort~=4.0
 
+# General Requirements
+typing
+
 # Requirements for frameworks
 blessed~=1.18.1
 prompt_toolkit~=3.0.19
