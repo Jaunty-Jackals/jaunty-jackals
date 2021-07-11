@@ -36,7 +36,7 @@ menu_data = {
     'title': "JackalOS GAME CONSOLE", 'type': MENU, 'subtitle': "SELECT",
     'options': [
         {'title': "MINE SWEEPER", 'type': COMMAND, 'command': 'venv/bin/python3.9 minesweep/minesweep.py'},
-        {'title': "CONTENT B", 'type': COMMAND, 'command': 'emulationstation'},
+        {'title': "BATTLESHIP", 'type': COMMAND, 'command': 'venv/bin/python3.9 battleship/client.py'},
         {'title': "CONTENT C", 'type': COMMAND, 'command': 'uqm'},
         {'title': "CONTENT D - has submenus", 'type': MENU, 'subtitle': "Please select an option...",
          'options': [
@@ -154,4 +154,7 @@ def processmenu(menu: Any, parent: Any = None) -> Any:
 # Main program
 processmenu(menu_data)
 curses.endwin()  # closes out the menu system and returns you to the bash prompt.
-os.system('clear')
+if METADATA["os"].upper() == 'POSIX':
+    os.system('clear')
+elif METADATA["os"].upper() == 'NT':
+    os.system('CLS')
