@@ -2,7 +2,7 @@ import curses
 import os
 from typing import Any
 
-from utils.palettes import palettes
+from bin.utils.palettes import palettes
 
 screen = curses.initscr()
 METADATA = {'os': os.name, 'term_h_cur': None, 'term_h_max': (screen.getmaxyx())[0], 'term_h_min': None,
@@ -33,7 +33,7 @@ EXITMENU = "exitmenu"
 menu_data = {
     'title': "JackalOS GAME CONSOLE", 'type': MENU, 'subtitle': "SELECT",
     'options': [
-        {'title': "CONTENT A", 'type': COMMAND, 'command': 'xbmc'},
+        {'title': "MINE SWEEPER", 'type': COMMAND, 'command': 'venv/bin/python3.9 minesweep/minesweep.py'},
         {'title': "CONTENT B", 'type': COMMAND, 'command': 'emulationstation'},
         {'title': "CONTENT C", 'type': COMMAND, 'command': 'uqm'},
         {'title': "CONTENT D - has submenus", 'type': MENU, 'subtitle': "Please select an option...",
