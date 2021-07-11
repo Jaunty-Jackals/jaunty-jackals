@@ -15,6 +15,8 @@ curses.can_change_color()
 screen.keypad(1)
 p = palettes.Base16_3024()
 curclrs = ['black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white']
+# curclrs = ['brightblack', 'brightred', 'brightgreen', 'brightyellow',
+#           'brightblue', 'brightmagenta', 'brightcyan', 'white']
 
 for i in range(len(curclrs)):
     RGB = p.to_rgb(curclrs[i], curses=True)
