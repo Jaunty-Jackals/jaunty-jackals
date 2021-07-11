@@ -3,6 +3,8 @@ from math import ceil
 
 
 class Palette:
+    """Basic class for setting up a colour palette"""
+
     def __init__(self):
         self.name = None
         self.number = (
@@ -51,6 +53,7 @@ class Palette:
         self.palette = {"number": self.number, "alias": self.alias, "hex": self.hex}
 
     def to_hex(self, term: str, sharp: bool = False):
+        """Searches up the term from palette and returns a hex code for a given colour."""
         assert len(self.number) == len(self.alias) == len(self.hex)
         assert isinstance(term, str) and isinstance(sharp, bool)
         prefix = ""
@@ -69,7 +72,7 @@ class Palette:
         else:
             raise ValueError("Specified colour does not exist.")
 
-    def to_rgb(self, term: str, curses: bool=False) -> tuple:
+    def to_rgb(self, term: str, curses: bool = False) -> tuple:
         """Returns a tuple of RGB values for a given colour number, alias or HEX code"""
         assert isinstance(term, str) and isinstance(curses, bool)
         if term in self.palette["number"]:
@@ -133,11 +136,7 @@ class Palette:
 
     def to_curses_rgb(self, term: str, component: str) -> int:
         """Returns an integer corresponding to curses' colourcoding of 0 ~ 1000 for a RGB colour component"""
-        assert (
-                isinstance(term, str)
-                and isinstance(component, str)
-                and component.upper() in ("R", "G", "B")
-        )
+        assert (isinstance(term, str) and isinstance(component, str) and component.upper() in ("R", "G", "B"))
         if term in self.palette["number"]:
             for element in range(len(self.palette["number"])):
                 if self.palette["number"][element] == term.lower():
@@ -187,11 +186,8 @@ class Palette:
                 "Specified colour does not exist in the palette, therefore cannot convert to curses RGB format."
             )
 
-    def to_greyscale(self, colour, out="RGB", sharp=False):
-        """
-        Converts a given colour (RGB or HEX) to a greyscaled colour
-        """
-
+    def to_greyscale(self, colour: str, out: str = "RGB", sharp: bool = False) -> str:
+        """Converts a given colour (RGB or HEX) to a greyscaled colour"""
         assert isinstance(out, str) and out.upper() in ["RGB", "HEX"]
         assert isinstance(colour, tuple) or isinstance(colour, str)
         greyscale_factor = (0.3, 0.59, 0.11)
@@ -204,9 +200,7 @@ class Palette:
         # TODO: RGB -> out
         if isinstance(colour, tuple) and len(colour) == 3:
             if out.upper() == "RGB":
-                return (
-                           int(sum(colour[i] * greyscale_factor[i] for i in range(3))),
-                       ) * 3
+                return (int(sum(colour[i] * greyscale_factor[i] for i in range(3))),) * 3
             else:
                 out_hex = "%02X%02X%02X" % tuple([int(spec) for spec in colour[:3]])
                 return f"{prefix}{out_hex}"
@@ -230,6 +224,8 @@ class Palette:
 
 
 class Base16_3024(Palette):
+    """Object for Base16 3024 Theme"""
+
     def __init__(self):
         super().__init__()
         self.name = "Base16 3024"
@@ -257,6 +253,8 @@ class Base16_3024(Palette):
 
 
 class Nord(Palette):
+    """Object class for Nord Theme"""
+
     def __init__(self):
         super().__init__()
         self.name = "Nord"
@@ -310,4 +308,4 @@ if __name__ == "__main__":
     print(palette.to_greyscale(g1))
     print(palette.to_greyscale(g2))
     print(palette.to_greyscale(g1, "hex", sharp=True))
-    print(palette.to_curses_rgb(col,'g'))
+    print(palette.to_curses_rgb(col, 'g'))
