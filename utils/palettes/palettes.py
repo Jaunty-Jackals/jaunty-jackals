@@ -1,5 +1,6 @@
 import json
 from math import ceil
+from typing import Any
 
 
 class Palette:
@@ -188,7 +189,7 @@ class Palette:
                 "Specified colour does not exist in the palette, therefore cannot convert to curses RGB format."
             )
 
-    def to_greyscale(self, colour: str, out: str = "RGB", sharp: bool = False) -> str:
+    def to_greyscale(self, colour: str, out: str = "RGB", sharp: bool = False) -> Any:
         """Converts a given colour (RGB or HEX) to a greyscaled colour"""
         assert isinstance(out, str) and out.upper() in ["RGB", "HEX"]
         assert isinstance(colour, tuple) or isinstance(colour, str)
@@ -369,6 +370,40 @@ class Gruvbox(Palette):
             "E8DCB5",  # 15
             "E8DCB5",  # fg = 15
             "282828",  # bg = 00
+        ]
+        self.palette = {
+            "name": self.name,
+            "number": self.number,
+            "alias": self.alias,
+            "hex": self.hex,
+        }
+
+
+class Commodore64(Palette):
+    """Commodore64 theme"""
+
+    def __init__(self):
+        super().__init__()
+        self.name = "Gruvbox"
+        self.hex = [
+            "000000",  # 00
+            "915244",  # 01
+            "76AA61",  # 02
+            "CCD58B",  # 03
+            "51469B",  # 04
+            "955BA4",  # 05
+            "8BBFC8",  # 06
+            "FFFFFF",  # 07
+            "000000",  # 00 08
+            "915244",  # 01 09
+            "76AA61",  # 02 10
+            "CCD58B",  # 03 11
+            "51469B",  # 04 12
+            "955BA4",  # 05 13
+            "8BBFC8",  # 06 14
+            "FFFFFF",  # 07 15
+            "FFFFFF",  # fg = 07 unique
+            "51469B",  # bg = 04
         ]
         self.palette = {
             "name": self.name,
