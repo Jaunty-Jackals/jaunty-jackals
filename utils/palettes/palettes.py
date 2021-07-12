@@ -81,12 +81,12 @@ class Palette:
                 if self.palette["number"][element] == term.lower():
                     if curses is False:
                         return tuple(
-                            int(self.palette["hex"][element][i : i + 2], 16)
+                            int(self.palette["hex"][element][i: i + 2], 16)
                             for i in (0, 2, 4)
                         )
                     elif curses is True:
                         rgb = tuple(
-                            int(self.palette["hex"][element][i : i + 2], 16)
+                            int(self.palette["hex"][element][i: i + 2], 16)
                             for i in (0, 2, 4)
                         )
                         return tuple(ceil(rgb[k] / 255 * 1000) for k in range(3))
@@ -95,23 +95,23 @@ class Palette:
                 if self.palette["alias"][element] == term.lower():
                     if curses is False:
                         return tuple(
-                            int(self.palette["hex"][element][i : i + 2], 16)
+                            int(self.palette["hex"][element][i: i + 2], 16)
                             for i in (0, 2, 4)
                         )
                     elif curses is True:
                         rgb = tuple(
-                            int(self.palette["hex"][element][i : i + 2], 16)
+                            int(self.palette["hex"][element][i: i + 2], 16)
                             for i in (0, 2, 4)
                         )
                         return tuple(ceil(rgb[k] / 255 * 1000) for k in range(3))
         elif term in self.palette["hex"]:
             if curses is False:
                 return tuple(
-                    int(self.palette["hex"][term][i : i + 2], 16) for i in (0, 2, 4)
+                    int(self.palette["hex"][term][i: i + 2], 16) for i in (0, 2, 4)
                 )
             elif curses is True:
                 rgb = tuple(
-                    int(self.palette["hex"][term][i : i + 2], 16) for i in (0, 2, 4)
+                    int(self.palette["hex"][term][i: i + 2], 16) for i in (0, 2, 4)
                 )
                 return tuple(ceil(rgb[k] / 255 * 1000) for k in range(3))
         elif "#" in term:
@@ -119,12 +119,12 @@ class Palette:
             if rgb_term in self.palette["hex"]:
                 if curses is False:
                     return tuple(
-                        int(self.palette["hex"][rgb_term][i : i + 2], 16)
+                        int(self.palette["hex"][rgb_term][i: i + 2], 16)
                         for i in (0, 2, 4)
                     )
                 elif curses is True:
                     rgb = tuple(
-                        int(self.palette["hex"][rgb_term][i : i + 2], 16)
+                        int(self.palette["hex"][rgb_term][i: i + 2], 16)
                         for i in (0, 2, 4)
                     )
                     return tuple(ceil(rgb[k] / 255 * 1000) for k in range(3))
@@ -144,7 +144,7 @@ class Palette:
             for element in range(len(self.palette["number"])):
                 if self.palette["number"][element] == term.lower():
                     rgb = tuple(
-                        int(self.palette["hex"][element][i : i + 2], 16)
+                        int(self.palette["hex"][element][i: i + 2], 16)
                         for i in (0, 2, 4)
                     )
                     if component.upper() in "R":
@@ -157,7 +157,7 @@ class Palette:
             for element in range(len(self.palette["alias"])):
                 if self.palette["alias"][element] == term.lower():
                     rgb = tuple(
-                        int(self.palette["hex"][element][i : i + 2], 16)
+                        int(self.palette["hex"][element][i: i + 2], 16)
                         for i in (0, 2, 4)
                     )
                     if component.upper() in "R":
@@ -167,7 +167,7 @@ class Palette:
                     else:
                         return ceil(rgb[2] / 255 * 1000)
         elif term in self.palette["hex"]:
-            rgb = tuple(int(term[i : i + 2], 16) for i in (0, 2, 4))
+            rgb = tuple(int(term[i: i + 2], 16) for i in (0, 2, 4))
             if component.upper() in "R":
                 return ceil(rgb[0] / 255 * 1000)
             elif component.upper() in "G":
@@ -177,7 +177,7 @@ class Palette:
         elif "#" in term:
             rgb_term = term.lstrip("#")
             if term in self.palette["hex"]:
-                rgb = tuple(int(rgb_term[i : i + 2], 16) for i in (0, 2, 4))
+                rgb = tuple(int(rgb_term[i: i + 2], 16) for i in (0, 2, 4))
                 if component.upper() in "R":
                     return ceil(rgb[0] / 255 * 1000)
                 elif component.upper() in "G":
@@ -214,11 +214,11 @@ class Palette:
         if isinstance(colour, str):
             if "#" in colour and len(colour) == 7:
                 colour_ = colour.lstrip("#")
-                colour_rgb = tuple(int(colour_[i : i + 2], 16) for i in (0, 2, 4))
+                colour_rgb = tuple(int(colour_[i: i + 2], 16) for i in (0, 2, 4))
                 return self.to_greyscale(colour_rgb, out=out, sharp=sharp)
 
             elif len(colour) == 6:
-                colour_rgb = tuple(int(colour[i : i + 2], 16) for i in (0, 2, 4))
+                colour_rgb = tuple(int(colour[i: i + 2], 16) for i in (0, 2, 4))
                 return self.to_greyscale(colour_rgb, out=out, sharp=sharp)
 
     def __str__(self):

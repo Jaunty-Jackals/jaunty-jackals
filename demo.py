@@ -2,7 +2,7 @@ import curses
 import os
 from typing import Any
 
-from utils.palettes import palettes
+from bin.utils.palettes import palettes
 
 screen = curses.initscr()
 METADATA = {
@@ -22,7 +22,7 @@ curses.can_change_color()
 screen.keypad(1)
 
 # Import a colour palette as desired
-p = palettes.Commodore64()  # see bin/utils/palettes/palettes.py
+p = palettes.Dracula()  # see bin/utils/palettes/palettes.py
 curclrs = p.alias  # contains the list of colour name aliases
 
 for i in range(len(curclrs)):
@@ -39,21 +39,18 @@ for i in range(len(curclrs)):
     black   red     green   yellow  blue    magenta cyan    white
 
     Other
-    16      17
     fg      bg
     """
     RGB = p.to_rgb(curclrs[i], curses=True)
     curses.init_color(i, RGB[0], RGB[1], RGB[2])
 
-# colour pairs for highlights
-curses.init_pair(1, 14, 0)  # selected text
-curses.init_pair(2, 1, 0)  # idle text
-selected = curses.color_pair(1)
-idled = curses.color_pair(2)
+# Change this to use different colors when highlighting
+curses.init_pair(1, 11, 5)
+h = curses.color_pair(1)  # h is the coloring for a highlighted menu option
+n = curses.A_NORMAL  # n is the coloring for a non highlighted menu option
 
 MENU = "menu"
-OSCOMMAND = "command"
-PYCOMMAND = "command"
+COMMAND = "command"
 EXITMENU = "exitmenu"
 
 menu_data = {
@@ -63,20 +60,15 @@ menu_data = {
     "options": [
         {
             "title": "MINE SWEEPER",
-            "type": OSCOMMAND,
+            "type": COMMAND,
             "command": "venv/bin/python3.9 minesweep/minesweep.py",
         },
         {
             "title": "BATTLESHIP",
-            "type": OSCOMMAND,
+            "type": COMMAND,
             "command": "venv/bin/python3.9 battleship/client.py",
         },
-        {
-            "title": "CONNECT FOUR",
-            "type": OSCOMMAND,
-            "command": "venv/bin/python3.9 ConnectFour/blessedConnectFour.py",
-        },
-        {"title": "CONTENT C", "type": PYCOMMAND, "command": "uqm"},
+        {"title": "CONTENT C", "type": COMMAND, "command": "uqm"},
         {
             "title": "CONTENT D - has submenus",
             "type": MENU,
@@ -84,24 +76,24 @@ menu_data = {
             "options": [
                 {
                     "title": "Midnight Rescue",
-                    "type": OSCOMMAND,
+                    "type": COMMAND,
                     "command": "dosbox /media/samba/Apps/dosbox/doswin/games/SSR/SSR.EXE -exit",
                 },
                 {
                     "title": "Outnumbered",
-                    "type": PYCOMMAND,
+                    "type": COMMAND,
                     "command": "dosbox /media/samba/Apps/dosbox/doswin/games/SSO/SSO.EXE -exit",
                 },
                 {
                     "title": "Treasure Mountain",
-                    "type": PYCOMMAND,
+                    "type": COMMAND,
                     "command": "dosbox /media/samba/Apps/dosbox/doswin/games/SST/SST.EXE -exit",
                 },
             ],
         },
-        {"title": "CREDITS", "type": PYCOMMAND, "command": "some command"},
+        {"title": "CREDITS", "type": COMMAND, "command": "some command"},
         {
-            "title": "SETTINGSs",
+            "title": "SETTINGS - has submenus",
             "type": MENU,
             "subtitle": "Select Yes to Reboot",
             "options": [
@@ -109,17 +101,17 @@ menu_data = {
                     "title": "NO",
                     "type": EXITMENU,
                 },
-                {"title": "", "type": PYCOMMAND, "command": ""},
-                {"title": "", "type": PYCOMMAND, "command": ""},
-                {"title": "", "type": PYCOMMAND, "command": ""},
+                {"title": "", "type": COMMAND, "command": ""},
+                {"title": "", "type": COMMAND, "command": ""},
+                {"title": "", "type": COMMAND, "command": ""},
                 {
                     "title": "YES",
-                    "type": PYCOMMAND,
+                    "type": COMMAND,
                     "command": "sudo shutdown -r -time now",
                 },
-                {"title": "", "type": PYCOMMAND, "command": ""},
-                {"title": "", "type": PYCOMMAND, "command": ""},
-                {"title": "", "type": PYCOMMAND, "command": ""},
+                {"title": "", "type": COMMAND, "command": ""},
+                {"title": "", "type": COMMAND, "command": ""},
+                {"title": "", "type": COMMAND, "command": ""},
             ],
         },
     ],
@@ -130,11 +122,11 @@ def runmenu(menu: dict, parent: Any) -> Any:
     """Displays the appropriate menu and returns the option selected"""
     # work out what text to display as the last menu option
     if parent is None:
-        lastoption = "EXIT"
+        lastoption = "Exit"
     else:
         lastoption = "Return to %s menu" % parent["title"]
 
-    optioncount = len(menu["options"])  # games in the menu
+    optioncount = len(menu["options"])  # how many options in this menu
 
     pos = 0
     oldpos = None
@@ -144,49 +136,46 @@ def runmenu(menu: dict, parent: Any) -> Any:
     while x != ord("\n"):
         if pos != oldpos:
             oldpos = pos
-            screen.bkgd(17)
-            screen.border(17)
+            screen.border(0)
             screen.addstr(2, 2, menu["title"], curses.A_STANDOUT)  # Title for this menu
             screen.addstr(
-                4,
-                2,
-                menu["subtitle"],
+                4, 2, menu["subtitle"], curses.A_BOLD
             )  # Subtitle for this menu
 
             # Display all the menu items, showing the 'pos' item highlighted
             for index in range(optioncount):
-                textstyle = idled
+                textstyle = n
                 if pos == index:
-                    textstyle = selected
+                    textstyle = h
                 screen.addstr(
-                    5 + index,  # y
-                    4,  # x
+                    5 + index,
+                    4,
                     "%d - %s" % (index + 1, menu["options"][index]["title"]),
                     textstyle,
                 )
             # Now display Exit/Return at bottom of menu
-            textstyle = idled
+            textstyle = n
             if pos == optioncount:
-                textstyle = selected
+                textstyle = h
             screen.addstr(
                 5 + optioncount, 4, "%d - %s" % (optioncount + 1, lastoption), textstyle
             )
             screen.refresh()
             # finished updating screen
 
-        x = screen.getch()
+        x = screen.getch()  # Gets user input
 
-        # Get input
+        # What is user input?
         if ord("1") <= x <= ord(str(optioncount + 1)):
             pos = (
                 x - ord("0") - 1
             )  # convert keypress back to a number, then subtract 1 to get index
-        elif x == 258:  # KEY_DOWN
+        elif x == 258:  # down arrow
             if pos < optioncount:
                 pos += 1
             else:
                 pos = 0
-        elif x == 259:  # KEY_UP
+        elif x == 259:  # up arrow
             if pos > 0:
                 pos += -1
             else:
@@ -204,39 +193,33 @@ def processmenu(menu: Any, parent: Any = None) -> Any:
         getin = runmenu(menu, parent)
         if getin == optioncount:
             exitmenu = True
-
-        # OS-based command
-        elif menu["options"][getin]["type"] == OSCOMMAND:
+        elif menu["options"][getin]["type"] == COMMAND:
             curses.def_prog_mode()  # save curent curses environment
             os.system("reset")
+            if menu["options"][getin]["title"] == "Pianobar":
+                os.system(
+                    "amixer cset numid=3 1"
+                )  # Sets audio output on the pi to 3.5mm headphone jack
             screen.clear()  # clears previous screen
             os.system(menu["options"][getin]["command"])  # run the command
             screen.clear()  # clears previous screen on key press and updates display based on pos
             curses.reset_prog_mode()  # reset to 'current' curses environment
             curses.curs_set(1)  # reset doesn't do this right
             curses.curs_set(0)
-
-        # Python-based command
-        elif menu["options"][getin]["type"] == PYCOMMAND:
-            screen.clear()
-            screen.clear()
-
-        # process submenu
+            os.system(
+                "amixer cset numid=3 2"
+            )  # Sets audio output on the pi back to HDMI
         elif menu["options"][getin]["type"] == MENU:
-            screen.clear()
+            screen.clear()  # clears previous screen on key press and updates display based on pos
             processmenu(menu["options"][getin], menu)  # display the submenu
-            screen.clear()
-
-        # exit
+            screen.clear()  # clears previous screen on key press and updates display based on pos
         elif menu["options"][getin]["type"] == EXITMENU:
             exitmenu = True
 
 
 # Main program
 processmenu(menu_data)
-curses.endwin()
-
-# OS-specific clear
+curses.endwin()  # closes out the menu system and returns you to the bash prompt.
 if METADATA["os"].upper() == "POSIX":
     os.system("clear")
 elif METADATA["os"].upper() == "NT":
