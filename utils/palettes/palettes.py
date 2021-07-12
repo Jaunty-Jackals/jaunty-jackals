@@ -1,5 +1,6 @@
 import json
 from math import ceil
+from typing import Any
 
 
 class Palette:
@@ -188,7 +189,7 @@ class Palette:
                 "Specified colour does not exist in the palette, therefore cannot convert to curses RGB format."
             )
 
-    def to_greyscale(self, colour: str, out: str = "RGB", sharp: bool = False) -> str:
+    def to_greyscale(self, colour: str, out: str = "RGB", sharp: bool = False) -> Any:
         """Converts a given colour (RGB or HEX) to a greyscaled colour"""
         assert isinstance(out, str) and out.upper() in ["RGB", "HEX"]
         assert isinstance(colour, tuple) or isinstance(colour, str)
@@ -268,7 +269,7 @@ class Nord(Palette):
         super().__init__()
         self.name = "Nord"
 
-        with open("nord.json") as f:
+        with open("utils/palettes/nord.json") as f:
             self.nordjson = json.load(f)
 
         self.hex = []
@@ -332,6 +333,77 @@ class Dracula(Palette):
             "BAFBFE",  # 15
             "F8F8F3",  # fg = 07
             "22222C",  # bg = 00
+        ]
+        self.palette = {
+            "name": self.name,
+            "number": self.number,
+            "alias": self.alias,
+            "hex": self.hex,
+        }
+
+
+class Gruvbox(Palette):
+    """Gruvbox theme
+
+    Credit to https://github.com/morhetz/gruvbox
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.name = "Gruvbox"
+        self.hex = [
+            "282828",  # 00
+            "BA3C28",  # 01
+            "98972F",  # 02
+            "CD9D37",  # 03
+            "578287",  # 04
+            "A66786",  # 05
+            "749B6D",  # 06
+            "A59A85",  # 07
+            "908476",  # 08
+            "E65D3E",  # 09
+            "B8BB3E",  # 10
+            "F0C148",  # 11
+            "8BA398",  # 12
+            "C88B9B",  # 13
+            "99BE81",  # 14
+            "E8DCB5",  # 15
+            "E8DCB5",  # fg = 15
+            "282828",  # bg = 00
+        ]
+        self.palette = {
+            "name": self.name,
+            "number": self.number,
+            "alias": self.alias,
+            "hex": self.hex,
+        }
+
+
+class Commodore64(Palette):
+    """Commodore64 theme"""
+
+    def __init__(self):
+        super().__init__()
+        self.name = "Gruvbox"
+        self.hex = [
+            "000000",  # 00
+            "915244",  # 01
+            "76AA61",  # 02
+            "CCD58B",  # 03
+            "51469B",  # 04
+            "955BA4",  # 05
+            "8BBFC8",  # 06
+            "FFFFFF",  # 07
+            "000000",  # 00 08
+            "915244",  # 01 09
+            "76AA61",  # 02 10
+            "CCD58B",  # 03 11
+            "51469B",  # 04 12
+            "955BA4",  # 05 13
+            "8BBFC8",  # 06 14
+            "FFFFFF",  # 07 15
+            "FFFFFF",  # fg = 07 unique
+            "51469B",  # bg = 04
         ]
         self.palette = {
             "name": self.name,
