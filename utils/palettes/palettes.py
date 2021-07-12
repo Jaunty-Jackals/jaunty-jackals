@@ -339,3 +339,40 @@ class Dracula(Palette):
             "alias": self.alias,
             "hex": self.hex,
         }
+
+
+class Gruvbox(Palette):
+    """Gruvbox theme
+
+    Credit to https://github.com/morhetz/gruvbox
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.name = "Gruvbox"
+        self.hex = [
+            "282828",  # 00
+            "BA3C28",  # 01
+            "98972F",  # 02
+            "CD9D37",  # 03
+            "578287",  # 04
+            "A66786",  # 05
+            "749B6D",  # 06
+            "A59A85",  # 07
+            "908476",  # 08
+            "E65D3E",  # 09
+            "B8BB3E",  # 10
+            "F0C148",  # 11
+            "8BA398",  # 12
+            "C88B9B",  # 13
+            "99BE81",  # 14
+            "E8DCB5",  # 15
+            "E8DCB5",  # fg = 15
+            "282828",  # bg = 00
+        ]
+        self.palette = {
+            "name": self.name,
+            "number": self.number,
+            "alias": self.alias,
+            "hex": self.hex,
+        }
