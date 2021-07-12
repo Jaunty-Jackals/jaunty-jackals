@@ -269,7 +269,7 @@ class Nord(Palette):
         super().__init__()
         self.name = "Nord"
 
-        with open("nord.json") as f:
+        with open("utils/palettes/nord.json") as f:
             self.nordjson = json.load(f)
 
         self.hex = []
