@@ -9,6 +9,7 @@ Has `MovementDirections` enum, and the `GameController` class.
 import enum
 import random
 
+
 class MovementDirections(enum.Enum):
     """
     Piece movement directions
@@ -143,7 +144,7 @@ class GameController:
     """
     Game controller class
 
-    Contains everything needed to represent, and control one instance of 
+    Contains everything needed to represent, and control one instance of
     the game.
     """
 
@@ -217,8 +218,8 @@ class GameController:
         """
         Resets the game
 
-        This method performs the full reset. The whole game controller 
-        will be put in the initial state, as it was when the game was 
+        This method performs the full reset. The whole game controller
+        will be put in the initial state, as it was when the game was
         first run.
         """
 
@@ -265,7 +266,7 @@ class GameController:
         """
         Piece movement, and merge, for the whole board
 
-        Performs the piece movement, and merging, in the given direction 
+        Performs the piece movement, and merging, in the given direction
         for the whole board. After that, checks if there are available
         moves.
         """
@@ -333,7 +334,7 @@ class GameController:
         go_to_endgame = \
                 self._state == _GameStates.gs_active and \
                 not self._moves_available()
-        
+
         if go_to_endgame:
             self._state = _GameStates.gs_endgame
             self._output_ctrl.open_endgame_message()
@@ -381,10 +382,10 @@ class GameController:
         Helper function for moving, and merging the pieces on the given
         direction line, as specified by the required game logic.
 
-        Manipulation with the direction line is performed through the 
+        Manipulation with the direction line is performed through the
         getter, and setter functions provided as the funcion parameters.
 
-        Function returns the cumulative score of the mergings, as well 
+        Function returns the cumulative score of the mergings, as well
         as the information if any piece was moved.
         """
 
