@@ -1,19 +1,43 @@
-"""I copied this from stackoverflow, this is an example of a docstring."""
+"""Snake."""
 
 import curses
 import secrets
 import time
 
-length = 0
+import keyboard
+
+speed = 0.1
+
 screen = curses.initscr()
 screen.resize(21, 41)
 screen.nodelay(1)
 screen.keypad(1)
 
+curses.start_color()
 
-def game() -> None:
-    """I copied this from stackoverflow, this is an example of a docstring."""
-    global length
+curses.init_pair(1, curses.COLOR_RED, curses.COLOR_RED)
+curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
+
+RESET = "\x1B[m"
+ACTIONDICT = {"up": "w", "left": "a", "down": "s", "right": "d"}
+action = "d"
+
+
+def getch(e: str) -> None:
+    """Get user input via keyboard.hook(getch)."""
+    global action
+    try:
+        action = ACTIONDICT[e.name]
+    except Exception:
+        action = e.name
+
+
+keyboard.hook(getch)
+
+
+def game() -> int:
+    """Snake game main code."""
+    global action
     dims = screen.getmaxyx()
     head = [1, 1]
     body = [head[:]]*5
@@ -25,26 +49,25 @@ def game() -> None:
 
     while not dead:
         length = len(body)
+
         while not apple:
             y = secrets.randbelow(dims[0] - 2) + 1
             x = secrets.randbelow(dims[1] - 2) + 1
             if chr(screen.inch(y, x)) == " ":
                 apple = 1
-                screen.addstr(y, x, "@", )
+                screen.addstr(y, x, "⬤", curses.color_pair(1))
 
         if remove not in body:
             screen.addch(remove[0], remove[1], ' ', )
-        screen.addch(head[0], head[1], 'O', )
+        screen.addch(head[0], head[1], '⬤', curses.color_pair(2))
 
-        action = screen.getch()
-
-        if action == curses.KEY_RIGHT:
+        if action == "d" and direction != 2:
             direction = 0
-        elif action == curses.KEY_DOWN:
+        elif action == "s" and direction != 3:
             direction = 1
-        elif action == curses.KEY_LEFT:
+        elif action == "a" and direction != 0:
             direction = 2
-        elif action == curses.KEY_UP:
+        elif action == "w" and direction != 1:
             direction = 3
 
         if direction == 0:
@@ -60,16 +83,17 @@ def game() -> None:
             body[i] = body[i-1][:]
         body[0] = head[:]
 
-        if chr(screen.inch(head[0],  head[1])) != " ":
-            if screen.inch(head[0],  head[1]) == ord("@"):
+        if screen.inch(head[0],  head[1]) != ord(" "):
+            if screen.inch(head[0],  head[1]) == 16788260:
                 apple = 0
                 body.append(body[-1])
             else:
-                dead = True
-            dead = 1
-        screen.move(dims[0]-1,  dims[1]-1)
+                dead = 1
+        screen.move(dims[0]-1, dims[1]-1)
         screen.refresh()
-        time.sleep(0.1)
+        time.sleep(speed)
+    return length
 
 
-game()
+print(f"Length: {game()}")
+curses.endwin()
