@@ -1,5 +1,6 @@
 import json
 from math import ceil
+from typing import Any
 
 
 class Palette:
@@ -80,12 +81,12 @@ class Palette:
                 if self.palette["number"][element] == term.lower():
                     if curses is False:
                         return tuple(
-                            int(self.palette["hex"][element][i:i + 2], 16)
+                            int(self.palette["hex"][element][i : i + 2], 16)
                             for i in (0, 2, 4)
                         )
                     elif curses is True:
                         rgb = tuple(
-                            int(self.palette["hex"][element][i:i + 2], 16)
+                            int(self.palette["hex"][element][i : i + 2], 16)
                             for i in (0, 2, 4)
                         )
                         return tuple(ceil(rgb[k] / 255 * 1000) for k in range(3))
@@ -94,25 +95,23 @@ class Palette:
                 if self.palette["alias"][element] == term.lower():
                     if curses is False:
                         return tuple(
-                            int(self.palette["hex"][element][i:i + 2], 16)
+                            int(self.palette["hex"][element][i : i + 2], 16)
                             for i in (0, 2, 4)
                         )
                     elif curses is True:
                         rgb = tuple(
-                            int(self.palette["hex"][element][i:i + 2], 16)
+                            int(self.palette["hex"][element][i : i + 2], 16)
                             for i in (0, 2, 4)
                         )
                         return tuple(ceil(rgb[k] / 255 * 1000) for k in range(3))
         elif term in self.palette["hex"]:
             if curses is False:
                 return tuple(
-                    int(self.palette["hex"][term][i:i + 2], 16)
-                    for i in (0, 2, 4)
+                    int(self.palette["hex"][term][i : i + 2], 16) for i in (0, 2, 4)
                 )
             elif curses is True:
                 rgb = tuple(
-                    int(self.palette["hex"][term][i:i + 2], 16)
-                    for i in (0, 2, 4)
+                    int(self.palette["hex"][term][i : i + 2], 16) for i in (0, 2, 4)
                 )
                 return tuple(ceil(rgb[k] / 255 * 1000) for k in range(3))
         elif "#" in term:
@@ -120,12 +119,12 @@ class Palette:
             if rgb_term in self.palette["hex"]:
                 if curses is False:
                     return tuple(
-                        int(self.palette["hex"][rgb_term][i:i + 2], 16)
+                        int(self.palette["hex"][rgb_term][i : i + 2], 16)
                         for i in (0, 2, 4)
                     )
                 elif curses is True:
                     rgb = tuple(
-                        int(self.palette["hex"][rgb_term][i:i + 2], 16)
+                        int(self.palette["hex"][rgb_term][i : i + 2], 16)
                         for i in (0, 2, 4)
                     )
                     return tuple(ceil(rgb[k] / 255 * 1000) for k in range(3))
@@ -136,12 +135,16 @@ class Palette:
 
     def to_curses_rgb(self, term: str, component: str) -> int:
         """Returns an integer corresponding to curses' colourcoding of 0 ~ 1000 for a RGB colour component"""
-        assert (isinstance(term, str) and isinstance(component, str) and component.upper() in ("R", "G", "B"))
+        assert (
+            isinstance(term, str)
+            and isinstance(component, str)
+            and component.upper() in ("R", "G", "B")
+        )
         if term in self.palette["number"]:
             for element in range(len(self.palette["number"])):
                 if self.palette["number"][element] == term.lower():
                     rgb = tuple(
-                        int(self.palette["hex"][element][i: i + 2], 16)
+                        int(self.palette["hex"][element][i : i + 2], 16)
                         for i in (0, 2, 4)
                     )
                     if component.upper() in "R":
@@ -154,7 +157,7 @@ class Palette:
             for element in range(len(self.palette["alias"])):
                 if self.palette["alias"][element] == term.lower():
                     rgb = tuple(
-                        int(self.palette["hex"][element][i: i + 2], 16)
+                        int(self.palette["hex"][element][i : i + 2], 16)
                         for i in (0, 2, 4)
                     )
                     if component.upper() in "R":
@@ -164,7 +167,7 @@ class Palette:
                     else:
                         return ceil(rgb[2] / 255 * 1000)
         elif term in self.palette["hex"]:
-            rgb = tuple(int(term[i: i + 2], 16) for i in (0, 2, 4))
+            rgb = tuple(int(term[i : i + 2], 16) for i in (0, 2, 4))
             if component.upper() in "R":
                 return ceil(rgb[0] / 255 * 1000)
             elif component.upper() in "G":
@@ -174,7 +177,7 @@ class Palette:
         elif "#" in term:
             rgb_term = term.lstrip("#")
             if term in self.palette["hex"]:
-                rgb = tuple(int(rgb_term[i: i + 2], 16) for i in (0, 2, 4))
+                rgb = tuple(int(rgb_term[i : i + 2], 16) for i in (0, 2, 4))
                 if component.upper() in "R":
                     return ceil(rgb[0] / 255 * 1000)
                 elif component.upper() in "G":
@@ -186,7 +189,7 @@ class Palette:
                 "Specified colour does not exist in the palette, therefore cannot convert to curses RGB format."
             )
 
-    def to_greyscale(self, colour: str, out: str = "RGB", sharp: bool = False) -> str:
+    def to_greyscale(self, colour: str, out: str = "RGB", sharp: bool = False) -> Any:
         """Converts a given colour (RGB or HEX) to a greyscaled colour"""
         assert isinstance(out, str) and out.upper() in ["RGB", "HEX"]
         assert isinstance(colour, tuple) or isinstance(colour, str)
@@ -200,7 +203,9 @@ class Palette:
         # TODO: RGB -> out
         if isinstance(colour, tuple) and len(colour) == 3:
             if out.upper() == "RGB":
-                return (int(sum(colour[i] * greyscale_factor[i] for i in range(3))),) * 3
+                return (
+                    int(sum(colour[i] * greyscale_factor[i] for i in range(3))),
+                ) * 3
             else:
                 out_hex = "%02X%02X%02X" % tuple([int(spec) for spec in colour[:3]])
                 return f"{prefix}{out_hex}"
@@ -209,11 +214,11 @@ class Palette:
         if isinstance(colour, str):
             if "#" in colour and len(colour) == 7:
                 colour_ = colour.lstrip("#")
-                colour_rgb = tuple(int(colour_[i: i + 2], 16) for i in (0, 2, 4))
+                colour_rgb = tuple(int(colour_[i : i + 2], 16) for i in (0, 2, 4))
                 return self.to_greyscale(colour_rgb, out=out, sharp=sharp)
 
             elif len(colour) == 6:
-                colour_rgb = tuple(int(colour[i: i + 2], 16) for i in (0, 2, 4))
+                colour_rgb = tuple(int(colour[i : i + 2], 16) for i in (0, 2, 4))
                 return self.to_greyscale(colour_rgb, out=out, sharp=sharp)
 
     def __str__(self):
@@ -223,7 +228,7 @@ class Palette:
         return f"{type(self.palette)}"
 
 
-class Base16_3024(Palette):
+class Base16(Palette):
     """Object for Base16 3024 Theme"""
 
     def __init__(self):
@@ -247,9 +252,14 @@ class Base16_3024(Palette):
             "B5E4F4",  # 06 14
             "F7F7F7",  # 07 15
             "A5A2A2",  # fg
-            "090300",
-        ]  # bg
-        self.palette = {"number": self.number, "alias": self.alias, "hex": self.hex}
+            "090300",  # bg
+        ]
+        self.palette = {
+            "name": self.name,
+            "number": self.number,
+            "alias": self.alias,
+            "hex": self.hex,
+        }
 
 
 class Nord(Palette):
@@ -259,7 +269,7 @@ class Nord(Palette):
         super().__init__()
         self.name = "Nord"
 
-        with open("nord.json") as f:
+        with open("utils/palettes/nord.json") as f:
             self.nordjson = json.load(f)
 
         self.hex = []
@@ -295,17 +305,109 @@ class Nord(Palette):
         self.palette = {"number": self.number, "alias": self.alias, "hex": self.hex}
 
 
-if __name__ == "__main__":
-    palette = Nord()
-    # print(palette.palette["alias"])
-    # print(palette.palette["number"])
-    # print(palette.palette["hex"])
-    col = "green"
-    g1 = palette.to_hex(col)
-    g2 = palette.to_rgb(col)
-    print(g1)
-    print(g2)
-    print(palette.to_greyscale(g1))
-    print(palette.to_greyscale(g2))
-    print(palette.to_greyscale(g1, "hex", sharp=True))
-    print(palette.to_curses_rgb(col, 'g'))
+class Dracula(Palette):
+    """Dracula theme
+
+    Credit to https://github.com/dracula
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.name = "Dracula"
+        self.hex = [
+            "22222C",  # 00
+            "EB675A",  # 01
+            "87F684",  # 02
+            "F6CE76",  # 03
+            "8DA7FB",  # 04
+            "C094E7",  # 05
+            "A4E5FB",  # 06
+            "F8F8F3",  # 07
+            "545454",  # 08
+            "EC7A72",  # 09
+            "95FB9B",  # 10
+            "F6CE76",  # 11
+            "D0ADFC",  # 12
+            "F099DD",  # 13
+            "BAFBFE",  # 14
+            "BAFBFE",  # 15
+            "F8F8F3",  # fg = 07
+            "22222C",  # bg = 00
+        ]
+        self.palette = {
+            "name": self.name,
+            "number": self.number,
+            "alias": self.alias,
+            "hex": self.hex,
+        }
+
+
+class Gruvbox(Palette):
+    """Gruvbox theme
+
+    Credit to https://github.com/morhetz/gruvbox
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.name = "Gruvbox"
+        self.hex = [
+            "282828",  # 00
+            "BA3C28",  # 01
+            "98972F",  # 02
+            "CD9D37",  # 03
+            "578287",  # 04
+            "A66786",  # 05
+            "749B6D",  # 06
+            "A59A85",  # 07
+            "908476",  # 08
+            "E65D3E",  # 09
+            "B8BB3E",  # 10
+            "F0C148",  # 11
+            "8BA398",  # 12
+            "C88B9B",  # 13
+            "99BE81",  # 14
+            "E8DCB5",  # 15
+            "E8DCB5",  # fg = 15
+            "282828",  # bg = 00
+        ]
+        self.palette = {
+            "name": self.name,
+            "number": self.number,
+            "alias": self.alias,
+            "hex": self.hex,
+        }
+
+
+class Commodore64(Palette):
+    """Commodore64 theme"""
+
+    def __init__(self):
+        super().__init__()
+        self.name = "Commodore64"
+        self.hex = [
+            "51469B",  # 00
+            "915244",  # 01
+            "76AA61",  # 02
+            "CCD58B",  # 03
+            "51469B",  # 04
+            "955BA4",  # 05
+            "8BBFC8",  # 06
+            "FFFFFF",  # 07
+            "51469B",  # 00 08
+            "915244",  # 01 09
+            "76AA61",  # 02 10
+            "CCD58B",  # 03 11
+            "51469B",  # 04 12
+            "955BA4",  # 05 13
+            "8BBFC8",  # 06 14
+            "FFFFFF",  # 07 15
+            "FFFFFF",  # fg = 07 unique
+            "51469B",  # bg = 04
+        ]
+        self.palette = {
+            "name": self.name,
+            "number": self.number,
+            "alias": self.alias,
+            "hex": self.hex,
+        }

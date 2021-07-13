@@ -23,7 +23,7 @@ class Table:
 
     def __init__(self, cols: int, rows: int, default: int = 0):
         if (cols <= 0) or (rows <= 0):
-            raise ValueError('Invalid rows/cols provided for table')
+            raise ValueError("Invalid rows/cols provided for table")
         self.table = [default for c in range(cols * rows)]
         self.num_cols = cols
         self.num_rows = rows
@@ -36,7 +36,7 @@ class Table:
         try:
             x, y = key
             if x >= self.num_cols or y >= self.num_rows:
-                raise IndexError('list index out of range')
+                raise IndexError("list index out of range")
             return self.table[self.subscript_to_linear(x, y)]
         except TypeError:
             return self.table[key]
@@ -45,17 +45,17 @@ class Table:
         try:
             x, y = key
             if x >= self.num_cols or y >= self.num_rows:
-                raise IndexError('list index out of range')
+                raise IndexError("list index out of range")
             self.table[self.subscript_to_linear(x, y)] = value
         except TypeError:
             self.table[key] = value
 
     def neighbours(self, x: int, y: int) -> Generator[int, int, int]:
         """Yields all current neighbours of cell"""
-        for c in range(max(x-1, 0), min(x+2, self.num_cols)):
-            for r in range(max(y-1, 0), min(y+2, self.num_rows)):
+        for c in range(max(x - 1, 0), min(x + 2, self.num_cols)):
+            for r in range(max(y - 1, 0), min(y + 2, self.num_rows)):
                 if c != x or r != y:
-                    yield(c, r)
+                    yield (c, r)
 
     def linear_to_subscript(self, index: int) -> tuple:
         """Convert string to tuple"""
@@ -63,7 +63,7 @@ class Table:
 
     def subscript_to_linear(self, col: int, row: int) -> int:
         """Convert tuple back to string"""
-        return col + row*self.num_cols
+        return col + row * self.num_cols
 
     def count(self, value: int) -> int:
         """Returns number of values in the table"""
@@ -72,7 +72,7 @@ class Table:
     def row(self, r: int) -> list:
         """Returns particular row from the table"""
         start = self.subscript_to_linear(0, r)
-        return self.table[start: start + self.num_cols]
+        return self.table[start : start + self.num_cols]
 
     def __iter__(self):
         for y in range(self.num_rows):
@@ -88,7 +88,11 @@ class MineSweeper:
         if flags is None:
             flags = Table(mines.num_cols, mines.num_rows, Flags.INITIAL)
         if mines.size() != flags.size():
-            raise ValueError('Fields cannot have different sizes ({0} != {1})'.format(mines.size(), flags.size()))
+            raise ValueError(
+                "Fields cannot have different sizes ({0} != {1})".format(
+                    mines.size(), flags.size()
+                )
+            )
         self.mines = mines
         self.flags = flags
         self.hints = Table(mines.num_cols, mines.num_rows, 0)
@@ -111,7 +115,7 @@ class MineSweeper:
         else:
             h = 0
             for a, b in self.mines.neighbours(x, y):
-                if(self.mines[a, b]):
+                if self.mines[a, b]:
                     h += 1
             return h
 
@@ -155,7 +159,9 @@ class MineSweeper:
             if self.hints[x, y] <= 0 or not reveal_known:
                 return True
             neighbours = list(self.mines.neighbours(x, y))
-            neighbour_mines = [(nx, ny) for nx, ny in neighbours if self.flags[nx, ny] == Flags.MARKED]
+            neighbour_mines = [
+                (nx, ny) for nx, ny in neighbours if self.flags[nx, ny] == Flags.MARKED
+            ]
             if len(neighbour_mines) == self.hints[x, y]:
                 for nx, ny in neighbours:
                     if (nx, ny) not in neighbour_mines:
@@ -194,20 +200,24 @@ class MineSweeper:
 
 def start_new_game(curse_context: Any) -> None:
     """Menu to start a new game"""
-    boxes = int(open_menu(curse_context, items=("100", "400", "625"), header="Number of Boxes"))
+    boxes = int(
+        open_menu(curse_context, items=("100", "400", "625"), header="Number of Boxes")
+    )
     mine_percents = [0.1, 0.2, 0.4, 0.6]
     mines = [str(int(boxes * mp)) for mp in mine_percents]
-    sel_mines = int(float(open_menu(curse_context, items=tuple(mines), header="Number of Mines")))
+    sel_mines = int(
+        float(open_menu(curse_context, items=tuple(mines), header="Number of Mines"))
+    )
 
-    final_cols = int(minmax(sqrt(boxes), 0, curses.COLS-3))
-    final_rows = int(minmax(sqrt(boxes), 0, curses.LINES-5))
+    final_cols = int(minmax(sqrt(boxes), 0, curses.COLS - 3))
+    final_rows = int(minmax(sqrt(boxes), 0, curses.LINES - 5))
 
     start_game(curse_context, final_cols, final_rows, sel_mines)
 
 
 def cursor_to_index(cursor_pos: Any, game_rect: Rect) -> Any:
     """Returns window position to table index"""
-    return ((cursor_pos.x - game_rect.x)//2, cursor_pos.y - game_rect.y)
+    return ((cursor_pos.x - game_rect.x) // 2, cursor_pos.y - game_rect.y)
 
 
 def get_header(curse_context: Any, game: Any) -> Rect:
@@ -220,7 +230,7 @@ def get_header(curse_context: Any, game: Any) -> Rect:
         remaining = game.mines.count(True) - game.flags.count(Flags.MARKED)
         text = "Remaining Mines: {0}".format(remaining)
     curse_context.addstr(0, 0, text, curses.A_REVERSE)
-    return Rect(0, 0, curses.COLS-1, 1)
+    return Rect(0, 0, curses.COLS - 1, 1)
 
 
 def get_footer(curse_context: Any, game: Any) -> Rect:
@@ -236,21 +246,21 @@ def get_footer(curse_context: Any, game: Any) -> Rect:
         ]
     offset = 0
     for name, control in controls:
-        curse_context.addstr(curses.LINES-1, offset, name, curses.A_REVERSE)
+        curse_context.addstr(curses.LINES - 1, offset, name, curses.A_REVERSE)
         offset += len(name)
-        curse_context.addstr(curses.LINES-1, offset, " " + control + " ")
+        curse_context.addstr(curses.LINES - 1, offset, " " + control + " ")
         offset += len(control) + 2
-    return Rect(0, curses.LINES-1, curses.COLS-1, 1)
+    return Rect(0, curses.LINES - 1, curses.COLS - 1, 1)
 
 
 def get_game(curse_context: Any, game: Any, game_rect: Rect) -> Rect:
     """Returns main body of the game"""
-    rect = Rect(game_rect.x, game_rect.y, game.columns()*2+1, game.rows()+2)
+    rect = Rect(game_rect.x, game_rect.y, game.columns() * 2 + 1, game.rows() + 2)
     rect = draw_rect(curse_context, rect)
 
     for i, (mine, flag, hint) in enumerate(zip(game.mines, game.flags, game.hints)):
         x, y = game.mines.linear_to_subscript(i)
-        x = x*2 + rect.x
+        x = x * 2 + rect.x
         y = y + rect.y
         if flag == Flags.INITIAL:
             curse_context.addstr(y, x, "?")
@@ -271,7 +281,12 @@ def draw_all(curse_context: Any, game: Any) -> Any:
     """Draws the main game"""
     game_head = get_header(curse_context, game)
     game_foot = get_footer(curse_context, game)
-    game_body = Rect(0, game_head.height, curses.COLS-1, curses.LINES-1-game_head.height-game_foot.height)
+    game_body = Rect(
+        0,
+        game_head.height,
+        curses.COLS - 1,
+        curses.LINES - 1 - game_head.height - game_foot.height,
+    )
     full_game = get_game(curse_context, game, game_body)
     return full_game
 
@@ -280,7 +295,7 @@ def start_game(curse_context: Any, cols: int, rows: int, mines: int) -> None:
     """Main loop to create and start the game"""
     game = MineSweeper.create_random(cols, rows, mines)
 
-    Point = namedtuple('Point', ['x', 'y'])
+    Point = namedtuple("Point", ["x", "y"])
     cursor_pos = Point(0, 0)
 
     while True:
@@ -288,21 +303,21 @@ def start_game(curse_context: Any, cols: int, rows: int, mines: int) -> None:
         game_rect = draw_all(curse_context, game)
 
         cursor_pos = Point(
-            minmax(cursor_pos.x, game_rect.x, game_rect.x+game_rect.width-1),
-            minmax(cursor_pos.y, game_rect.y, game_rect.y+game_rect.height-1)
+            minmax(cursor_pos.x, game_rect.x, game_rect.x + game_rect.width - 1),
+            minmax(cursor_pos.y, game_rect.y, game_rect.y + game_rect.height - 1),
         )
         curse_context.move(cursor_pos.y, cursor_pos.x)
         curse_context.refresh()
 
         input_ch = curse_context.getch()
         if input_ch == curses.KEY_LEFT:
-            cursor_pos = Point(cursor_pos.x-2, cursor_pos.y)
+            cursor_pos = Point(cursor_pos.x - 2, cursor_pos.y)
         if input_ch == curses.KEY_RIGHT:
-            cursor_pos = Point(cursor_pos.x+2, cursor_pos.y)
+            cursor_pos = Point(cursor_pos.x + 2, cursor_pos.y)
         if input_ch == curses.KEY_UP:
-            cursor_pos = Point(cursor_pos.x, cursor_pos.y-1)
+            cursor_pos = Point(cursor_pos.x, cursor_pos.y - 1)
         if input_ch == curses.KEY_DOWN:
-            cursor_pos = Point(cursor_pos.x, cursor_pos.y+1)
+            cursor_pos = Point(cursor_pos.x, cursor_pos.y + 1)
         if input_ch == curses.KEY_ENTER or input_ch == 10:
             game.toggle_mark(*cursor_to_index(cursor_pos, game_rect))
         if input_ch == " " or input_ch == 32:
@@ -328,7 +343,9 @@ def start_game(curse_context: Any, cols: int, rows: int, mines: int) -> None:
 def main(curse_context: Any) -> None:
     """Main function called from outside"""
     while True:
-        selection = open_menu(curse_context, items=("New Game", "Exit"), header="Main Menu")
+        selection = open_menu(
+            curse_context, items=("New Game", "Exit"), header="Main Menu"
+        )
         if selection == "Exit":
             return  # to load back main menu
         if selection == "New Game":

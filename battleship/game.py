@@ -4,26 +4,36 @@ import socket
 import struct
 from dataclasses import dataclass
 from itertools import repeat
+from typing import Any, List, Tuple
 
 from color import Background, Cursor, Text
 
-
 vertical_header = " |A|B|C|D|E|F|G|H|I|J| "
-FIELDS = [EMPTY, OWN_SHIP, OWN_SHIP_HIT, ENEMY_SHIP_HIT, MISS, OWN_SHIP_ENEMY_SHIP_HIT] = 0, 1, 2, 3, 4, 5
-SHIP_TYPES = [BATTLESHIP, CRUISER, DESTROYER, SUBMARINE] = 5, 4, 3, 2  # supported ship types
+FIELDS = [
+    EMPTY,
+    OWN_SHIP,
+    OWN_SHIP_HIT,
+    ENEMY_SHIP_HIT,
+    MISS,
+    OWN_SHIP_ENEMY_SHIP_HIT,
+] = (0, 1, 2, 3, 4, 5)
+SHIP_TYPES = [BATTLESHIP, CRUISER, DESTROYER, SUBMARINE] = (
+    5,
+    4,
+    3,
+    2,
+)  # supported ship types
 SHIP_NAMES = {
     BATTLESHIP: "Battleship",
     CRUISER: "Cruiser",
     DESTROYER: "Destroyer",
-    SUBMARINE: "Submarine"
+    SUBMARINE: "Submarine",
 }
 PLAYER_SHIPS = [BATTLESHIP, SUBMARINE]  # change this according to your needs
 
 
 class Error(ValueError):
-    """
-    Monkey patch ValueError to log the exceptions to a log file.
-    """
+    """Monkey patch ValueError to log the exceptions to a log file."""
 
     def __init__(self, *args):
         logging.error(str(self))
@@ -31,20 +41,55 @@ class Error(ValueError):
 
 
 def print_err(*args, **kwargs):
-    """
-    Prints an error in red.
-    """
+    """Prints an error in red."""
     print(Text.RED, *args, Cursor.FULL_RESET, **kwargs)
 
 
-def coord_valid(c: int):
+@dataclass
+class Shot:
     """
-    Returns True if a given x or y coordinates is in bounds.
+    Dataclass to store and decode/encode shot information for communication between two clients.
+
+    +-------+-------+-------+---------+
+    |   X   |   Y   |  Hit  | Padding |
+    +-------+-------+-------+---------+
+    | 4 Bit | 4 Bit | 1 Bit | 7 Bit   |
+    +-------+-------+-------+---------+
     """
-    return 0 <= c <= 9
+
+    x: int
+    y: int
+    last_shot_hit: bool = False
+
+    def __bytes__(self):
+        """Encode the shot as packed binary data."""
+        if self.x >= 2 ** 4:
+            raise Error(
+                f"X={self.x} is too large to fit into 4 bit: {hex(self.x)} > 0xf."
+            )
+        if self.y >= 2 ** 4:
+            raise Error(
+                f"X={self.y} is too large to fit into 4 bit: {hex(self.y)} > 0xf."
+            )
+
+        return struct.pack("!BB", (self.x << 4) | self.y, int(self.last_shot_hit) << 7)
+
+    @staticmethod
+    def decode(pkt: Any) -> Any:
+        """Decode a packet into a Shot instance."""
+        xy, h = struct.unpack("!BB", pkt)
+        return Shot(xy >> 4, xy & 0xF, h >> 7)
 
 
-def print_boards(board, enemy_board):
+def coord_valid(coord: int) -> bool:
+    """Returns True if a given x or y coordinates is in bounds."""
+    return 0 <= coord <= 9
+
+
+Board = List[List[int]]
+
+
+def print_boards(board: Board, enemy_board: Board) -> None:
     """
     Prints the full board including padding, color and spaces directly to stdout.
 
@@ -88,22 +133,19 @@ def print_boards(board, enemy_board):
     # Clear the screen on OSX and Linux
     else:
         _ = os.system("clear")
-    
+
     print(s)
     return
 
 
 def create_empty_board():
-    """
-    Returns a 10x10 array of zeros.
-    """
+    """Returns a 10x10 array of zeros."""
     return [10 * [0] for _ in repeat(0, 10)]
 
 
-def update_player_board(shot, board):
+def update_player_board(shot: Shot, board: Board):
     """
-    Update the player board for a given shot by the enemy.
-    Marks Hits on own ship and returns True if a ship was hit.
+    Update the player board for a given shot by the enemy. Marks Hits on own ship.
 
     :param shot: the shot to evaluate
     :param board: the board to update (by ref)
@@ -118,10 +160,9 @@ def update_player_board(shot, board):
     return False
 
 
-def update_enemy_board(shot, board):
+def update_enemy_board(shot: Shot, board: Board):
     """
-    Update the enemy board board after a shot has been fired.
-    Marks Misses and Hits.
+    Update the enemy board board after a shot has been fired. Marks Misses and Hits.
 
     :param shot: the shot to evaluate
     :param board: the board to update (by ref)
@@ -135,46 +176,9 @@ def update_enemy_board(shot, board):
         board[y][x] = MISS
 
 
-def player_lost(board):
-    """
-    Returns True if the current player has not ships left.
-    """
+def player_lost(board: Board):
+    """Returns True if the current player has not ships left."""
     return not any(OWN_SHIP in set(x) for x in board)
-
-
-@dataclass
-class Shot:
-    """
-    Dataclass to store and decode/encode shot information for communication between two clients.
-
-    +-------+-------+-------+---------+
-    |   X   |   Y   |  Hit  | Padding |
-    +-------+-------+-------+---------+
-    | 4 Bit | 4 Bit | 1 Bit | 7 Bit   |
-    +-------+-------+-------+---------+
-    """
-    x: int
-    y: int
-    last_shot_hit: bool = False
-
-    def __bytes__(self):
-        """
-        Encode the shot as packed binary data.
-        """
-        if self.x >= 2 ** 4:
-            raise Error(f"X={self.x} is too large to fit into 4 bit: {hex(self.x)} > 0xf.")
-        if self.y >= 2 ** 4:
-            raise Error(f"X={self.y} is too large to fit into 4 bit: {hex(self.y)} > 0xf.")
-
-        return struct.pack("!BB", (self.x << 4) | self.y, int(self.last_shot_hit) << 7)
-
-    @staticmethod
-    def decode(pkt):
-        """
-        Decode a packet into a Shot instance.
-        """
-        xy, h = struct.unpack("!BB", pkt)
-        return Shot(xy >> 4, xy & 0xf, h >> 7)
 
 
 class Network:
@@ -185,11 +189,13 @@ class Network:
 
     Supports classic instantiation or the use as a context manager.
     """
+
     BUFSIZE = 16
 
-    def __init__(self, host, port, is_server):
+    def __init__(self, host: str, port: int, is_server: bool) -> None:
         """
-        The functionality is basically the same for client and server and only differs slightly.
+        Functionality is almost the same for client and server. It differs slightly.
+
         :param host: the host to either connect to (as client) or to open the server in (as server)
         :param port: the port to connect to (as client) or to open as server
         :param is_server: True if the returned instance should act as a TCP server.
@@ -210,22 +216,24 @@ class Network:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.sock.connect((host, port))
 
-    def _server_send(self, pkt):
+    def _server_send(self, pkt: Any) -> Any:
         self.conn.sendall(pkt)
 
-    def _client_send(self, pkt):
+    def _client_send(self, pkt: Any) -> Any:
         self.sock.send(pkt)
 
-    def send(self, pkt):
+    def send(self, pkt: Any):
         """
-        Send arbitrary  to remote
+        Send arbitrary to remote
+
         :param pkt: packet as binary data
         """
         if self.is_server:
             return self._server_send(pkt)
         return self._client_send(pkt)
 
-    def _server_recv(self):
+    def _server_recv(self) -> int:
+        """Receive in server."""
         if self.conn is None:
             while True:
                 logging.debug("Server is waiting for a connection.")
@@ -239,13 +247,15 @@ class Network:
                 break
             return data
 
-    def _client_recv(self):
+    def _client_recv(self) -> int:
+        """Recieve in client."""
         data = self.sock.recv(self.BUFSIZE)
         return data
 
-    def recv(self):
+    def recv(self) -> Any:
         """
         Wait for a packet to arrive.
+
         Note: BLOCKING!
         """
         try:
@@ -258,6 +268,7 @@ class Network:
     def close(self):
         """
         Close the socket and free all resources.
+
         Make sure this method is always called (also in case of failure to prevent stuck resources or ports)
         """
         self.sock.close()
@@ -265,28 +276,31 @@ class Network:
             self.conn.close()
 
     def __enter__(self):
+        """Enter"""
         # enables context manager
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any):
+        """Exit"""
         # enables context manager
         self.close()
 
 
-def pre_process_string(s):
+def pre_process_string(s: str):
+    """Pre-process shot string"""
     s = s.lower()
 
-    def wanted(c):
-        return c.isalnum() or c == '-' or ord(c) in range(ord("a"), ord("k"))
+    def wanted(c: str):
+        return c.isalnum() or c == "-" or ord(c) in range(ord("a"), ord("k"))
 
     ascii_characters = [chr(ordinal) for ordinal in range(128)]
     ascii_code_point_filter = [c if wanted(c) else None for c in ascii_characters]
-    s = s.encode('ascii', errors='ignore').decode('ascii')
+    s = s.encode("ascii", errors="ignore").decode("ascii")
     return s.translate(ascii_code_point_filter)
 
 
-def parse_shot(s):
-    # be gentle
+def parse_shot(s: str):
+    """Check if shot is valid."""
     s = pre_process_string(s)
     s = s.lower().replace(" ", "")
 
@@ -310,9 +324,7 @@ def parse_shot(s):
 
 
 def ask_player_for_shot():
-    """
-    Ask until the player gives a valid input.
-    """
+    """Ask until the player gives a valid input."""
     while 1:
         try:
             return parse_shot(input("Shoot (Format XY, e.g. A4): "))
@@ -320,13 +332,13 @@ def ask_player_for_shot():
             pass
 
 
-def ask_player_for_ship(ship_type):
-    """
-    Ask until the player gives a valid input and has placed all of the ships.
-    """
+def ask_player_for_ship(ship_type: int):
+    """Ask until the player gives a valid input and has placed all of the ships."""
     length = ship_type
     while True:
-        s = input(f"Place your {SHIP_NAMES.get(ship_type)} (length: {length}) formatted as XX - YY (e.g. A1-A5): ")
+        s = input(
+            f"Place your {SHIP_NAMES.get(ship_type)} (length: {length}) formatted as XX - YY (e.g. A1-A5): "
+        )
         # assume the following format: XX - YY and ask until the user enters something valid
         try:
             a, b = s.lower().replace(" ", "").split("-")
@@ -356,9 +368,10 @@ def ask_player_for_ship(ship_type):
             print_err("Invalid Format: ", str(e))
 
 
-def place_ship(a, b, board):
+def place_ship(a: Tuple[int, int], b: Tuple[int, int], board: Board) -> None:
     """
     Update the board and place a ship on it
+
     :param a: Start X, Y coords
     :param b: End X, Y coords
     :param board: board to update
@@ -390,10 +403,8 @@ def place_ship(a, b, board):
             return
 
 
-def place_ships(board, enemy_board):
-    """
-    Place all ships and ask the user for each position.
-    """
+def place_ships(board: Board, enemy_board: Board) -> None:
+    """Place all ships and ask the user for each position."""
     for ship in PLAYER_SHIPS:
         print_boards(board, enemy_board)
         while 1:

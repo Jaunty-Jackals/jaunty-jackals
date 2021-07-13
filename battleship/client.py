@@ -1,14 +1,14 @@
 import logging
 
-from game import *
+import game
 
-
-logging.basicConfig(filename='log.log', level=logging.DEBUG)
+logging.basicConfig(filename="log.log", level=logging.DEBUG)
 
 
 def main():
+    """Game"""
     # Network setup
-    host = 'localhost'
+    host = "localhost"
     port = 5000
     last_shot_hit = False
     last_move = None
@@ -20,24 +20,24 @@ def main():
         host = input("Enter hostname (default: localhost)") or host
         port = int(input("Enter port (default: 5000)") or port)
 
-    with Network(host, port, is_server) as net:
+    with game.Network(host, port, is_server) as net:
         # init
-        player_board = create_empty_board()
-        enemy_board = create_empty_board()
+        player_board = game.create_empty_board()
+        enemy_board = game.create_empty_board()
 
-        place_ships(player_board, enemy_board)
+        game.place_ships(player_board, enemy_board)
 
         print("Okay, let's start:")
-        print_boards(player_board, enemy_board)
+        game.print_boards(player_board, enemy_board)
 
         # game on
-        while not player_lost(player_board):
+        while not game.player_lost(player_board):
 
             if player_turn:
-                x, y, exit_ = ask_player_for_shot()
+                x, y, exit_ = game.ask_player_for_shot()
                 if exit_:
                     break
-                last_move = Shot(x, y, last_shot_hit)
+                last_move = game.Shot(x, y, last_shot_hit)
                 net.send(bytes(last_move))
 
             else:
@@ -47,16 +47,16 @@ def main():
                     player_won = True
                     break
 
-                enemy_shot = Shot.decode(data)
+                enemy_shot = game.Shot.decode(data)
 
                 # true if enemy hit player
-                last_shot_hit = update_player_board(enemy_shot, player_board)
+                last_shot_hit = game.update_player_board(enemy_shot, player_board)
 
                 if last_move:
                     last_move.last_shot_hit = enemy_shot.last_shot_hit
-                    update_enemy_board(last_move, enemy_board)
+                    game.update_enemy_board(last_move, enemy_board)
 
-            print_boards(player_board, enemy_board)
+            game.print_boards(player_board, enemy_board)
             player_turn = not player_turn
 
         if player_won:
