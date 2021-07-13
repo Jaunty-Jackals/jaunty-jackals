@@ -2,7 +2,7 @@ import curses
 import os
 from typing import Any
 
-from utils.palettes import palettes
+from bin.utils.palettes import palettes
 
 screen = curses.initscr()
 METADATA = {
