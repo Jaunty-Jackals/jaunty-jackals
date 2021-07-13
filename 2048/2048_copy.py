@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 
+import components.gamectrl
+import components.crsout
+import components.crsin
+
 import curses
 import os
-
-import components.crsin
-import components.crsout
-import components.gamectrl
-
 
 def main(stdscr):
     curses.curs_set(0)

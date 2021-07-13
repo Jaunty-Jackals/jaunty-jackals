@@ -5,11 +5,9 @@ Curses output module
 """
 
 import curses
-import enum
 import textwrap
-
+import enum
 from . import helpdocs
-
 
 class _DrawCharacters:
     """
@@ -164,7 +162,7 @@ class _BoardWindow(_SubWindow):
     This window is used to represent the game board.
     """
 
-    def __init__(self, x, y, width, height, board_wh_tiles,
+    def __init__(self, x, y, width, height, board_wh_tiles, 
             free_tile_value):
         super().__init__(x, y, width, height)
 
@@ -196,7 +194,7 @@ class _BoardWindow(_SubWindow):
         self._fit_window_to_board()
 
         return self.get_window_size()
-
+    
     def change_board_dimensions(self, horizontal_tiles, vertical_tiles):
         self._board_wh_tiles = (horizontal_tiles, vertical_tiles)
         self._calc_tile_board_size()
@@ -219,10 +217,10 @@ class _BoardWindow(_SubWindow):
         inner_line = inner_line_tile * self._board_wh_tiles[0]
 
         draw_y = self._draw_area_xy[1]
-
+    
         def draw_tile_line(line_text):
             nonlocal draw_y
-            self._window.addstr(draw_y, self._draw_area_xy[0],
+            self._window.addstr(draw_y, self._draw_area_xy[0], 
                     line_text)
             draw_y += 1
 
@@ -279,7 +277,7 @@ class CursesOutput:
     """
     Curses output class
 
-    Encapsulate all the necessary data to provide the visual output of
+    Encapsulate all the necessary data to provide the visual output of 
     the game to the specified curses window.
     """
 
@@ -403,13 +401,13 @@ class CursesOutput:
         endgame_message = "".join([
                 "Sorry, no more moves available =(.",
                 " Current score is {}.".format(self._score)])
-
+        
         self._create_message_window(
                 CursesOutput._MessageWindowIndices.mwi_endgame,
                 "Game End",
                 endgame_message)
         self.redraw()
-
+    
     def close_endgame_message(self):
         self._remove_message_window(
                 CursesOutput._MessageWindowIndices.mwi_endgame)

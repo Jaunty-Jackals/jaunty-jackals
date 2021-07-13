@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
-import curses
-import enum
-
 from . import gamectrl
 
+import curses
+import enum
 
 class _CursesInputStates(enum.Enum):
     """
@@ -18,7 +17,7 @@ class CursesInput:
     """
     Cuses input class
 
-    Contains everything necessary to translate the input events from the
+    Contains everything necessary to translate the input events from the 
     given curses window to the commands for the output, and the game
     logic components.
     """
