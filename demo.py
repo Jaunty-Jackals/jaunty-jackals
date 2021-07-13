@@ -2,6 +2,8 @@ import curses
 import os
 from typing import Any
 
+from playsound import playsound
+
 from initload import initialize
 from utils.palettes import palettes
 
@@ -27,7 +29,7 @@ METADATA = {
 # run initload
 METADATA = initialize(METADATA)
 screen.clear()
-
+playsound("utils/assets/sound/passing_time.mp3", block=False)
 
 # Import a colour palette as desired; see bin/utils/palettes/palettes.py
 METADATA["palette"] = palettes.Gruvbox()
@@ -219,17 +221,20 @@ def displaymenu(menu: dict, parent: Any) -> Any:
                 x - ord("0") - 1
             )  # convert keypress back to a number, then subtract 1 to get index
         elif x == 258:  # down arrow
+            playsound("utils/assets/sound/sfx_menu_move4.wav", block=False)
             if pos < optioncount:
                 pos += 1
             else:
                 pos = 0
         elif x == 259:  # up arrow
+            playsound("utils/assets/sound/sfx_menu_move4.wav", block=False)
             if pos > 0:
                 pos += -1
             else:
                 pos = optioncount
 
     # return index of the selected item
+    playsound("utils/assets/sound/sfx_menu_select4.wav", block=False)
     return pos
 
 
