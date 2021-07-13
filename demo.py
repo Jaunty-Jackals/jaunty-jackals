@@ -90,6 +90,11 @@ menu_data = {
             "type": COMMAND,
             "command": "venv/bin/python3.9 ConnectFour/blessedConnectFour.py",
         },
+        {
+            "title": "SNAKE",
+            "type": COMMAND,
+            "command": "venv/bin/python3.9 snake/snake.py",
+        },
         {"title": "CONTENT C", "type": COMMAND, "command": "uqm"},
         {
             "title": "CONTENT D - has submenus",
