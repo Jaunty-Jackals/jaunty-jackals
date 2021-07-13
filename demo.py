@@ -176,7 +176,7 @@ def displaymenu(menu: dict, parent: Any) -> Any:
                 curses.color_pair(3),
             )
             # Subtitle
-            screen.addstr(curses.LINES - 1, 1, menu["subtitle"], curses.color_pair(4))
+            # screen.addstr(curses.LINES - 1,curses.COLS - 1,menu["subtitle"],curses.color_pair(4))
 
             # Display all the menu items, showing the 'pos' item highlighted
             for index in range(optioncount):
