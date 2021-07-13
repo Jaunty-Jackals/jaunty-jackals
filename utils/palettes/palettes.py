@@ -384,9 +384,9 @@ class Commodore64(Palette):
 
     def __init__(self):
         super().__init__()
-        self.name = "Gruvbox"
+        self.name = "Commodore64"
         self.hex = [
-            "000000",  # 00
+            "51469B",  # 00
             "915244",  # 01
             "76AA61",  # 02
             "CCD58B",  # 03
@@ -394,7 +394,7 @@ class Commodore64(Palette):
             "955BA4",  # 05
             "8BBFC8",  # 06
             "FFFFFF",  # 07
-            "000000",  # 00 08
+            "51469B",  # 00 08
             "915244",  # 01 09
             "76AA61",  # 02 10
             "CCD58B",  # 03 11
