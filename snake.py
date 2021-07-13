@@ -53,7 +53,7 @@ def game() -> int:
         while not apple:
             y = secrets.randbelow(dims[0] - 2) + 1
             x = secrets.randbelow(dims[1] - 2) + 1
-            if chr(screen.inch(y, x)) == " ":
+            if screen.inch(y, x) == ord(" "):
                 apple = 1
                 screen.addstr(y, x, "⬤", curses.color_pair(1))
 
