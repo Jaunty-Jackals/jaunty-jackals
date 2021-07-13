@@ -18,7 +18,7 @@ def initialize(metadata: dict) -> dict:
     curses.cbreak()
     curses.start_color()
     curses.can_change_color()
-    screen.resize(24, 80)
+    # screen.resize(24, 80)
     screen.keypad(True)
     screen.border(0)
 
