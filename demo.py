@@ -2,7 +2,7 @@ import curses
 import os
 from typing import Any
 
-# from initload import initialize
+from initload import initialize
 from utils.palettes import palettes
 
 screen = curses.initscr()
@@ -14,21 +14,23 @@ screen.keypad(1)
 
 METADATA = {
     "os": None,
-    "py_version": None,
+    "py_version": False,
     "term_h_cur": None,
-    "term_h_max": (screen.getmaxyx())[0],
+    "term_h_max": None,
     "term_h_min": None,
     "term_w_cur": None,
-    "term_w_max": (screen.getmaxyx())[1],
+    "term_w_max": None,
     "term_w_min": None,
-    "palette": None,
+    "palette": palettes.Commodore64(),
 }
 
 # run initload
-# METADATA = initialize(METADATA)
+METADATA = initialize(METADATA)
+screen.clear()
+
 
 # Import a colour palette as desired; see bin/utils/palettes/palettes.py
-METADATA["palette"] = palettes.Commodore64()
+METADATA["palette"] = palettes.Gruvbox()
 # p = palettes.Gruvbox()
 curclrs = METADATA["palette"].alias  # contains the list of colour name aliases
 
