@@ -40,7 +40,7 @@ def game() -> int:
     global action
     dims = screen.getmaxyx()
     head = [1, 1]
-    body = [head[:]]*5
+    body = [head[:]] * 5
     screen.border()
     direction = 0
     dead = 0
@@ -58,8 +58,12 @@ def game() -> int:
                 screen.addstr(y, x, "⬤", curses.color_pair(1))
 
         if remove not in body:
-            screen.addch(remove[0], remove[1], ' ', )
-        screen.addch(head[0], head[1], '■', curses.color_pair(2))
+            screen.addch(
+                remove[0],
+                remove[1],
+                " ",
+            )
+        screen.addch(head[0], head[1], "■", curses.color_pair(2))
 
         if action == "d" and direction != 2:
             direction = 0
@@ -79,8 +83,8 @@ def game() -> int:
         if direction == 3:
             head[0] -= 1
         remove = body[-1][:]
-        for i in range(len(body)-1, 0, -1):
-            body[i] = body[i-1][:]
+        for i in range(len(body) - 1, 0, -1):
+            body[i] = body[i - 1][:]
         body[0] = head[:]
 
         if screen.inch(head[0], head[1]) != ord(" "):
@@ -89,7 +93,7 @@ def game() -> int:
                 body.append(body[-1])
             else:
                 dead = 1
-        screen.move(dims[0]-1, dims[1]-1)
+        screen.move(dims[0] - 1, dims[1] - 1)
         screen.refresh()
         time.sleep(speed)
     return length
