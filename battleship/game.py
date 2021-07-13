@@ -9,13 +9,25 @@ from typing import Any, List, Tuple
 from color import Background, Cursor, Text
 
 vertical_header = " |A|B|C|D|E|F|G|H|I|J| "
-FIELDS = [EMPTY, OWN_SHIP, OWN_SHIP_HIT, ENEMY_SHIP_HIT, MISS, OWN_SHIP_ENEMY_SHIP_HIT] = 0, 1, 2, 3, 4, 5
-SHIP_TYPES = [BATTLESHIP, CRUISER, DESTROYER, SUBMARINE] = 5, 4, 3, 2  # supported ship types
+FIELDS = [
+    EMPTY,
+    OWN_SHIP,
+    OWN_SHIP_HIT,
+    ENEMY_SHIP_HIT,
+    MISS,
+    OWN_SHIP_ENEMY_SHIP_HIT,
+] = (0, 1, 2, 3, 4, 5)
+SHIP_TYPES = [BATTLESHIP, CRUISER, DESTROYER, SUBMARINE] = (
+    5,
+    4,
+    3,
+    2,
+)  # supported ship types
 SHIP_NAMES = {
     BATTLESHIP: "Battleship",
     CRUISER: "Cruiser",
     DESTROYER: "Destroyer",
-    SUBMARINE: "Submarine"
+    SUBMARINE: "Submarine",
 }
 PLAYER_SHIPS = [BATTLESHIP, SUBMARINE]  # change this according to your needs
 
@@ -52,9 +64,13 @@ class Shot:
     def __bytes__(self):
         """Encode the shot as packed binary data."""
         if self.x >= 2 ** 4:
-            raise Error(f"X={self.x} is too large to fit into 4 bit: {hex(self.x)} > 0xf.")
+            raise Error(
+                f"X={self.x} is too large to fit into 4 bit: {hex(self.x)} > 0xf."
+            )
         if self.y >= 2 ** 4:
-            raise Error(f"X={self.y} is too large to fit into 4 bit: {hex(self.y)} > 0xf.")
+            raise Error(
+                f"X={self.y} is too large to fit into 4 bit: {hex(self.y)} > 0xf."
+            )
 
         return struct.pack("!BB", (self.x << 4) | self.y, int(self.last_shot_hit) << 7)
 
@@ -62,7 +78,7 @@ class Shot:
     def decode(pkt: Any) -> Any:
         """Decode a packet into a Shot instance."""
         xy, h = struct.unpack("!BB", pkt)
-        return Shot(xy >> 4, xy & 0xf, h >> 7)
+        return Shot(xy >> 4, xy & 0xF, h >> 7)
 
 
 def coord_valid(coord: int) -> bool:
@@ -275,11 +291,11 @@ def pre_process_string(s: str):
     s = s.lower()
 
     def wanted(c: str):
-        return c.isalnum() or c == '-' or ord(c) in range(ord("a"), ord("k"))
+        return c.isalnum() or c == "-" or ord(c) in range(ord("a"), ord("k"))
 
     ascii_characters = [chr(ordinal) for ordinal in range(128)]
     ascii_code_point_filter = [c if wanted(c) else None for c in ascii_characters]
-    s = s.encode('ascii', errors='ignore').decode('ascii')
+    s = s.encode("ascii", errors="ignore").decode("ascii")
     return s.translate(ascii_code_point_filter)
 
 
@@ -320,7 +336,9 @@ def ask_player_for_ship(ship_type: int):
     """Ask until the player gives a valid input and has placed all of the ships."""
     length = ship_type
     while True:
-        s = input(f"Place your {SHIP_NAMES.get(ship_type)} (length: {length}) formatted as XX - YY (e.g. A1-A5): ")
+        s = input(
+            f"Place your {SHIP_NAMES.get(ship_type)} (length: {length}) formatted as XX - YY (e.g. A1-A5): "
+        )
         # assume the following format: XX - YY and ask until the user enters something valid
         try:
             a, b = s.lower().replace(" ", "").split("-")

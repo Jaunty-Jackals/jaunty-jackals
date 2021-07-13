@@ -2,7 +2,7 @@ import logging
 
 import game
 
-logging.basicConfig(filename='log.log', level=logging.DEBUG)
+logging.basicConfig(filename="log.log", level=logging.DEBUG)
 
 
 def main():

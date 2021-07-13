@@ -1,4 +1,4 @@
-CSI = '\x1b['
+CSI = "\x1b["
 
 
 class Ansi(object):
@@ -8,8 +8,8 @@ class Ansi(object):
 
     def __init__(self):
         for name in dir(self):
-            if not name.startswith('__'):
-                setattr(self, name, CSI + str(getattr(self, name)) + 'm')
+            if not name.startswith("__"):
+                setattr(self, name, CSI + str(getattr(self, name)) + "m")
 
 
 class Text(Ansi):
