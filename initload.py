@@ -166,7 +166,7 @@ def initialize(metadata: dict) -> dict:
             f"{screen_x} by {screen_y} detected     ".upper(),
             passed=True,
             pos=[acpi_pos_y, acpi_pos_x],
-            sleep=5.0,
+            sleep=2.0,
         )
         screen.refresh()
         acpi_pos_y += 1
