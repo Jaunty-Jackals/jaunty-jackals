@@ -1,43 +1,17 @@
 """Snake."""
 
 import curses
-import os
 import secrets
 import time
 
 speed = 0.1
 
 action = "d"
-ACTIONDICT = {"up": "w", "left": "a", "down": "s", "right": "d"}
 
-WINDOWS = os.name == "nt"
-
-if WINDOWS:
-    import keyboard
-
-    def getch(e: keyboard.KeyboardEvent) -> None:
-        """
-        Windows method of getting char.
-
-        (curses.KEY_UP isn't returning
-        correct value)
-        """
-        global action
-        try:
-            action = ACTIONDICT[e.name]
-        except Exception:
-            action = e.name
-
-    keyboard.hook(getch)
-    w = "w"
-    a = "a"
-    s = "s"
-    d = "d"
-else:
-    w = curses.KEY_UP
-    a = curses.KEY_LEFT
-    s = curses.KEY_DOWN
-    d = curses.KEY_RIGHT
+w = curses.KEY_UP
+a = curses.KEY_LEFT
+s = curses.KEY_DOWN
+d = curses.KEY_RIGHT
 
 screen = curses.initscr()
 screen.resize(21, 41)
@@ -50,7 +24,7 @@ curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
 curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
 
 
-def game() -> int:
+def game() -> None:
     """Snake game main code."""
     global action
     dims = screen.getmaxyx()
@@ -78,8 +52,7 @@ def game() -> int:
                 " ",
             )
         screen.addch(head[0], head[1], "■", curses.color_pair(2))
-        if WINDOWS is False:
-            action = screen.getch()
+        action = screen.getch()
         if action == d and direction != 2:
             direction = 0
         elif action == s and direction != 3:
@@ -113,5 +86,4 @@ def game() -> int:
     return length
 
 
-print(f"Length: {game()}")
 curses.endwin()
