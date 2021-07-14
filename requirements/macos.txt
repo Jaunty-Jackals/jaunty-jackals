@@ -1,3 +1,2 @@
 # Requirements for MacOS
 -r dev-requirements.txt
-PyObjC  # MacOS AppKit backend
