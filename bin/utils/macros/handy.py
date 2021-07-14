@@ -2,6 +2,19 @@ import curses
 import time
 from typing import Any
 
+jackal_ascii_small = (
+    "...                  `..`\n"
+    "` :s:`             .o+`` \n"
+    " ` .do.         ``om/ `` \n"
+    " `` /o/ ``    `` /h:```  \n"
+    "  `` ``          `` ``   \n"
+    "   .  `..-. ` .--.` ``   \n"
+    "   `  ``-:.   .--.` ``   \n"
+    "   ``` `  `   ````.`.`   \n"
+    " ```.```..`:h/``.``` ` ``\n"
+    ".`  ``....-:s::.-...``  .\n"
+    " ` ```             ``````\n"
+)
 jackal_ascii_medium = [
     "...`                                `--`",
     "``.+o.                           `:/-`` ",
@@ -53,7 +66,7 @@ def status(screen: Any, msg: str, passed: Any, pos: list, sleep: float = 0.25) -
     elif passed is None:
         passorfail = "CHCK"
         passorfail_color = checktext
-    elif passed == "WARN":
+    elif str(passed).upper() == "WARN":
         passorfail = "WARN"
         passorfail_color = warntext
 
