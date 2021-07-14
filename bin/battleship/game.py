@@ -3,12 +3,17 @@ import os
 import socket
 import struct
 from dataclasses import dataclass
-from itertools import repeat
+from itertools import chain, repeat
 from typing import Any, List, Tuple
 
-from color import Background, Cursor, Text
+from color import Background, Cursor
+from console import console
+from rich.layout import Layout
+from rich.panel import Panel
+from rich.prompt import Prompt
+from rich.table import Table
+from rich.text import Text
 
-vertical_header = " |A|B|C|D|E|F|G|H|I|J| "
 PERMITTED_LETTERS = "abcdefghij0123456789-"
 FIELDS = [EMPTY, OWN_SHIP, OWN_SHIP_HIT, ENEMY_SHIP_HIT, MISS, OWN_SHIP_ENEMY_SHIP_HIT] = 0, 1, 2, 3, 4, 5
 SHIP_TYPES = [BATTLESHIP, CRUISER, DESTROYER, SUBMARINE] = 5, 4, 3, 2  # Supported ship types.
@@ -21,6 +26,24 @@ SHIP_NAMES = {
 PLAYER_SHIPS = [BATTLESHIP, SUBMARINE]  # Change this according to your needs.
 
 
+layout = Layout(name="root")
+layout.split_column(
+    Layout(name="adjust", size=1),
+    Layout(name="header", size=3),
+    Layout(name="main"),
+    Layout(name="footer", size=3, visible=False)
+)
+layout["header"].split_row(
+    Layout(name="header_left"),
+    Layout(name="header_right")
+)
+layout["main"].split_row(
+    Layout(name="left"),
+    Layout(name="right")
+)
+layout["adjust"].update(Text(" "))
+
+
 class Error(ValueError):
     """Monkey patch ValueError to log the exceptions to a log file."""
 
@@ -31,7 +54,8 @@ class Error(ValueError):
 
 def print_err(*args, **kwargs):
     """Prints an error in red."""
-    print(Text.RED, *args, Cursor.FULL_RESET, **kwargs)
+    # print(Text.RED, *args, Cursor.FULL_RESET, **kwargs)
+    console.print(*args, **kwargs, style="red")
 
 
 @dataclass
@@ -78,43 +102,55 @@ def coord_valid(coord: int) -> bool:
 Board = List[List[int]]
 
 
+def create_table_board(board: Board, person: str) -> Table:
+    """Create Rich Table object of Board."""
+    vertical_header = [" ", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", " "]
+
+    if person == "you":
+        table = Table(*vertical_header, title="Your Board", show_lines=True)
+    elif person == "enemy":
+        table = Table(*vertical_header, title="Enemy Board", show_lines=True)
+
+    for row_no, row in enumerate(board):
+        lst = []
+        lst.append(str(row_no))
+        for col in row:
+            if col == EMPTY:
+                lst.append(Text(" ", style="white on black"))
+            elif col == OWN_SHIP:
+                lst.append(Text("\u2588", style="green"))
+            elif col == OWN_SHIP_HIT:
+                lst.append(Text("X", style="red on green"))
+            elif col == ENEMY_SHIP_HIT:
+                lst.append(Text("\u2588", style="on red"))
+            elif col == MISS:
+                lst.append(Text("\u2588", style="on yellow"))
+        lst.append(str(row_no))
+        table.add_row(*lst)
+
+    return table
+
+
 def print_boards(board: Board, enemy_board: Board) -> None:
     """
     Prints the full board including padding, color and spaces directly to stdout.
 
     Note: Due to use of ANSI Color codes it might not work on windows.
     """
-    s = "      Your Board  \t\t       Enemy Board\n\r"
-    s += vertical_header + "\t\t" + vertical_header + "\n\r"
-    for i, rows in enumerate(zip(board, enemy_board)):
-        for j, entries in enumerate(rows):
-            s += f"{i}|"
-            for entry in entries:
-                if entry == EMPTY:
-                    s += Background.BLACK
-                    s += " "
-                elif entry == OWN_SHIP:
-                    s += Background.GREEN
-                    s += " "
-                elif entry == OWN_SHIP_HIT:
-                    s += Background.GREEN
-                    s += Text.RED
-                    s += "X"
-                elif entry == ENEMY_SHIP_HIT:
-                    s += Background.RED
-                    s += " "
-                elif entry == MISS:
-                    s += Background.YELLOW
-                    s += " "
+    your_table = create_table_board(board, "you")
+    enemy_table = create_table_board(enemy_board, "enemy")
+    layout["left"].update(Panel(your_table, expand=False))
+    layout["right"].update(Panel(enemy_table, expand=False))
 
-                s += Cursor.FULL_RESET
-                s += "|"
-            if not j:
-                s += f"{i}\t\t"
+    def get_score(board: Board) -> int:
+        return list(chain.from_iterable(board)).count(ENEMY_SHIP_HIT)
 
-        s += f"{i}\n\r"
-
-    s += vertical_header + "\t\t" + vertical_header + "\n\r"
+    layout["header_left"].update(Panel(Text(
+        f"Your Score: {get_score(enemy_board)}/{sum(PLAYER_SHIPS)}", justify="center"))
+    )
+    layout["header_right"].update(Panel(Text(
+        f"Enemy Score: {get_score(board)}/{sum(PLAYER_SHIPS)}", justify="center"))
+    )
 
     # Clear the screen on Windows
     if os.name == "nt":
@@ -123,7 +159,7 @@ def print_boards(board: Board, enemy_board: Board) -> None:
     else:
         _ = os.system("clear")
 
-    print(s)
+    console.print(layout)
     return
 
 
@@ -305,7 +341,7 @@ def ask_player_for_shot():
     """Ask until the player gives a valid input."""
     while True:
         try:
-            return parse_shot(input("Shoot (Format XY, e.g. A4): "))
+            return parse_shot(Prompt.ask("Shoot (Format XY, e.g. A4)"))
         except Error:
             pass
 
@@ -314,8 +350,8 @@ def ask_player_for_ship(ship_type: int):
     """Ask until the player gives a valid input and has placed all of the ships."""
     length = ship_type
     while True:
-        ship_input = input(
-            f"Place your {SHIP_NAMES.get(ship_type)} (length: {length}) formatted as XX - YY (e.g. A1-A5): "
+        ship_input = Prompt.ask(
+            f"Place your {SHIP_NAMES.get(ship_type)} (length: {length}) formatted as XY - XY (e.g. A1-A5)"
         )
         # Assume the following format: XX - YY and ask until the user enters something valid.
         try:

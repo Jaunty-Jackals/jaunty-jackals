@@ -1,6 +1,8 @@
 import logging
 
 import game
+from console import console
+from rich.prompt import IntPrompt, Prompt
 
 logging.basicConfig(filename="log.log", level=logging.DEBUG)
 
@@ -13,12 +15,12 @@ def main():
     last_shot_hit = False
     last_move = None
     player_won = False
-    is_server = input("Are you a client or a server? (c/s)").lower()[0] == "s"
+    is_server = Prompt.ask("Are you a client or a server? (c/s)").lower()[0] == "s"
     player_turn = not is_server
 
     if not is_server:
-        host = input("Enter hostname (default: localhost)") or host
-        port = int(input("Enter port (default: 5000)") or port)
+        host = Prompt.ask("Enter hostname (default: localhost)", default="localhost", show_default=False)
+        port = IntPrompt.ask("Enter port (default: 5000)", default=5000, show_default=False)
 
     with game.Network(host, port, is_server) as net:
         # Initialise
@@ -27,7 +29,7 @@ def main():
 
         game.place_ships(player_board, enemy_board)
 
-        print("Okay, let's start:")
+        console.print("Okay, let's start:")
         game.print_boards(player_board, enemy_board)
 
         # Game on
@@ -39,7 +41,7 @@ def main():
                 net.send(bytes(last_move))
 
             else:
-                print("Waiting for response...")
+                console.print("Waiting for enemy's response...")
                 data = net.recv()
                 if not data:
                     player_won = True
@@ -58,9 +60,9 @@ def main():
             player_turn = not player_turn
 
         if player_won:
-            print("You won!")
+            console.print("You won!")
         else:
-            print("You lost!")
+            console.print("You lost!")
 
 
 if __name__ == "__main__":
