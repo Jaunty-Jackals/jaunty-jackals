@@ -29,7 +29,7 @@ METADATA = {
 # run initload
 METADATA = initialize(METADATA)
 screen.clear()
-playsound("utils/assets/sound/passing_time.mp3", block=False)
+playsound("utils/assets/sound/passing_time_in_wav.wav", block=False)
 
 # Import a colour palette as desired; see bin/utils/palettes/palettes.py
 METADATA["palette"] = palettes.Gruvbox()

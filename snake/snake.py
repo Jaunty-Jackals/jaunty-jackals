@@ -1,12 +1,43 @@
 """Snake."""
 
 import curses
+import os
 import secrets
 import time
 
-import keyboard
-
 speed = 0.1
+
+action = "d"
+ACTIONDICT = {"up": "w", "left": "a", "down": "s", "right": "d"}
+
+WINDOWS = os.name == "nt"
+
+if WINDOWS:
+    import keyboard
+
+    def getch(e: keyboard.KeyboardEvent) -> None:
+        """
+        Windows method of getting char.
+
+        (curses.KEY_UP isn't returning
+        correct value)
+        """
+        global action
+        try:
+            action = ACTIONDICT[e.name]
+        except Exception:
+            action = e.name
+
+    keyboard.hook(getch)
+    w = "w"
+    a = "a"
+    s = "s"
+    d = "d"
+else:
+    w = curses.KEY_UP
+    a = curses.KEY_LEFT
+    s = curses.KEY_DOWN
+    d = curses.KEY_RIGHT
 
 screen = curses.initscr()
 screen.resize(21, 41)
@@ -17,22 +48,6 @@ curses.start_color()
 
 curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
 curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
-
-RESET = "\x1B[m"
-ACTIONDICT = {"up": "w", "left": "a", "down": "s", "right": "d"}
-action = "d"
-
-
-def getch(e: str) -> None:
-    """Get user input via keyboard.hook(getch)."""
-    global action
-    try:
-        action = ACTIONDICT[e.name]
-    except Exception:
-        action = e.name
-
-
-keyboard.hook(getch)
 
 
 def game() -> int:
@@ -56,24 +71,23 @@ def game() -> int:
             if screen.inch(y, x) == ord(" "):
                 apple = 1
                 screen.addstr(y, x, "⬤", curses.color_pair(1))
-
-        if remove not in body:
+        if (remove in body) is False:
             screen.addch(
                 remove[0],
                 remove[1],
                 " ",
             )
         screen.addch(head[0], head[1], "■", curses.color_pair(2))
-
-        if action == "d" and direction != 2:
+        if WINDOWS is False:
+            action = screen.getch()
+        if action == d and direction != 2:
             direction = 0
-        elif action == "s" and direction != 3:
+        elif action == s and direction != 3:
             direction = 1
-        elif action == "a" and direction != 0:
+        elif action == a and direction != 0:
             direction = 2
-        elif action == "w" and direction != 1:
+        elif action == w and direction != 1:
             direction = 3
-
         if direction == 0:
             head[1] += 1
         if direction == 1:
