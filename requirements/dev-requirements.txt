@@ -11,7 +11,7 @@ flake8-isort~=4.0
 
 # General Requirements
 typing
-playsound  # sound playback
+boombox  # sound playback
 
 # Requirements for frameworks
 blessed~=1.18.1

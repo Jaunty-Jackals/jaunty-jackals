@@ -2,9 +2,8 @@ import curses
 import os
 from typing import Any
 
-from playsound import playsound
-
 from initload import initialize
+from playsound import playsound  # TODO: replace with boombox
 from utils.palettes import palettes
 
 screen = curses.initscr()
@@ -80,22 +79,22 @@ menu_data = {
         {
             "title": "MINE SWEEPER",
             "type": COMMAND,
-            "command": "venv/bin/python3.9 minesweep/minesweep.py",
+            "command": "python minesweep/minesweep.py",
         },
         {
             "title": "BATTLESHIP",
             "type": COMMAND,
-            "command": "venv/bin/python3.9 battleship/client.py",
+            "command": "python battleship/client.py",
         },
         {
             "title": "CONNECT FOUR",
             "type": COMMAND,
-            "command": "venv/bin/python3.9 ConnectFour/blessedConnectFour.py",
+            "command": "python ConnectFour/blessedConnectFour.py",
         },
         {
             "title": "SNAKE",
             "type": COMMAND,
-            "command": "venv/bin/python3.9 snake/snake.py",
+            "command": "python snake/snake.py",
         },
         {"title": "CONTENT C", "type": COMMAND, "command": "uqm"},
         {
