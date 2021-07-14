@@ -4,7 +4,6 @@ from typing import Any
 
 from initload import initialize
 from play_sounds import play_file as playsound
-
 from utils.palettes import palettes
 
 # Curses setup
