@@ -1,15 +1,14 @@
 from __future__ import annotations
-from typing import Callable, Optional, Set, Any
+
+import atexit
+import signal
 from functools import partial
 from multiprocessing import Process
-from platform import platform
 from pathlib import Path
-from weakref import finalize as finalizer
+from platform import platform
 from sys import exit
-from signal import *
-import signal
-import atexit
-
+from typing import Any, Callable, Optional, Set
+from weakref import finalize as finalizer
 
 PLATFORM: str = platform().lower()
 _PROCS: Procs = set()
@@ -28,6 +27,7 @@ def play_process(
     running_procs: Optional[Procs] = _PROCS,
     **kwargs,
 ) -> Process:
+    """Play process"""
     proc = Process(target=target, args=(file, *args), kwargs=kwargs, daemon=True)
 
     if finalize:
@@ -42,6 +42,7 @@ def play_process(
 
 
 def kill_process(proc: Process, running_procs: Optional[Procs] = _PROCS):
+    """Kill process"""
     proc.kill()
     proc.join()
 
@@ -52,12 +53,16 @@ def kill_process(proc: Process, running_procs: Optional[Procs] = _PROCS):
 def kill_child_procs(
     signum: Optional[int] = None, frame: Optional[Any] = None, perform_exit: bool = True
 ):
+    """Kill child processes"""
     if _PROCS:
         for proc in _PROCS.copy():
             try:
                 kill_process(proc)
 
-            except:
+            except Exception as excp:
+                print(f"{excp}")
+                pass
+            else:
                 pass
 
     if perform_exit:
@@ -71,11 +76,13 @@ def handle_sigint(
     signum: Optional[int] = None,
     frame: Optional[Any] = None,
 ):
+    """Handle SIGINTs"""
     kill_procs_no_exit()
     _SIGINT(signum, frame)
 
 
 def register_handlers():
+    """Handle registers"""
     # handle graceful shutdown
     atexit.register(kill_procs_no_exit)
 

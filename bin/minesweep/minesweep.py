@@ -5,9 +5,20 @@ import random
 from collections import namedtuple
 from enum import Enum
 from math import sqrt
+from platform import system
 from typing import Any, Generator
 
-from utils import Rect, draw_rect, minmax, open_menu
+from minesweep_utils import Rect, draw_rect, minmax, open_menu
+from play_sounds import play_file as playsound
+from play_sounds import play_while_running
+
+path = "bin/utils/assets/sound/sfx_minesweeper_"
+sfx_nav_path = path + "nav.wav"
+sfx_space_path = path + "space.wav"
+sfx_enter_path = path + "flag.wav"
+sfx_death_path = path + "death.wav"
+sfx_bgm_path = path + "bgm.wav"
+sfx_ingame_path = path + "ingame.wav"
 
 
 class Flags(Enum):
@@ -200,24 +211,30 @@ class MineSweeper:
 
 def start_new_game(curse_context: Any) -> None:
     """Menu to start a new game"""
-    boxes = int(
-        open_menu(curse_context, items=("100", "400", "625"), header="Number of Boxes")
-    )
-    mine_percents = [0.1, 0.2, 0.4, 0.6]
-    mines = [str(int(boxes * mp)) for mp in mine_percents]
-    sel_mines = int(
-        float(open_menu(curse_context, items=tuple(mines), header="Number of Mines"))
-    )
+    with play_while_running(sfx_bgm_path, block=True):
+        boxes = int(
+            open_menu(
+                curse_context, items=("100", "400", "625"), header="Number of Boxes"
+            )
+        )
+        mine_percents = [0.1, 0.2, 0.4, 0.6]
+        mines = [str(int(boxes * mp)) for mp in mine_percents]
+        sel_mines = int(
+            float(
+                open_menu(curse_context, items=tuple(mines), header="Number of Mines")
+            )
+        )
 
-    final_cols = int(minmax(sqrt(boxes), 0, curses.COLS - 3))
-    final_rows = int(minmax(sqrt(boxes), 0, curses.LINES - 5))
+        final_cols = int(minmax(sqrt(boxes), 0, curses.COLS - 3))
+        final_rows = int(minmax(sqrt(boxes), 0, curses.LINES - 5))
 
-    start_game(curse_context, final_cols, final_rows, sel_mines)
+    with play_while_running(sfx_ingame_path, block=True):
+        start_game(curse_context, final_cols, final_rows, sel_mines)
 
 
 def cursor_to_index(cursor_pos: Any, game_rect: Rect) -> Any:
     """Returns window position to table index"""
-    return ((cursor_pos.x - game_rect.x) // 2, cursor_pos.y - game_rect.y)
+    return (cursor_pos.x - game_rect.x) // 2, cursor_pos.y - game_rect.y
 
 
 def get_header(curse_context: Any, game: Any) -> Rect:
@@ -262,18 +279,37 @@ def get_game(curse_context: Any, game: Any, game_rect: Rect) -> Rect:
         x, y = game.mines.linear_to_subscript(i)
         x = x * 2 + rect.x
         y = y + rect.y
+
+        # OS-specific mine and flag text
+        sym_initial = "\u25A0"
+        sym_marked = "\u26F3"
+        sym_mine = "\u26ED"
+
+        if system().upper() in ("WINDOWS", "DARWIN"):
+            sym_initial = "?"
+            sym_marked = "M"
+            sym_mine = "*"
+
         if flag == Flags.INITIAL:
-            curse_context.addstr(y, x, "?")
+            curse_context.addstr(y, x, sym_initial)
         elif flag == Flags.MARKED:
-            curse_context.addstr(y, x, "\u26F3")
+            curse_context.addstr(y, x, sym_marked, curses.color_pair(9))
         else:
             if mine:
-                curse_context.addstr(y, x, "\u26ED")
+                curse_context.addstr(y, x, sym_mine, curses.color_pair(8))
             else:
                 if hint == 0:
                     curse_context.addstr(y, x, " ")
+                elif hint == 1:
+                    curse_context.addstr(y, x, str(hint), curses.color_pair(1))
+                elif hint == 2:
+                    curse_context.addstr(y, x, str(hint), curses.color_pair(2))
+                elif hint == 3:
+                    curse_context.addstr(y, x, str(hint), curses.color_pair(3))
+                elif hint == 4:
+                    curse_context.addstr(y, x, str(hint), curses.color_pair(4))
                 else:
-                    curse_context.addstr(y, x, str(hint), curses.A_DIM)
+                    curse_context.addstr(y, x, str(hint), curses.color_pair(4))
     return rect
 
 
@@ -311,16 +347,22 @@ def start_game(curse_context: Any, cols: int, rows: int, mines: int) -> None:
 
         input_ch = curse_context.getch()
         if input_ch == curses.KEY_LEFT:
+            playsound(sfx_nav_path, block=False)
             cursor_pos = Point(cursor_pos.x - 2, cursor_pos.y)
         if input_ch == curses.KEY_RIGHT:
+            playsound(sfx_nav_path, block=False)
             cursor_pos = Point(cursor_pos.x + 2, cursor_pos.y)
         if input_ch == curses.KEY_UP:
+            playsound(sfx_nav_path, block=False)
             cursor_pos = Point(cursor_pos.x, cursor_pos.y - 1)
         if input_ch == curses.KEY_DOWN:
+            playsound(sfx_nav_path, block=False)
             cursor_pos = Point(cursor_pos.x, cursor_pos.y + 1)
-        if input_ch == curses.KEY_ENTER or input_ch == 10:
+        if input_ch == curses.KEY_ENTER or input_ch == 10:  # enter
+            playsound(sfx_enter_path, block=False)
             game.toggle_mark(*cursor_to_index(cursor_pos, game_rect))
-        if input_ch == " " or input_ch == 32:
+        if input_ch == " " or input_ch == 32:  # spacebar
+            playsound(sfx_space_path, block=False)
             game.reveal(*cursor_to_index(cursor_pos, game_rect))
         if input_ch == 27:
             selected = open_menu(curse_context, ("Continue", "New Game", "Exit"))
@@ -330,6 +372,7 @@ def start_game(curse_context: Any, cols: int, rows: int, mines: int) -> None:
                 start_new_game(curse_context)
 
         if game.is_lost() or game.is_solved():
+            playsound(sfx_death_path, block=False)
             game.reveal_all()
             curse_context.clear()
             draw_all(curse_context, game)
@@ -342,6 +385,15 @@ def start_game(curse_context: Any, cols: int, rows: int, mines: int) -> None:
 
 def main(curse_context: Any) -> None:
     """Main function called from outside"""
+    # curses colours
+    curses.init_pair(1, 6, 0)  # 1
+    curses.init_pair(2, 4, 0)  # 2
+    curses.init_pair(3, 3, 0)  # 3
+    curses.init_pair(4, 9, 0)  # 4
+    curses.init_pair(5, 1, 0)  # 5+
+    curses.init_pair(8, 7, 1)  # mine
+    curses.init_pair(9, 0, 3)  # marked
+
     while True:
         selection = open_menu(
             curse_context, items=("New Game", "Exit"), header="Main Menu"
@@ -354,3 +406,4 @@ def main(curse_context: Any) -> None:
 
 if __name__ == "__main__":
     curses.wrapper(main)
+    curses.endwin()
