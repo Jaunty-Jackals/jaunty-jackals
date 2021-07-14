@@ -1,4 +1,3 @@
-import json
 from math import ceil
 from typing import Any
 
@@ -268,39 +267,26 @@ class Nord(Palette):
     def __init__(self):
         super().__init__()
         self.name = "Nord"
-
-        with open("utils/palettes/nord.json") as f:
-            self.nordjson = json.load(f)
-
-        self.hex = []
-        for colour in self.nordjson["palette"].values():
-            self.hex.append(colour.lstrip("#"))
-
-        if len(self.hex) == 16:
-            # foreground
-            self.hex.append(self.hex[6])
-
-            # background
-            self.hex.append(self.hex[0])
-
-        # self.hex = ['2e3440',  # 00
-        #             '3b4252',  # 01
-        #             '434c5e',  # 02
-        #             '4c566a',  # 03
-        #             'd8dee9',  # 04
-        #             'e5e9f0',  # 05
-        #             'eceff4',  # 06
-        #             '8fbcbb',  # 07
-        #             '88c0d0',  # 08
-        #             '81a1c1',  # 09
-        #             '5e81ac',  # 10
-        #             'bf616a',  # 11
-        #             'd08770',  # 12
-        #             'ebcb8b',  # 13
-        #             'a3be8c',  # 14
-        #             'b48ead',  # 15
-        #             'eceff4',  # fg
-        #             '2e3440']  # bg
+        self.hex = [
+            "2e3440",  # 00
+            "3b4252",  # 01
+            "434c5e",  # 02
+            "4c566a",  # 03
+            "d8dee9",  # 04
+            "e5e9f0",  # 05
+            "eceff4",  # 06
+            "8fbcbb",  # 07
+            "88c0d0",  # 08
+            "81a1c1",  # 09
+            "5e81ac",  # 10
+            "bf616a",  # 11
+            "d08770",  # 12
+            "ebcb8b",  # 13
+            "a3be8c",  # 14
+            "b48ead",  # 15
+            "eceff4",  # fg
+            "2e3440",
+        ]  # bg
 
         self.palette = {"number": self.number, "alias": self.alias, "hex": self.hex}
 
@@ -404,6 +390,74 @@ class Commodore64(Palette):
             "FFFFFF",  # 07 15
             "FFFFFF",  # fg = 07 unique
             "51469B",  # bg = 04
+        ]
+        self.palette = {
+            "name": self.name,
+            "number": self.number,
+            "alias": self.alias,
+            "hex": self.hex,
+        }
+
+
+class Haxx0r(Palette):
+    """Haxx0r theme"""
+
+    def __init__(self):
+        super().__init__()
+        self.name = "Haxx0r"
+        self.hex = [
+            "000000",  # 00
+            "00FF00",  # 01
+            "00EE00",  # 02
+            "00DD00",  # 03
+            "00CC00",  # 04
+            "00AA00",  # 05
+            "009900",  # 06
+            "008800",  # 07
+            "000000",  # 00
+            "00FF00",  # 01
+            "00EE00",  # 02
+            "00DD00",  # 03
+            "00CC00",  # 04
+            "00AA00",  # 05
+            "009900",  # 06
+            "008800",  # 07
+            "00FF00",  # fg = 07 unique
+            "000000",  # bg = 04
+        ]
+        self.palette = {
+            "name": self.name,
+            "number": self.number,
+            "alias": self.alias,
+            "hex": self.hex,
+        }
+
+
+class Jackal(Palette):
+    """Jackal theme"""
+
+    def __init__(self):
+        super().__init__()
+        self.name = "Jackal"
+        self.hex = [
+            "1f1f1f",  # 00
+            "d17b49",  # 01
+            "7b8748",  # 02
+            "af865a",  # 03
+            "535c5c",  # 04
+            "775759",  # 05
+            "6d715e",  # 06
+            "C0B18B",  # 07
+            "4a3637",  # 00 08
+            "d17b49",  # 01 09
+            "7b8748",  # 02 10
+            "af865a",  # 03 11
+            "535c5c",  # 04 12
+            "775759",  # 05 13
+            "6d715e",  # 06 14
+            "C0B18B",  # 07 15
+            "C0B18B",  # fg = 07 unique
+            "1F1F1F",  # bg = 04
         ]
         self.palette = {
             "name": self.name,
