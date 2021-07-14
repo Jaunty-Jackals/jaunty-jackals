@@ -1,8 +1,9 @@
 # export asset paths
-from base import DEFAULT_ASSETS, DEFAULT_SONG, DEFAULT_SOUND
-
 # export functions and context managers
 from .base import (
+    DEFAULT_ASSETS,
+    DEFAULT_SONG,
+    DEFAULT_SOUND,
     play_after,
     play_after_async,
     play_file,
