@@ -1,2 +1,3 @@
 # Requirements for MacOS
 -r dev-requirements.txt
+PyObjc>=6.2.2
