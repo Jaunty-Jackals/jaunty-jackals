@@ -1,3 +1,3 @@
-[submodule "ConnectFour"]
+[submodule "bin/ConnectFour"]
 	path = bin/ConnectFour
 	url = https://github.com/vguo2037/ConnectFour.git
