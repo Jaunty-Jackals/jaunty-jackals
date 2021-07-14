@@ -396,3 +396,4 @@ def main(curse_context: Any) -> None:
 
 if __name__ == "__main__":
     curses.wrapper(main)
+    curses.endwin()
