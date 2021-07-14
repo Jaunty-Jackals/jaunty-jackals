@@ -275,12 +275,6 @@ def processmenu(menu: dict, parent: Any = None) -> None:
             exitmenu = True
 
 
-def get_metadata() -> dict:
-    """Returns user's sysinfo variable METADATA as dictionary"""
-    global METADATA
-    return METADATA
-
-
 # Main program
 processmenu(menu_data)
 curses.endwin()  # closes out the menu system and returns you to the bash prompt.
