@@ -14,14 +14,15 @@ BLOCK_WHILE_PLAYING: bool = True
 DEFAULT_WAIT: float = 0.25
 
 
-# def get_assets_dir() -> Path:
-#     """Get the asset """
-#     filename = __loader__.get_filename()
-#     return Path(filename).parent / "assets"
+def get_assets_dir() -> Path:
+    """Get the asset"""
+    filename = __loader__.get_filename()
+    return Path(filename).parent / "assets"
 
-# DEFAULT_ASSETS = get_assets_dir()
-# DEFAULT_SONG = DEFAULT_ASSETS / "song.mp3"
-# DEFAULT_SOUND = DEFAULT_ASSETS / "ding.mp3"
+
+DEFAULT_ASSETS = get_assets_dir()
+DEFAULT_SONG = DEFAULT_ASSETS / "song.mp3"
+DEFAULT_SOUND = DEFAULT_ASSETS / "ding.mp3"
 
 PLATFORM = system().lower()
 MAJOR, MINOR, *_ = sys.version_info
