@@ -55,7 +55,8 @@ def initialize(metadata: dict) -> dict:
         curses.init_pair(16, 9, 0)  # menu highlighted item
         curses.init_pair(17, 4, 0)  # menu normal item
 
-        acpi_pos_y = 0  # position counter
+        # Position counter
+        acpi_pos_y = 0
         acpi_pos_x = 1
         curses.def_prog_mode()
 
@@ -95,7 +96,7 @@ def initialize(metadata: dict) -> dict:
         py_ver = python_version()
         if int(py_ver[0]) == 3:
             if int(py_ver[2]) in (9, 10):
-                if int(py_ver[2]) == 9 and int(py_ver[4]) in (4, 5, 6):
+                if int(py_ver[2]) == 9 and int(py_ver[4]) in (2, 5, 6):
                     status(
                         screen,
                         f"Python {py_ver} DETECTED    ",
@@ -160,16 +161,66 @@ def initialize(metadata: dict) -> dict:
         acpi_pos_y += 1
 
         screen_y = (screen.getmaxyx())[0]
+        metadata["term_h_cur"] = screen_y
         screen_x = (screen.getmaxyx())[1]
+        metadata["term_w_cur"] = screen_x
         status(
             screen,
             f"{screen_x} by {screen_y} detected     ".upper(),
             passed=True,
             pos=[acpi_pos_y, acpi_pos_x],
-            sleep=2.0,
+            sleep=0.5,
         )
         screen.refresh()
         acpi_pos_y += 1
+
+        # TODO: Unexpected Screen Size
+        # Width is too small
+        if screen_x < metadata["term_w_min"]:
+            status(
+                screen,
+                f'screen width of {screen_x} is smaller than the recommended {metadata["term_w_min"]}'.upper(),
+                passed="warn",
+                pos=[acpi_pos_y, acpi_pos_x],
+                sleep=0.5,
+            )
+            screen.refresh()
+            acpi_pos_y += 1
+
+        # Width is too long
+        elif screen_x > metadata["term_w_max"]:
+            status(
+                screen,
+                f'screen width of {screen_x} is bigger than the recommended {metadata["term_w_max"]}'.upper(),
+                passed="warn",
+                pos=[acpi_pos_y, acpi_pos_x],
+                sleep=0.5,
+            )
+            screen.refresh()
+            acpi_pos_y += 1
+
+        # Height is too small
+        if screen_y < metadata["term_h_min"]:
+            status(
+                screen,
+                f'screen height of {screen_y} is smaller than the recommended {metadata["term_h_min"]}'.upper(),
+                passed="warn",
+                pos=[acpi_pos_y, acpi_pos_x],
+            )
+            screen.refresh()
+            acpi_pos_y += 1
+
+        # Height is too long
+        elif screen_y > metadata["term_h_max"]:
+            status(
+                screen,
+                f'screen height of {screen_y} is bigger than the recommended {metadata["term_h_max"]}'.upper(),
+                passed="warn",
+                pos=[acpi_pos_y, acpi_pos_x],
+                sleep=1.0,
+            )
+            screen.refresh()
+            acpi_pos_y += 1
 
         complete = True
 
