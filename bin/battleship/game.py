@@ -9,27 +9,16 @@ from typing import Any, List, Tuple
 from color import Background, Cursor, Text
 
 vertical_header = " |A|B|C|D|E|F|G|H|I|J| "
-FIELDS = [
-    EMPTY,
-    OWN_SHIP,
-    OWN_SHIP_HIT,
-    ENEMY_SHIP_HIT,
-    MISS,
-    OWN_SHIP_ENEMY_SHIP_HIT,
-] = (0, 1, 2, 3, 4, 5)
-SHIP_TYPES = [BATTLESHIP, CRUISER, DESTROYER, SUBMARINE] = (
-    5,
-    4,
-    3,
-    2,
-)  # supported ship types
+PERMITTED_LETTERS = "abcdefghij0123456789-"
+FIELDS = [EMPTY, OWN_SHIP, OWN_SHIP_HIT, ENEMY_SHIP_HIT, MISS, OWN_SHIP_ENEMY_SHIP_HIT] = 0, 1, 2, 3, 4, 5
+SHIP_TYPES = [BATTLESHIP, CRUISER, DESTROYER, SUBMARINE] = 5, 4, 3, 2  # Supported ship types.
 SHIP_NAMES = {
     BATTLESHIP: "Battleship",
     CRUISER: "Cruiser",
     DESTROYER: "Destroyer",
     SUBMARINE: "Submarine",
 }
-PLAYER_SHIPS = [BATTLESHIP, SUBMARINE]  # change this according to your needs
+PLAYER_SHIPS = [BATTLESHIP, SUBMARINE]  # Change this according to your needs.
 
 
 class Error(ValueError):
@@ -154,6 +143,7 @@ def update_player_board(shot: Shot, board: Board):
     x = shot.x
     y = shot.y
     field = board[y][x]
+
     if field == OWN_SHIP:
         board[y][x] = OWN_SHIP_HIT
         return True
@@ -162,7 +152,7 @@ def update_player_board(shot: Shot, board: Board):
 
 def update_enemy_board(shot: Shot, board: Board):
     """
-    Update the enemy board board after a shot has been fired. Marks Misses and Hits.
+    Update the enemy board after a shot has been fired. Marks Misses and Hits.
 
     :param shot: the shot to evaluate
     :param board: the board to update (by ref)
@@ -177,7 +167,7 @@ def update_enemy_board(shot: Shot, board: Board):
 
 
 def player_lost(board: Board):
-    """Returns True if the current player has not ships left."""
+    """Returns True if the current player has no ships left."""
     return not any(OWN_SHIP in set(x) for x in board)
 
 
@@ -241,6 +231,7 @@ class Network:
                 break
 
         logging.debug("Waiting for Data")
+
         while True:
             data = self.conn.recv(self.BUFSIZE)
             if not data:
@@ -248,7 +239,7 @@ class Network:
             return data
 
     def _client_recv(self) -> int:
-        """Recieve in client."""
+        """Receive in client."""
         data = self.sock.recv(self.BUFSIZE)
         return data
 
@@ -277,55 +268,42 @@ class Network:
 
     def __enter__(self):
         """Enter"""
-        # enables context manager
+        # Enables context manager.
         return self
 
     def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any):
         """Exit"""
-        # enables context manager
+        # Enables context manager.
         self.close()
 
 
-def pre_process_string(s: str):
-    """Pre-process shot string"""
-    s = s.lower()
-
-    def wanted(c: str):
-        return c.isalnum() or c == "-" or ord(c) in range(ord("a"), ord("k"))
-
-    ascii_characters = [chr(ordinal) for ordinal in range(128)]
-    ascii_code_point_filter = [c if wanted(c) else None for c in ascii_characters]
-    s = s.encode("ascii", errors="ignore").decode("ascii")
-    return s.translate(ascii_code_point_filter)
-
-
-def parse_shot(s: str):
+def parse_shot(shot_string: str):
     """Check if shot is valid."""
-    s = pre_process_string(s)
-    s = s.lower().replace(" ", "")
+    shot_string = shot_string.lower().replace(" ", "")
+    shot_string = "".join([c if c in PERMITTED_LETTERS else "" for c in shot_string])
 
-    if len(s) < 2:
-        raise Error("Invalid String provided")
+    if len(shot_string) < 2:
+        raise Error("Invalid String provided!")
 
-    # convert input into numbers between 0 and 9
+    # Convert input into numbers between 0 and 9.
     try:
-        x = ord(s[0]) - 97
-        y = int(s[1])
+        x = ord(shot_string[0]) - 97
+        y = int(shot_string[1])
     except ValueError:
-        raise Error("Invalid String provided")
+        raise Error("Invalid String provided!")
 
     if not coord_valid(x):
-        raise Error("X out of bounds")
+        raise Error("X out of bounds!")
 
     if not coord_valid(y):
-        raise Error("Y out of bounds")
+        raise Error("Y out of bounds!")
 
-    return x, y, False
+    return x, y
 
 
 def ask_player_for_shot():
     """Ask until the player gives a valid input."""
-    while 1:
+    while True:
         try:
             return parse_shot(input("Shoot (Format XY, e.g. A4): "))
         except Error:
@@ -336,18 +314,17 @@ def ask_player_for_ship(ship_type: int):
     """Ask until the player gives a valid input and has placed all of the ships."""
     length = ship_type
     while True:
-        s = input(
+        ship_input = input(
             f"Place your {SHIP_NAMES.get(ship_type)} (length: {length}) formatted as XX - YY (e.g. A1-A5): "
         )
-        # assume the following format: XX - YY and ask until the user enters something valid
+        # Assume the following format: XX - YY and ask until the user enters something valid.
         try:
-            a, b = s.lower().replace(" ", "").split("-")
-            a0, a1, _ = parse_shot(a)
-            b0, b1, _ = parse_shot(b)
+            a, b = ship_input.lower().replace(" ", "").split("-")
+            a0, a1 = parse_shot(a)
+            b0, b1 = parse_shot(b)
 
-            # validate ship
-            # ships can be either vertical or horizontal
-            # so only one dimension can change: a-z or 1-9
+            # Validate ship.
+            # Ships can be either vertical or horizontal. So only one dimension can change: a-z or 1-9
             if a0 != b0 and a1 != b1:
                 print_err("Ships cannot be diagonal.")
                 continue
@@ -380,15 +357,15 @@ def place_ship(a: Tuple[int, int], b: Tuple[int, int], board: Board) -> None:
     b0, b1 = b
 
     if a0 != b0 and a1 != b1:
-        raise Error("Ship cannot be diagonal")
+        raise Error("Ship cannot be diagonal!")
 
     if a0 == b0 and a1 == b1:
-        raise Error("Ship must have more than one square")
+        raise Error("Ship must have more than one square!")
 
-    # iterate over the squares until a0 == b0 and b1 == b1
+    # Iterate over the squares until a0 == b0 and b1 == b1.
     while True:
         if board[a1][a0] != EMPTY:
-            raise Error("Field already occupied")
+            raise Error("Field already occupied!")
 
         board[a1][a0] = OWN_SHIP
 
@@ -407,7 +384,7 @@ def place_ships(board: Board, enemy_board: Board) -> None:
     """Place all ships and ask the user for each position."""
     for ship in PLAYER_SHIPS:
         print_boards(board, enemy_board)
-        while 1:
+        while True:
             try:
                 coords = ask_player_for_ship(ship)
                 place_ship(*coords, board)

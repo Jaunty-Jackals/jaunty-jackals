@@ -21,7 +21,7 @@ def main():
         port = int(input("Enter port (default: 5000)") or port)
 
     with game.Network(host, port, is_server) as net:
-        # init
+        # Initialise
         player_board = game.create_empty_board()
         enemy_board = game.create_empty_board()
 
@@ -30,13 +30,11 @@ def main():
         print("Okay, let's start:")
         game.print_boards(player_board, enemy_board)
 
-        # game on
+        # Game on
         while not game.player_lost(player_board):
 
             if player_turn:
-                x, y, exit_ = game.ask_player_for_shot()
-                if exit_:
-                    break
+                x, y = game.ask_player_for_shot()
                 last_move = game.Shot(x, y, last_shot_hit)
                 net.send(bytes(last_move))
 
@@ -49,7 +47,7 @@ def main():
 
                 enemy_shot = game.Shot.decode(data)
 
-                # true if enemy hit player
+                # True if enemy hit player
                 last_shot_hit = game.update_player_board(enemy_shot, player_board)
 
                 if last_move:
