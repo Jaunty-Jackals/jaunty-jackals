@@ -10,11 +10,15 @@ from typing import Any, Generator
 
 from minesweep_utils import Rect, draw_rect, minmax, open_menu
 from play_sounds import play_file as playsound
+from play_sounds import play_while_running
 
-sfx_nav_path = "bin/utils/assets/sound/sfx_minesweeper_nav.wav"
-sfx_space_path = "bin/utils/assets/sound/sfx_minesweeper_space.wav"
-sfx_enter_path = "bin/utils/assets/sound/sfx_minesweeper_flag.wav"
-sfx_death_path = "bin/utils/assets/sound/sfx_minesweeper_death.wav"
+path = "bin/utils/assets/sound/sfx_minesweeper_"
+sfx_nav_path = path + "nav.wav"
+sfx_space_path = path + "space.wav"
+sfx_enter_path = path + "flag.wav"
+sfx_death_path = path + "death.wav"
+sfx_bgm_path = path + "bgm.wav"
+sfx_ingame_path = path + "ingame.wav"
 
 
 class Flags(Enum):
@@ -207,19 +211,25 @@ class MineSweeper:
 
 def start_new_game(curse_context: Any) -> None:
     """Menu to start a new game"""
-    boxes = int(
-        open_menu(curse_context, items=("100", "400", "625"), header="Number of Boxes")
-    )
-    mine_percents = [0.1, 0.2, 0.4, 0.6]
-    mines = [str(int(boxes * mp)) for mp in mine_percents]
-    sel_mines = int(
-        float(open_menu(curse_context, items=tuple(mines), header="Number of Mines"))
-    )
+    with play_while_running(sfx_bgm_path, block=True):
+        boxes = int(
+            open_menu(
+                curse_context, items=("100", "400", "625"), header="Number of Boxes"
+            )
+        )
+        mine_percents = [0.1, 0.2, 0.4, 0.6]
+        mines = [str(int(boxes * mp)) for mp in mine_percents]
+        sel_mines = int(
+            float(
+                open_menu(curse_context, items=tuple(mines), header="Number of Mines")
+            )
+        )
 
-    final_cols = int(minmax(sqrt(boxes), 0, curses.COLS - 3))
-    final_rows = int(minmax(sqrt(boxes), 0, curses.LINES - 5))
+        final_cols = int(minmax(sqrt(boxes), 0, curses.COLS - 3))
+        final_rows = int(minmax(sqrt(boxes), 0, curses.LINES - 5))
 
-    start_game(curse_context, final_cols, final_rows, sel_mines)
+    with play_while_running(sfx_ingame_path, block=True):
+        start_game(curse_context, final_cols, final_rows, sel_mines)
 
 
 def cursor_to_index(cursor_pos: Any, game_rect: Rect) -> Any:
