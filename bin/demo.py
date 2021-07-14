@@ -3,9 +3,10 @@ import os
 from typing import Any
 
 from initload import initialize
-from playsound import playsound  # TODO: replace with boombox
+from play_sounds import play_file as playsound
 from utils.palettes import palettes
 
+# Curses setup
 screen = curses.initscr()
 curses.noecho()
 curses.cbreak()
@@ -13,22 +14,23 @@ curses.start_color()
 curses.can_change_color()
 screen.keypad(1)
 
+# Player metadata
 METADATA = {
     "os": None,
     "py_version": False,
     "term_h_cur": None,
-    "term_h_max": None,
-    "term_h_min": None,
+    "term_h_max": 25,
+    "term_h_min": 24,
     "term_w_cur": None,
-    "term_w_max": None,
-    "term_w_min": None,
+    "term_w_max": 80,
+    "term_w_min": 80,
     "palette": palettes.Commodore64(),
 }
 
-# run initload
+# Run initload
 METADATA = initialize(METADATA)
 screen.clear()
-playsound("utils/assets/sound/passing_time_in_wav.wav", block=False)
+playsound("bin/utils/assets/sound/passing_time_in_wav.wav", block=False)
 
 # Import a colour palette as desired; see bin/utils/palettes/palettes.py
 METADATA["palette"] = palettes.Gruvbox()
@@ -68,6 +70,7 @@ idled = curses.color_pair(17)
 
 MENU = "menu"
 COMMAND = "command"
+PYCOMMAND = "pycommand"
 QUIT = "exitmenu"
 LOAD = "load"
 
@@ -79,22 +82,22 @@ menu_data = {
         {
             "title": "MINE SWEEPER",
             "type": COMMAND,
-            "command": "python minesweep/minesweep.py",
+            "command": "python bin/minesweep/minesweep.py",
         },
         {
             "title": "BATTLESHIP",
             "type": COMMAND,
-            "command": "python battleship/client.py",
+            "command": "python bin/battleship/client.py",
         },
         {
             "title": "CONNECT FOUR",
             "type": COMMAND,
-            "command": "python ConnectFour/blessedConnectFour.py",
+            "command": "python bin/ConnectFour/blessedConnectFour.py",
         },
         {
             "title": "SNAKE",
             "type": COMMAND,
-            "command": "python snake/snake.py",
+            "command": "python bin/snake/snake.py",
         },
         {"title": "CONTENT C", "type": COMMAND, "command": "uqm"},
         {
@@ -216,24 +219,27 @@ def displaymenu(menu: dict, parent: Any) -> Any:
 
         # What is user input?
         if ord("1") <= x <= ord(str(optioncount + 1)):
-            pos = (
-                x - ord("0") - 1
-            )  # convert keypress back to a number, then subtract 1 to get index
-        elif x == 258:  # down arrow
-            playsound("utils/assets/sound/sfx_menu_move4.wav", block=False)
+            # convert keypress back to a number, then subtract 1 to get index
+            pos = x - ord("0") - 1
+
+        # down arrow
+        elif x == 258:
+            playsound("bin/utils/assets/sound/sfx_menu_move4.wav", block=False)
             if pos < optioncount:
                 pos += 1
             else:
                 pos = 0
-        elif x == 259:  # up arrow
-            playsound("utils/assets/sound/sfx_menu_move4.wav", block=False)
+
+        # up arrow
+        elif x == 259:
+            playsound("bin/utils/assets/sound/sfx_menu_move4.wav", block=False)
             if pos > 0:
                 pos += -1
             else:
                 pos = optioncount
 
     # return index of the selected item
-    playsound("utils/assets/sound/sfx_menu_select4.wav", block=False)
+    playsound("bin/utils/assets/sound/sfx_menu_select4.wav", block=False)
     return pos
 
 
@@ -247,6 +253,17 @@ def processmenu(menu: dict, parent: Any = None) -> None:
 
         if getin == optioncount:
             exitmenu = True
+
+        elif menu["options"][getin]["type"] == PYCOMMAND:
+            curses.def_prog_mode()
+            wipe(METADATA)
+            screen.clear()
+            # TODO: run python code
+            menu["options"][getin]["pycommand"]()
+            screen.clear()
+            curses.reset_prog_mode()
+            curses.curs_set(1)
+            curses.curs_set(0)
 
         elif menu["options"][getin]["type"] == COMMAND:
             # save curent curses environment
