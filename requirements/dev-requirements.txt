@@ -10,8 +10,8 @@ flake8-docstrings~=1.5
 flake8-isort~=4.0
 
 # General Requirements
-typing
-boombox  # sound playback
+typing  # typing hinting
+play_sounds~=0.4.1  # sound playback
 
 # Requirements for frameworks
 blessed~=1.18.1
