@@ -1,5 +1,6 @@
 import curses
 import time
+from random import randint
 from typing import Any
 
 jackal_ascii_small = (
@@ -42,7 +43,16 @@ def jackal_logo(screen: Any) -> None:
     pass
 
 
-def status(screen: Any, msg: str, passed: Any, pos: list, sleep: float = 0.25) -> None:
+rsleep = float(randint(-10, 10) / 10)
+
+
+def status(
+    screen: Any,
+    msg: str,
+    passed: Any,
+    pos: list,
+    sleep: float = rsleep,
+) -> None:
     """Sends out a status message during initialisation"""
     curses.init_pair(5, 2, 0)  # PASS
     curses.init_pair(6, 1, 0)  # FAIL
@@ -55,6 +65,9 @@ def status(screen: Any, msg: str, passed: Any, pos: list, sleep: float = 0.25) -
     failtext = curses.color_pair(6)
     checktext = curses.color_pair(7)
     warntext = curses.color_pair(8)
+
+    if sleep < 0:
+        sleep = 0.1
 
     passorfail = None
     if passed is True:
