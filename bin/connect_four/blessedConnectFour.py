@@ -9,11 +9,14 @@ curses.curs_set(1)
 
 
 class ConnectFour:
-    import numpy as np
-    import time
-    import getpass
-    import text_arts as ta
+    """a connect four game.
+       it plays the logo & title screen once and initialises
+       the board size per run of the game.
+    """
     from blessed import Terminal
+    import numpy as np
+    import text_arts as ta
+    import time
 
     tm = Terminal()
     sty_default = tm.bright_white_on_blue2
@@ -90,7 +93,7 @@ class ConnectFour:
     print(tm.home + tm.clear)
 
     ################################################################
-    def __init__(self):
+    def __init__(self: ConnectFour):
         """__init__"""
         print(self.tm.home + self.tm.clear)
         curses.nocbreak()
@@ -103,7 +106,7 @@ class ConnectFour:
         self.avail_choices = set(range(self.ncol))
         self.mx = self.np.zeros((self.nrow, self.ncol), self.np.int8)
 
-    def get_nrow_ncol(self):
+    def get_nrow_ncol(self: ConnectFour):
         """set custom board size"""
         nrow, ncol = None, None
         size_prpt = (
@@ -177,7 +180,7 @@ class ConnectFour:
                 break
         return nrow, ncol
 
-    def start(self):
+    def start(self: ConnectFour):
         """plays game of set size"""
         print(self.tm.home + self.tm.clear)
         cur_player = 1
@@ -319,14 +322,14 @@ class ConnectFour:
                     )
                     return False
 
-    def col_full(self, col):
+    def col_full(self: ConnectFour, col: int):
         """check if a chosen column is full"""
         for i in range(self.nrow):
             if self.mx[i][col] == 0:
                 return False
         return True
 
-    def check_choice(self, choice, prpt2_error, prpt2_full):
+    def check_choice(self: ConnectFour, choice: int, prpt2_error: str, prpt2_full: str):
         """check if a chosen column is within the board"""
         if choice not in self.avail_choices:
             print(prpt2_error, end="", flush=True)
@@ -336,7 +339,7 @@ class ConnectFour:
             return False
         return True
 
-    def drop(self, cur_player, col):
+    def drop(self: ConnectFour, cur_player: int, col: int):
         """drops a disc in a column"""
         for i in range(self.nrow):
             self.time.sleep(0.15)
@@ -371,7 +374,7 @@ class ConnectFour:
         print(self.sty_default)
         return i
 
-    def check_win(self, cur_player, col, row):
+    def check_win(self: ConnectFour, cur_player: int, col: int, row: int):
         """check if a player has won"""
         count = 0
         for i in range(self.ncol):
