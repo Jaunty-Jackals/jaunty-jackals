@@ -31,7 +31,7 @@ METADATA = {
 # Run initload
 METADATA = initialize(METADATA)
 screen.clear()
-playsound("bin/utils/assets/sound/sfx_minesweeper_bgm.wav", block=False)
+# playsound("bin/utils/assets/sound/sfx_minesweeper_bgm.wav", block=False)
 
 # Import a colour palette as desired; see bin/utils/palettes/palettes.py
 # METADATA["palette"] = palettes.Gruvbox()
@@ -90,22 +90,22 @@ menu_data = {
         {
             "title": "MINE SWEEPER",
             "type": COMMAND,
-            "command": "python bin/minesweep/minesweep.py",
+            "command": "venv/bin/python bin/minesweep/minesweep.py",
         },
         {
             "title": "BATTLESHIP",
             "type": COMMAND,
-            "command": "python bin/battleship/client.py",
+            "command": "venv/bin/python bin/battleship/client.py",
         },
         {
             "title": "CONNECT FOUR",
             "type": COMMAND,
-            "command": "python bin/ConnectFour/blessedConnectFour.py",
+            "command": "venv/bin/python bin/ConnectFour/blessedConnectFour.py",
         },
         {
             "title": "SNAKE",
             "type": COMMAND,
-            "command": "python bin/snake/snake.py",
+            "command": "venv/bin/python bin/snake/snake.py",
         },
         # {
         #     "title": "CONTENT D - has submenus",
