@@ -9,7 +9,7 @@ from utils.palettes import palettes
 # Curses setup
 screen = curses.initscr()
 curses.noecho()
-curses.cbreak()
+# curses.cbreak()
 curses.start_color()
 curses.can_change_color()
 screen.keypad(1)
@@ -24,38 +24,44 @@ METADATA = {
     "term_w_cur": None,
     "term_w_max": 80,
     "term_w_min": 80,
-    "palette": palettes.Commodore64(),
+    "palette": palettes.Base16(),
 }
 
 # Run initload
 METADATA = initialize(METADATA)
 screen.clear()
-# playsound("bin/utils/assets/sound/passing_time_in_wav.wav", block=False)
+playsound("bin/utils/assets/sound/sfx_minesweeper_bgm.wav", block=False)
 
 # Import a colour palette as desired; see bin/utils/palettes/palettes.py
-METADATA["palette"] = palettes.Gruvbox()
+# METADATA["palette"] = palettes.Gruvbox()
 # p = palettes.Gruvbox()
-curclrs = METADATA["palette"].alias  # contains the list of colour name aliases
 
-for i in range(len(curclrs)):
-    """COLOUR ORDER AND ALIASES
 
-    Follows typical ANSI colour formatting + foreground and background (which equal to one of the 16)
+def colorinit(scr: object, metadata: dict) -> None:
+    """Changes the colour theme of the screen."""
+    curclrs = metadata["palette"].alias  # contains the list of colour name aliases
 
-    Normal
-    0       1       2       3       4       5       6       7
-    black   red     green   yellow  blue    magenta cyan    white
+    for i in range(len(curclrs)):
+        """COLOUR ORDER AND ALIASES
 
-    Brighter (add "bright" prefix)
-    8       9       10      11      12      13      14      15
-    black   red     green   yellow  blue    magenta cyan    white
+        Follows typical ANSI colour formatting + foreground and background (which equal to one of the 16)
 
-    Other
-    16      17
-    fg      bg
-    """
-    RGB = METADATA["palette"].to_rgb(curclrs[i], curses=True)
-    curses.init_color(i, RGB[0], RGB[1], RGB[2])
+        Normal
+        0       1       2       3       4       5       6       7
+        black   red     green   yellow  blue    magenta cyan    white
+
+        Brighter (add "bright" prefix)
+        8       9       10      11      12      13      14      15
+        black   red     green   yellow  blue    magenta cyan    white
+
+        Other
+        16      17
+        fg      bg
+        """
+        RGB = metadata["palette"].to_rgb(curclrs[i], curses=True)
+        curses.init_color(i, RGB[0], RGB[1], RGB[2])
+        scr.refresh()
+
 
 # Change this to use different colors when highlighting
 curses.init_pair(3, 3, 0)  # menu title
@@ -71,6 +77,7 @@ idled = curses.color_pair(17)
 MENU = "menu"
 COMMAND = "command"
 PYCOMMAND = "pycommand"
+SETTING = "setting"
 QUIT = "exitmenu"
 LOAD = "load"
 
@@ -99,50 +106,41 @@ menu_data = {
             "type": COMMAND,
             "command": "python bin/snake/snake.py",
         },
-        {"title": "CONTENT C", "type": COMMAND, "command": "uqm"},
-        {
-            "title": "CONTENT D - has submenus",
-            "type": MENU,
-            "subtitle": "Please select an option...",
-            "options": [
-                {
-                    "title": "Midnight Rescue",
-                    "type": COMMAND,
-                    "command": "dosbox /media/samba/Apps/dosbox/doswin/games/SSR/SSR.EXE -exit",
-                },
-                {
-                    "title": "Outnumbered",
-                    "type": COMMAND,
-                    "command": "dosbox /media/samba/Apps/dosbox/doswin/games/SSO/SSO.EXE -exit",
-                },
-                {
-                    "title": "Treasure Mountain",
-                    "type": COMMAND,
-                    "command": "dosbox /media/samba/Apps/dosbox/doswin/games/SST/SST.EXE -exit",
-                },
-            ],
-        },
+        # {
+        #     "title": "CONTENT D - has submenus",
+        #     "type": MENU,
+        #     "subtitle": "Please select an option...",
+        #     "options": [
+        #         {
+        #             "title": "Midnight Rescue",
+        #             "type": COMMAND,
+        #             "command": "dosbox /media/samba/Apps/dosbox/doswin/games/SSR/SSR.EXE -exit",
+        #         },
+        #         {
+        #             "title": "Outnumbered",
+        #             "type": COMMAND,
+        #             "command": "dosbox /media/samba/Apps/dosbox/doswin/games/SSO/SSO.EXE -exit",
+        #         },
+        #         {
+        #             "title": "Treasure Mountain",
+        #             "type": COMMAND,
+        #             "command": "dosbox /media/samba/Apps/dosbox/doswin/games/SST/SST.EXE -exit",
+        #         },
+        #     ],
+        # },
         {"title": "CREDITS", "type": COMMAND, "command": "some command"},
         {
-            "title": "SETTINGS - has submenus",
+            "title": "change theme".upper(),
             "type": MENU,
-            "subtitle": "Select Yes to Reboot",
+            "subtitle": "select a theme".upper(),
             "options": [
-                {
-                    "title": "NO",
-                    "type": QUIT,
-                },
-                {"title": "", "type": COMMAND, "command": ""},
-                {"title": "", "type": COMMAND, "command": ""},
-                {"title": "", "type": COMMAND, "command": ""},
-                {
-                    "title": "YES",
-                    "type": COMMAND,
-                    "command": "sudo shutdown -r -time now",
-                },
-                {"title": "", "type": COMMAND, "command": ""},
-                {"title": "", "type": COMMAND, "command": ""},
-                {"title": "", "type": COMMAND, "command": ""},
+                {"title": "base16".upper(), "type": SETTING, "command": "base16"},
+                {"title": "commodore".upper(), "type": SETTING, "command": "commodore"},
+                {"title": "dracula".upper(), "type": SETTING, "command": "dracula"},
+                {"title": "gruvbox".upper(), "type": SETTING, "command": "gruvbox"},
+                {"title": "haxx0r".upper(), "type": SETTING, "command": "hacker"},
+                {"title": "jackal".upper(), "type": SETTING, "command": "jackal"},
+                {"title": "nord".upper(), "type": SETTING, "command": "nord"},
             ],
         },
     ],
@@ -179,13 +177,13 @@ def displaymenu(menu: dict, parent: Any) -> Any:
             # screen.box(2, 2)
             # Title
             screen.addstr(
-                curses.LINES // 2,  # y
-                curses.COLS // 2 - len(menu["title"]) // 2,  # x
+                1,  # y
+                2,  # x
                 menu["title"],
                 curses.color_pair(3),
             )
             # Subtitle
-            # screen.addstr(curses.LINES - 1,curses.COLS - 1,menu["subtitle"],curses.color_pair(4))
+            screen.addstr(4, 4, menu["subtitle"], curses.color_pair(4))
 
             # Display all the menu items, showing the 'pos' item highlighted
             for index in range(optioncount):
@@ -193,10 +191,9 @@ def displaymenu(menu: dict, parent: Any) -> Any:
                 if pos == index:
                     textstyle = selected
                 screen.addstr(
-                    5 + index,
-                    4,
-                    "%d - %s"
-                    % (index + 1, menu["options"][index]["title"]),  # TODO: fstring
+                    5 + index,  # y
+                    4,  # x
+                    f'{index + 1} - {menu["options"][index]["title"]}',
                     textstyle,
                 )
 
@@ -254,16 +251,14 @@ def processmenu(menu: dict, parent: Any = None) -> None:
         if getin == optioncount:
             exitmenu = True
 
-        elif menu["options"][getin]["type"] == PYCOMMAND:
-            curses.def_prog_mode()
-            wipe(METADATA)
-            screen.clear()
-            # TODO: run python code
-            menu["options"][getin]["pycommand"]()
-            screen.clear()
-            curses.reset_prog_mode()
-            curses.curs_set(1)
-            curses.curs_set(0)
+        # elif menu["options"][getin]["type"] == PYCOMMAND:
+        #     if menu["options"][getin]["title"].lower == 'minesweeper':
+        #         curses.reset_prog_mode()
+        #         wipe(METADATA)
+        #         curses.wrapper(minesweep.main)
+        #         screen.clear()
+        #         curses.curs_set(1)
+        #         curses.curs_set(0)
 
         elif menu["options"][getin]["type"] == COMMAND:
             # save curent curses environment
@@ -282,10 +277,43 @@ def processmenu(menu: dict, parent: Any = None) -> None:
             curses.curs_set(1)  # reset doesn't do this right
             curses.curs_set(0)
 
+        elif menu["options"][getin]["type"] == SETTING:
+            if menu["options"][getin]["command"].lower() == "base16":
+                METADATA["palette"] = palettes.Base16()
+                colorinit(screen, METADATA)
+                screen.refresh()
+            elif menu["options"][getin]["command"].lower() == "commodore":
+                METADATA["palette"] = palettes.Commodore64()
+                colorinit(screen, METADATA)
+                screen.refresh()
+                screen.refresh()
+            elif menu["options"][getin]["command"].lower() == "dracula":
+                METADATA["palette"] = palettes.Dracula()
+                colorinit(screen, METADATA)
+                screen.refresh()
+            elif menu["options"][getin]["command"].lower() == "gruvbox":
+                METADATA["palette"] = palettes.Gruvbox()
+                colorinit(screen, METADATA)
+                screen.refresh()
+            elif menu["options"][getin]["command"].lower() == "hacker":
+                METADATA["palette"] = palettes.Haxx0r()
+                colorinit(screen, METADATA)
+                screen.refresh()
+            elif menu["options"][getin]["command"].lower() == "jackal":
+                METADATA["palette"] = palettes.Jackal()
+                colorinit(screen, METADATA)
+                screen.refresh()
+            elif menu["options"][getin]["command"].lower() == "nord":
+                METADATA["palette"] = palettes.Nord()
+                colorinit(screen, METADATA)
+                screen.refresh()
+
         elif menu["options"][getin]["type"] == MENU:
             screen.clear()
             processmenu(menu["options"][getin], menu)
             screen.clear()
+            curses.curs_set(1)  # reset doesn't do this right
+            curses.curs_set(0)
 
         elif menu["options"][getin]["type"] == QUIT:
             exitmenu = True
