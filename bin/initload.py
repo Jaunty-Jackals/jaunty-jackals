@@ -2,6 +2,7 @@ import curses
 from platform import python_version, system
 
 from utils.macros.handy import status
+
 from utils.palettes import palettes
 
 

@@ -1,5 +1,6 @@
 import curses
-import typing
+
+#import typing
 
 # environment after running demo.py
 screen = curses.initscr()
@@ -10,14 +11,16 @@ curses.curs_set(1)
 
 
 class ConnectFour:
-    """A connect four game.
-       it plays the logo & title screen once and initialises
-       the board size per run of the game.
+    """A two-player connect four game.
+    It plays the logo & title screen once and initialises
+    the board size each run of the game.
     """
-    from blessed import Terminal
+
+    import time
+
     import numpy as np
     import text_arts as ta
-    import time
+    from blessed import Terminal
 
     tm = Terminal()
     sty_default = tm.bright_white_on_blue2
