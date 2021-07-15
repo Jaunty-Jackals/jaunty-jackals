@@ -4,13 +4,13 @@ from collections import namedtuple
 from enum import Enum
 from math import sqrt
 from platform import system
-from typing import Any, Generator
+from typing import Any, Generator, Union
 
 from minesweep_utils import Rect, draw_rect, minmax, open_menu
 from play_sounds import play_file as playsound
 from play_sounds import play_while_running
 
-path = "bin/utils/assets/sound/sfx_minesweeper_"
+path = "bin/utils/sound/sfx_minesweeper_"
 sfx_nav_path = path + "nav.wav"
 sfx_space_path = path + "space.wav"
 sfx_enter_path = path + "flag.wav"
@@ -41,7 +41,7 @@ class Table:
         """Returns total size of table"""
         return self.num_cols * self.num_rows
 
-    def __getitem__(self, key: tuple) -> list:
+    def __getitem__(self, key: tuple) -> Union[list, int]:
         try:
             x, y = key
             if x >= self.num_cols or y >= self.num_rows:
@@ -59,16 +59,16 @@ class Table:
         except TypeError:
             self.table[key] = value
 
-    def neighbours(self, x: int, y: int) -> Generator[int, int, int]:
+    def neighbours(self, x: int, y: int) -> None:
         """Yields all current neighbours of cell"""
         for c in range(max(x - 1, 0), min(x + 2, self.num_cols)):
             for r in range(max(y - 1, 0), min(y + 2, self.num_rows)):
                 if c != x or r != y:
-                    yield (c, r)
+                    yield c, r
 
     def linear_to_subscript(self, index: int) -> tuple:
         """Convert string to tuple"""
-        return (index % self.num_cols, index // self.num_cols)
+        return index % self.num_cols, index // self.num_cols
 
     def subscript_to_linear(self, col: int, row: int) -> int:
         """Convert tuple back to string"""

@@ -68,7 +68,7 @@ def open_menu(curse_context: Any, items: tuple, header: str = "") -> Any:
             if i == sel:
                 attr = curses.A_STANDOUT
             curse_context.addstr(
-                rect.y + 1 + i * 2, center[0] - len(items) // 2, item, attr
+                rect.y + 1 + i * 2, center[0] - len(items) // 3, item, attr
             )
 
         c = curse_context.getch()
