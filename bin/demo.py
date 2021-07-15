@@ -88,7 +88,7 @@ menu_data = {
         {
             "title": "MINE SWEEPER",
             "type": COMMAND,
-            "command": "bin/minesweep/minesweep.py",
+            "command": "bin/minesweep.py",
         },
         {
             "title": "BATTLESHIP",
