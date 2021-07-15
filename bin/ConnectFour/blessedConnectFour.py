@@ -9,6 +9,7 @@ screen.keypad(1)
 curses.noecho()
 curses.curs_set(1)
 
+from play_sounds import play_file as playsound
 
 class ConnectFour:
     """A two-player connect four game.
@@ -20,6 +21,7 @@ class ConnectFour:
     import time
 
     import numpy as np
+    import sound_paths as sp
     import text_arts as ta
     from blessed import Terminal
 
@@ -347,7 +349,7 @@ class ConnectFour:
     def drop(self, cur_player: int, col: int) -> int:
         """Drops a disc in a column"""
         for i in range(self.nrow):
-            self.time.sleep(0.15)
+            self.time.sleep(max(0.25 - 0.02 * i, 0.01))
             if cur_player == 1:
                 disc_text = self.sty_p1("1")
             else:
@@ -371,6 +373,7 @@ class ConnectFour:
                 if i > 0:
                     print(disc_ers)
             else:
+                playsound(sp.drop)
                 break
         for i in reversed(range(self.nrow)):
             if self.mx[i][col] == 0:
