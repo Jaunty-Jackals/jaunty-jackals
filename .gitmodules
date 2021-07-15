@@ -2,6 +2,6 @@
 	path = bin/ConnectFour
 	url = https://github.com/vguo2037/ConnectFour.git
 
-[submodule "bin/play_sounds"]
-        path = bin/play_sounds
-        url = https://github.com/Jaunty-Jackals/play_sounds.git
+[submodule "play_sounds"]
+	path = bin/play_sounds
+	url = https://github.com/Jaunty-Jackals/play_sounds.git
