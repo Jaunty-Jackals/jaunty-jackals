@@ -1,6 +1,8 @@
 import curses
+from os import environ as _env
 from platform import python_version, system
 
+from play_sounds import play_file as playsound
 from utils.macros.handy import status
 from utils.palettes import palettes
 
@@ -18,9 +20,13 @@ def initialize(metadata: dict) -> dict:
     curses.cbreak()
     curses.start_color()
     curses.can_change_color()
-    # screen.resize(24, 80)
     screen.keypad(True)
     screen.border(0)
+
+    # Happy sound
+    initsound = "bin/utils/sound/sfx_init.wav"
+    warnsound = "bin/utils/sound/sfx_init_warn.wav"
+    playsound(initsound, block=True)
 
     while not complete:
 
@@ -73,12 +79,36 @@ def initialize(metadata: dict) -> dict:
         if os_ver.upper() in ("WINDOWS", "DARWIN", "LINUX"):
             status(
                 screen,
-                f"{os_ver.upper()} DETECTED",
+                f"{os_ver.upper()} detected".upper(),
                 passed=True,
                 pos=[acpi_pos_y, acpi_pos_x],
             )
             acpi_pos_y += 1
             metadata["os"] = os_ver.upper()
+
+            # Show some _env values
+            _envk = list(_env.keys())
+            _envv = list(_env.values())
+
+            # Ensure position y is not overflowing
+
+            for i in range(10 - acpi_pos_y):
+                status(
+                    screen,
+                    f'{_envk[i]}',
+                    passed=None,
+                    pos=[acpi_pos_y, acpi_pos_x],
+                    sleep=0.1,
+                )
+                acpi_pos_y += 1
+                status(
+                    screen,
+                    f'{_envv[i]}',
+                    passed=True,
+                    pos=[acpi_pos_y, acpi_pos_x],
+                    sleep=0.1,
+                )
+                acpi_pos_y += 1
         else:
             status(
                 screen,
@@ -113,6 +143,7 @@ def initialize(metadata: dict) -> dict:
                         pos=[acpi_pos_y, acpi_pos_x],
                     )
                     acpi_pos_y += 1
+                    playsound(warnsound, block=True)
                     status(
                         screen,
                         "You are either using an older version of Python 3.9".upper(),
@@ -137,6 +168,7 @@ def initialize(metadata: dict) -> dict:
                     acpi_pos_y += 1
                     metadata["py_version"] = True
             else:
+                playsound(warnsound, block=True)
                 status(
                     screen,
                     "You must use Python 3.9+! Aborting...",
@@ -174,9 +206,9 @@ def initialize(metadata: dict) -> dict:
         screen.refresh()
         acpi_pos_y += 1
 
-        # TODO: Unexpected Screen Size
         # Width is too small
         if screen_x < metadata["term_w_min"]:
+            playsound(warnsound, block=True)
             status(
                 screen,
                 f'screen width of {screen_x} is smaller than the recommended {metadata["term_w_min"]}'.upper(),
@@ -189,6 +221,7 @@ def initialize(metadata: dict) -> dict:
 
         # Width is too long
         elif screen_x > metadata["term_w_max"]:
+            playsound(warnsound, block=True)
             status(
                 screen,
                 f'screen width of {screen_x} is bigger than the recommended {metadata["term_w_max"]}'.upper(),
@@ -201,6 +234,7 @@ def initialize(metadata: dict) -> dict:
 
         # Height is too small
         if screen_y < metadata["term_h_min"]:
+            playsound(warnsound, block=True)
             status(
                 screen,
                 f'screen height of {screen_y} is smaller than the recommended {metadata["term_h_min"]}'.upper(),
@@ -212,6 +246,7 @@ def initialize(metadata: dict) -> dict:
 
         # Height is too long
         elif screen_y > metadata["term_h_max"]:
+            playsound(warnsound, block=True)
             status(
                 screen,
                 f'screen height of {screen_y} is bigger than the recommended {metadata["term_h_max"]}'.upper(),
