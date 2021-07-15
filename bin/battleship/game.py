@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from itertools import chain, repeat
 from typing import Any, List, Tuple
 
-from color import Background, Cursor
 from console import console
 from rich.layout import Layout
 from rich.panel import Panel
@@ -54,7 +53,6 @@ class Error(ValueError):
 
 def print_err(*args, **kwargs):
     """Prints an error in red."""
-    # print(Text.RED, *args, Cursor.FULL_RESET, **kwargs)
     console.print(*args, **kwargs, style="red")
 
 
