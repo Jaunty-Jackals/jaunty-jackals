@@ -28,6 +28,7 @@ PLAYER_SHIPS = [BATTLESHIP, SUBMARINE]  # Change this according to your needs.
 layout = Layout(name="root")
 layout.split_column(
     Layout(name="adjust", size=1),
+    Layout(name="legend", size=3),
     Layout(name="header", size=3),
     Layout(name="main"),
     Layout(name="footer", size=3, visible=False)
@@ -40,7 +41,19 @@ layout["main"].split_row(
     Layout(name="left"),
     Layout(name="right")
 )
+
+# Insert blank line at the top to compensate for input line at the bottom
 layout["adjust"].update(Text(" "))
+
+# Key
+text = Text("Own Ship: \u2588 | Own Ship Hit: X | Enemy Ship Hit: \u2588 | Enemy Ship Miss: \u2588", justify="center")
+text.stylize("green on green", 10, 11)
+text.stylize("red on green", 28, 29)
+text.stylize("red on red", 48, 49)
+text.stylize("yellow on yellow", 69, 70)
+layout["legend"].update(
+    Panel(text, title="KEY")
+)
 
 
 class Error(ValueError):
