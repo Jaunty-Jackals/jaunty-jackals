@@ -19,7 +19,6 @@ curses.curs_set(1)
 class ConnectFour:
     """A two-player connect four game."""
 
-
     tm = Terminal()
     sty_default = tm.bright_white_on_blue
     sty_p1 = tm.bright_yellow_on_blue
