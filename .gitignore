@@ -25,10 +25,22 @@ build/
 # IDEs
 # PyCharm
 .idea/
+
 # VSCode
 .vscode/
+.markdownlint.json
+
 # MacOS
 .DS_Store
 
 # Jupyter
 *.ipynb
+*.ipynb_checkpoints
+
+# Sphinx Buildfiles
+_static
+_templates
+_build
+Makefile
+*.rst
+conf.py
