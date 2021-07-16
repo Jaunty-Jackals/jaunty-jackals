@@ -98,7 +98,7 @@ menu_data = {
         {
             "title": "CONNECT FOUR",
             "type": COMMAND,
-            "command": "bin/ConnectFour/blessedConnectFour.py",
+            "command": "bin/blessedConnectFour.py",
         },
         {
             "title": "SNAKE",
