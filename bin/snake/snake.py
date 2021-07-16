@@ -3,9 +3,10 @@
 import curses
 import secrets
 import time
+from platform import system
 
 speed = 0.1
-
+SYSOS = system().upper()
 action = "d"
 
 w = curses.KEY_UP
@@ -26,7 +27,7 @@ curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
 
 def game() -> None:
     """Snake game main code."""
-    global action
+    global action, SYSOS
     dims = screen.getmaxyx()
     head = [1, 1]
     body = [head[:]] * 5
@@ -35,6 +36,9 @@ def game() -> None:
     dead = 0
     apple = 0
     remove = body[-1][:]
+    yummy = "⬤"
+    if SYSOS == 'DARWIN':
+        yummy = "●"
 
     while not dead:
         while not apple:
@@ -42,7 +46,7 @@ def game() -> None:
             x = secrets.randbelow(dims[1] - 2) + 1
             if screen.inch(y, x) == ord(" "):
                 apple = 1
-                screen.addstr(y, x, "⬤", curses.color_pair(1))
+                screen.addstr(y, x, yummy, curses.color_pair(1))
         if (remove in body) is False:
             screen.addch(
                 remove[0],
