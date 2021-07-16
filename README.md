@@ -17,7 +17,7 @@ Work in progress!
 
 ### 1. Clone the repository
 
-```shell
+```sh
 git clone https://github.com/Jaunty-Jackals/jaunty-jackals.git
 ```
 
@@ -25,43 +25,52 @@ git clone https://github.com/Jaunty-Jackals/jaunty-jackals.git
 
 ### 2. Install requirements
 
-**Windows** <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Windows_logo_-_2021.svg/1920px-Windows_logo_-_2021.svg.png" width="16">
+#### Windows <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Windows_logo_-_2021.svg/1920px-Windows_logo_-_2021.svg.png" width="16">
 
 ```sh
+# Change directory to project root directory
+C:~\> cd jaunty-jackals
+
 # Set up virtual environment
-py -m venv venv
+C:~\jaunty-jackals\> python -m venv venv
 
 # Enter virtual environment
-.venv/scripts/activate
+C:~\jaunty-jackals\> .\venv\Scripts\activate
 
 # Install requirements
-pip install -r requirements/windows.txt
+(venv) C:~\jaunty-jackals\> pip install -r requirements/windows.txt
 ```
 
-**macOS** <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Apple_Computer_Logo_rainbow.svg" width="16">
+#### macOS <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Apple_Computer_Logo_rainbow.svg" width="16">
 
 ```sh
+# Change directory to project root directory
+$ cd jaunty-jackals
+
 # Set up virtual environment
-python -m venv venv
+$ python -m venv venv
 
 # Enter virtual environment
-source venv/bin/python
+$ source venv/bin/python
 
 # Install requirements
-pip install -r requirements/macos.txt
+(venv) $ pip install -r requirements/macos.txt
 ```
 
-**Linux** <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Tux_Classic_flat_look_3D.svg/1920px-Tux_Classic_flat_look_3D.svg.png" width="16">
+#### Linux <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Tux_Classic_flat_look_3D.svg/1920px-Tux_Classic_flat_look_3D.svg.png" width="16">
 
 ```sh
+# Change directory to project root directory
+$ cd jaunty-jackals
+
 # Set up virtual environment
-python -m venv venv
+$ python -m venv venv
 
 # Enter virtual environment
-source venv/bin/python
+$ source venv/bin/python
 
-# Install requirements
-venv/bin/python -m pip install -r requirements/dev-requirements.txt
+# Install the requirements
+(venv) $ python -m pip install -r requirements/dev-requirements.txt
 ```
 
 ### 3. Run the app
@@ -69,13 +78,13 @@ venv/bin/python -m pip install -r requirements/dev-requirements.txt
 **macOS** <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Apple_Computer_Logo_rainbow.svg" width="16"> & **Linux** <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Tux_Classic_flat_look_3D.svg/1920px-Tux_Classic_flat_look_3D.svg.png" width="16">
 
 ```sh
-python bin/demo.py
+(venv) $ python bin/demo.py
 ```
 
 **Windows** <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Windows_logo_-_2021.svg/1920px-Windows_logo_-_2021.svg.png" width="16">
 
 ```sh
-py bin/demo.py
+(venv) C:~\jaunty-jackals\> python bin/demo.py
 ```
 
 ## Team Members
