@@ -285,8 +285,8 @@ class Nord(Palette):
             "a3be8c",  # 14
             "b48ead",  # 15
             "eceff4",  # fg
-            "2e3440",
-        ]  # bg
+            "2e3440",  # bg
+        ]
 
         self.palette = {"number": self.number, "alias": self.alias, "hex": self.hex}
 
