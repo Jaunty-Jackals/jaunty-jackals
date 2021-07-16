@@ -77,7 +77,7 @@ def game() -> None:
         body[0] = head[:]
 
         if screen.inch(head[0], head[1]) != ord(" "):
-            if screen.inch(head[0], head[1]) == 16788260:
+            if screen.inch(head[0], head[1]) in 16788260, 9679:
                 apple = 0
                 body.append(body[-1])
             else:
