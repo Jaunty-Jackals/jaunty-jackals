@@ -269,11 +269,11 @@ class Nord(Palette):
         self.name = "Nord"
         self.hex = [
             "2e3440",  # 00
-            "3b4252",  # 01
-            "434c5e",  # 02
-            "4c566a",  # 03
-            "d8dee9",  # 04
-            "e5e9f0",  # 05
+            "bf616a",  # 01
+            "d08770",  # 02
+            "ebcb8b",  # 03
+            "a3be8c",  # 04
+            "b48ead",  # 05
             "eceff4",  # 06
             "8fbcbb",  # 07
             "88c0d0",  # 08
