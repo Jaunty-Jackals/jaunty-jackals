@@ -9,7 +9,7 @@ screen.keypad(1)
 curses.noecho()
 curses.curs_set(1)
 
-from play_sounds import play_file as playsound
+#from play_sounds import play_file as playsound
 
 class ConnectFour:
     """A two-player connect four game.
@@ -373,7 +373,7 @@ class ConnectFour:
                 if i > 0:
                     print(disc_ers)
             else:
-                playsound(sp.drop)
+                #playsound(sp.drop)
                 break
         for i in reversed(range(self.nrow)):
             if self.mx[i][col] == 0:
