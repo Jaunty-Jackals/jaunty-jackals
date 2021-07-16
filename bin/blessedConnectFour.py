@@ -372,6 +372,9 @@ class ConnectFour:
         """Drops a disc in a column"""
         for i in range(self.nrow):
             choice_sym = tm.inkey(0.01)
+            # just to use choice_sym somehow so flake8 is happy
+            if choice_sym:
+                pass
             time.sleep(max(0.25 - 0.02 * i, 0.01))
             if cur_player == 1:
                 disc_text = sty_p1("1")
