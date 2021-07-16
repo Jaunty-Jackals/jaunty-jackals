@@ -4,31 +4,39 @@ import curses
 import secrets
 import time
 from platform import system
+from typing import Any
+
+from minesweep.minesweep_utils import open_menu
+from play_sounds import play_file as playsound
+from play_sounds import play_while_running
 
 speed = 0.1
-SYSOS = system().upper()
-action = "d"
 
+SYSOS = system().upper()
+
+sfxpath = "bin/utils/sound/sfx_snake_"
+sfx_ingame_path = sfxpath + "ingame.wav"
+sfx_nav_path = sfxpath + "nav.wav"
+sfx_eat_path = sfxpath + "yummy.wav"
+
+action = "d"
 w = curses.KEY_UP
 a = curses.KEY_LEFT
 s = curses.KEY_DOWN
 d = curses.KEY_RIGHT
 
 screen = curses.initscr()
-screen.resize(21, 41)
+# screen.resize(21, 41)
 screen.nodelay(1)
 screen.keypad(1)
 
 curses.start_color()
 
-curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
-curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
-
 
 def game() -> None:
     """Snake game main code."""
     global action, SYSOS
-    dims = screen.getmaxyx()
+    dims = (21, 41)
     head = [1, 1]
     body = [head[:]] * 5
     screen.border()
@@ -75,9 +83,12 @@ def game() -> None:
         for i in range(len(body) - 1, 0, -1):
             body[i] = body[i - 1][:]
         body[0] = head[:]
+        screen.refresh()
 
         if screen.inch(head[0], head[1]) != ord(" "):
-            if screen.inch(head[0], head[1]) in 16788260, 9679:
+            # Snake munched the yummy!
+            if screen.inch(head[0], head[1]) in (16788260, 9679):
+                playsound(sfx_eat_path, block=False)
                 apple = 0
                 body.append(body[-1])
             else:
@@ -87,6 +98,28 @@ def game() -> None:
         time.sleep(speed)
 
 
-game()
+def new_game_init(curses_ctx: Any) -> None:
+    """Menu to start a new game"""
+    with play_while_running(sfx_ingame_path, block=True):
+        game()
 
-curses.endwin()
+
+def main(curses_ctx: Any) -> None:
+    """Wrapper function to run Snake externally"""
+    # curses colours
+    curses.init_pair(1, 1, 0)  # yummy
+    curses.init_pair(2, 2, 0)  # snek
+
+    while True:
+        selection = open_menu(
+            curses_ctx, items=("PLAY", "QUIT"), header="SNAKE"
+        )
+        if selection == "BYE SNEK":
+            return  # to load back main menu
+        if selection == "PLAY AGAIN":
+            new_game_init(curses_ctx)
+
+
+if __name__ == "__main__":
+    curses.wrapper(main)
+    curses.endwin()
