@@ -60,15 +60,54 @@ def open_menu(curse_context: Any, items: tuple, header: str = "") -> Any:
 
     while True:
         center = (curses.COLS // 2, curses.LINES // 2)
-        rect = Rect(center[0] - width // 2, center[1] - height // 2, width, height)
-        rect = draw_rect(curse_context, rect, header)
+        rect = Rect(center[0] - width // 3, center[1] - height // 2, width, height)
+        rect = draw_rect(curse_context, rect, header.upper())
 
         for i, item in enumerate(items):
             attr = curses.A_NORMAL
             if i == sel:
                 attr = curses.A_STANDOUT
             curse_context.addstr(
-                rect.y + 1 + i * 2, center[0] - len(items) // 3, item, attr
+                rect.y + 1 + i * 2,
+                center[0] - len(item) // 2 + 4,
+                item.upper(),
+                attr
+            )
+
+        c = curse_context.getch()
+        if c == curses.KEY_UP:
+            sel -= 1
+        if c == curses.KEY_DOWN:
+            sel += 1
+        if c == curses.KEY_ENTER or c == 10:
+            break
+        sel = minmax(sel, 0, len(items) - 1)
+
+    curses.curs_set(True)
+    return items[sel]
+
+
+def open_menu_no_rect(curse_context: Any, items: tuple) -> Any:
+    """General function to display menu without rectangular border"""
+    # width = len(items) + 20
+    # height = len(items * 2) - 1 + 4
+    curses.curs_set(False)
+    sel = 0
+
+    while True:
+        # center = (curses.COLS // 2, curses.LINES // 2)
+        # rect = Rect(center[0] - width // 2, center[1] - height // 2, width, height)
+        # rect = draw_rect(curse_context, rect, header)
+
+        for i, item in enumerate(items):
+            attr = curses.A_NORMAL
+            if i == sel:
+                attr = curses.A_STANDOUT
+            curse_context.addstr(
+                curses.COLS // 2 - i * 2,
+                curses.LINES // 2,
+                item,
+                attr
             )
 
         c = curse_context.getch()
