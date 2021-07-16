@@ -1,4 +1,12 @@
 import curses
+import time
+
+import ConnectFour.sound_paths as sp
+import ConnectFour.text_arts as ta
+import numpy as np
+
+from blessed import Terminal
+from play_sounds import play_file as playsound
 
 # environment after running demo.py
 screen = curses.initscr()
@@ -11,14 +19,6 @@ curses.curs_set(1)
 class ConnectFour:
     """A two-player connect four game."""
 
-    import time
-
-    # import ConnectFour.sound_paths as sp
-    import ConnectFour.text_arts as ta
-    import numpy as np
-    from blessed import Terminal
-
-    # from play_sounds import play_file as playsound
 
     tm = Terminal()
     sty_default = tm.bright_white_on_blue
@@ -106,7 +106,7 @@ class ConnectFour:
         screen.keypad(1)
         curses.noecho()
         self.avail_choices = set(range(self.ncol))
-        self.mx = self.np.zeros((self.nrow, self.ncol), self.np.int8)
+        self.mx = np.zeros((self.nrow, self.ncol), np.int8)
 
     def get_nrow_ncol(self) -> (int, int):
         """Get a user input for board size"""
@@ -344,7 +344,7 @@ class ConnectFour:
     def drop(self, cur_player: int, col: int) -> int:
         """Drops a disc in a column"""
         for i in range(self.nrow):
-            self.time.sleep(max(0.25 - 0.02 * i, 0.01))
+            time.sleep(max(0.25 - 0.02 * i, 0.01))
             if cur_player == 1:
                 disc_text = self.sty_p1("1")
             else:
@@ -368,7 +368,6 @@ class ConnectFour:
                 if i > 0:
                     print(disc_ers)
             else:
-
                 break
         for i in reversed(range(self.nrow)):
             if self.mx[i][col] == 0:
@@ -400,7 +399,7 @@ class ConnectFour:
 
         # left diagonal
         count = 0
-        dg = self.np.diag(self.mx, col - row)
+        dg = np.diag(self.mx, col - row)
         for i in dg:
             if i == cur_player:
                 count += 1
@@ -411,7 +410,7 @@ class ConnectFour:
 
         # right diagonal
         count = 0
-        dg = self.np.diag(self.np.fliplr(self.mx), (self.ncol - 1 - col) - row)
+        dg = np.diag(np.fliplr(self.mx), (self.ncol - 1 - col) - row)
         for i in dg:
             if i == cur_player:
                 count += 1
