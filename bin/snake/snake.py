@@ -82,7 +82,7 @@ def game() -> None:
         screen.refresh()
         time.sleep(speed)
 
-        
+
 game()
 
 curses.endwin()
