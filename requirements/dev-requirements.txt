@@ -24,6 +24,3 @@ rich~=10.4.0
 
 # Requirements for ConnectFour
 numpy~=1.21
-
-# Requirements for Snake
-keyboard
