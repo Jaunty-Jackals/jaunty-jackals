@@ -7,16 +7,17 @@ screen.keypad(1)
 curses.noecho()
 curses.curs_set(1)
 
+
 class ConnectFour:
     """A two-player connect four game."""
 
     import time
 
-    import numpy as np
     # import ConnectFour.sound_paths as sp
     import ConnectFour.text_arts as ta
-
+    import numpy as np
     from blessed import Terminal
+
     # from play_sounds import play_file as playsound
 
     tm = Terminal()
@@ -367,7 +368,7 @@ class ConnectFour:
                 if i > 0:
                     print(disc_ers)
             else:
-                
+
                 break
         for i in reversed(range(self.nrow)):
             if self.mx[i][col] == 0:

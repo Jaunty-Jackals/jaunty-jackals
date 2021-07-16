@@ -4,7 +4,6 @@ from platform import python_version, system
 
 from play_sounds import play_file as playsound
 from utils.macros.handy import status
-
 from utils.palettes import palettes
 
 
