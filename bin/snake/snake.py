@@ -83,7 +83,7 @@ def game() -> None:
         screen.move(dims[0] - 1, dims[1] - 1)
         screen.refresh()
         time.sleep(speed)
-    return length
 
+game()
 
 curses.endwin()
