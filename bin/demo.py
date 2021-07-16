@@ -103,7 +103,7 @@ menu_data = {
         {
             "title": "SNAKE",
             "type": COMMAND,
-            "command": "bin/snake/snake.py",
+            "command": "bin/snake.py",
         },
         # {
         #     "title": "CONTENT D - has submenus",
