@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from itertools import chain, repeat
 from typing import Any, List, Tuple
 
-from color import Background, Cursor
 from console import console
 from rich.layout import Layout
 from rich.panel import Panel
@@ -53,8 +52,7 @@ class Error(ValueError):
 
 
 def print_err(*args, **kwargs):
-    """Prints an error in red."""
-    # print(Text.RED, *args, Cursor.FULL_RESET, **kwargs)
+    """Print an error in red."""
     console.print(*args, **kwargs, style="red")
 
 
@@ -95,7 +93,7 @@ class Shot:
 
 
 def coord_valid(coord: int) -> bool:
-    """Returns True if a given x or y coordinates is in bounds."""
+    """Return True if a given x or y coordinates is in bounds."""
     return 0 <= coord <= 9
 
 
@@ -118,13 +116,13 @@ def create_table_board(board: Board, person: str) -> Table:
             if col == EMPTY:
                 lst.append(Text(" ", style="white on black"))
             elif col == OWN_SHIP:
-                lst.append(Text("\u2588", style="green"))
+                lst.append(Text("\u2588", style="green on green"))
             elif col == OWN_SHIP_HIT:
                 lst.append(Text("X", style="red on green"))
             elif col == ENEMY_SHIP_HIT:
-                lst.append(Text("\u2588", style="on red"))
+                lst.append(Text("\u2588", style="red on red"))
             elif col == MISS:
-                lst.append(Text("\u2588", style="on yellow"))
+                lst.append(Text("\u2588", style="yellow on yellow"))
         lst.append(str(row_no))
         table.add_row(*lst)
 
@@ -139,17 +137,17 @@ def print_boards(board: Board, enemy_board: Board) -> None:
     """
     your_table = create_table_board(board, "you")
     enemy_table = create_table_board(enemy_board, "enemy")
+
     layout["left"].update(Panel(your_table, expand=False))
     layout["right"].update(Panel(enemy_table, expand=False))
 
-    def get_score(board: Board) -> int:
-        return list(chain.from_iterable(board)).count(ENEMY_SHIP_HIT)
-
     layout["header_left"].update(Panel(Text(
-        f"Your Score: {get_score(enemy_board)}/{sum(PLAYER_SHIPS)}", justify="center"))
+        f"Your Score: {list(chain.from_iterable(enemy_board)).count(ENEMY_SHIP_HIT)}/{sum(PLAYER_SHIPS)}",
+        justify="center"))
     )
     layout["header_right"].update(Panel(Text(
-        f"Enemy Score: {get_score(board)}/{sum(PLAYER_SHIPS)}", justify="center"))
+        f"Enemy Score: {list(chain.from_iterable(board)).count(OWN_SHIP_HIT)}/{sum(PLAYER_SHIPS)}",
+        justify="center"))
     )
 
     # Clear the screen on Windows
@@ -164,7 +162,7 @@ def print_boards(board: Board, enemy_board: Board) -> None:
 
 
 def create_empty_board():
-    """Returns a 10x10 array of zeros."""
+    """Return a 10x10 array of zeros."""
     return [10 * [0] for _ in repeat(0, 10)]
 
 
@@ -196,14 +194,16 @@ def update_enemy_board(shot: Shot, board: Board):
     """
     x = shot.x
     y = shot.y
-    if shot.last_shot_hit:
+    field = board[y][x]
+
+    if shot.last_shot_hit or field == ENEMY_SHIP_HIT:
         board[y][x] = ENEMY_SHIP_HIT
     else:
         board[y][x] = MISS
 
 
 def player_lost(board: Board):
-    """Returns True if the current player has no ships left."""
+    """Return True if the current player has no ships left."""
     return not any(OWN_SHIP in set(x) for x in board)
 
 
@@ -342,8 +342,8 @@ def ask_player_for_shot():
     while True:
         try:
             return parse_shot(Prompt.ask("Shoot (Format XY, e.g. A4)"))
-        except Error:
-            pass
+        except Error as err:
+            print_err(err)
 
 
 def ask_player_for_ship(ship_type: int):
@@ -365,12 +365,12 @@ def ask_player_for_ship(ship_type: int):
                 print_err("Ships cannot be diagonal.")
                 continue
 
-            # out of bounds
+            # Out of bounds
             if any([not coord_valid(x) for x in [a0, a1, b0, b1]]):
                 print_err("Ships coordinates out of bounds.")
                 continue
 
-            # length
+            # Length
             if max(abs(a0 - b0), abs(a1 - b1)) != (length - 1):
                 print_err(f"Ship must be exactly {length} fields long.")
                 continue
@@ -378,12 +378,12 @@ def ask_player_for_ship(ship_type: int):
             return (a0, a1), (b0, b1)
 
         except (IndexError, ValueError) as e:
-            print_err("Invalid Format: ", str(e))
+            print_err("Invalid Format:", str(e))
 
 
 def place_ship(a: Tuple[int, int], b: Tuple[int, int], board: Board) -> None:
     """
-    Update the board and place a ship on it
+    Update the board and place a ship on it.
 
     :param a: Start X, Y coords
     :param b: End X, Y coords

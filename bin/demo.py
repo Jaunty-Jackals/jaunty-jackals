@@ -4,7 +4,7 @@ from typing import Any
 
 from initload import initialize
 from play_sounds import play_file as playsound
-
+from play_sounds import play_while_running
 from utils.palettes import palettes
 
 # Curses setup
@@ -20,10 +20,10 @@ METADATA = {
     "os": None,
     "py_version": False,
     "term_h_cur": None,
-    "term_h_max": 25,
-    "term_h_min": 24,
+    "term_h_max": 32,
+    "term_h_min": 32,
     "term_w_cur": None,
-    "term_w_max": 80,
+    "term_w_max": 106,
     "term_w_min": 80,
     "palette": palettes.Base16(),
 }
@@ -31,8 +31,6 @@ METADATA = {
 # Run initload
 METADATA = initialize(METADATA)
 screen.clear()
-# playsound("bin/utils/assets/sound/sfx_minesweeper_bgm.wav", block=False)
-
 # Import a colour palette as desired; see bin/utils/palettes/palettes.py
 # METADATA["palette"] = palettes.Gruvbox()
 # p = palettes.Gruvbox()
@@ -90,22 +88,22 @@ menu_data = {
         {
             "title": "MINE SWEEPER",
             "type": COMMAND,
-            "command": "venv/bin/python bin/minesweep/minesweep.py",
+            "command": "bin/minesweep.py",
         },
         {
             "title": "BATTLESHIP",
             "type": COMMAND,
-            "command": "venv/bin/python bin/battleship/client.py",
+            "command": "bin/battleship/client.py",
         },
         {
             "title": "CONNECT FOUR",
             "type": COMMAND,
-            "command": "venv/bin/python bin/ConnectFour/blessedConnectFour.py",
+            "command": "bin/ConnectFour/blessedConnectFour.py",
         },
         {
             "title": "SNAKE",
             "type": COMMAND,
-            "command": "venv/bin/python bin/snake/snake.py",
+            "command": "bin/snake/snake.py",
         },
         # {
         #     "title": "CONTENT D - has submenus",
@@ -222,7 +220,7 @@ def displaymenu(menu: dict, parent: Any) -> Any:
 
         # down arrow
         elif x == 258:
-            playsound("bin/utils/assets/sound/sfx_menu_move4.wav", block=False)
+            playsound("bin/utils/sound/sfx_menu_move4.wav", block=False)
             if pos < optioncount:
                 pos += 1
             else:
@@ -230,19 +228,20 @@ def displaymenu(menu: dict, parent: Any) -> Any:
 
         # up arrow
         elif x == 259:
-            playsound("bin/utils/assets/sound/sfx_menu_move4.wav", block=False)
+            playsound("bin/utils/sound/sfx_menu_move4.wav", block=False)
             if pos > 0:
                 pos += -1
             else:
                 pos = optioncount
 
     # return index of the selected item
-    playsound("bin/utils/assets/sound/sfx_menu_select4.wav", block=False)
+    playsound("bin/utils/sound/sfx_menu_select4.wav", block=False)
     return pos
 
 
 def processmenu(menu: dict, parent: Any = None) -> None:
     """Calls Showmenu and acts on the selected item"""
+    global METADATA
     optioncount = len(menu["options"])
     exitmenu = False
 
@@ -270,7 +269,12 @@ def processmenu(menu: dict, parent: Any = None) -> None:
             screen.clear()
 
             # run the command
-            os.system(menu["options"][getin]["command"])
+            pythonpath = "venv/bin/python"
+            if METADATA['os'] != 'WINDOWS':
+                os.system(f'{pythonpath} {menu["options"][getin]["command"]}')
+            else:
+                pythonpath = "py"  # py3.9?
+                os.system(f'{pythonpath} {menu["options"][getin]["command"]}')
 
             # clear on keypress and update with new position
             screen.clear()

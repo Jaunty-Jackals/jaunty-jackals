@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager, contextmanager
 from multiprocessing import Process
 from pathlib import Path
 from platform import system
-from typing import AsyncContextManager, ContextManager
+from typing import AsyncContextManager, ContextManager, Union
 
 from .proc import kill_process, play_process
 from .wrap import to_thread
@@ -31,7 +31,7 @@ MAJOR, MINOR, *_ = sys.version_info
 if "windows" in PLATFORM or "nt" in PLATFORM:
     from playsound import playsound
 
-    def play_file(file: Path, block: bool = BLOCK_WHILE_PLAYING):
+    def play_file(file: str, block: bool = BLOCK_WHILE_PLAYING):
         """Play the delegated sound file (Windows)"""
         # filename = str(file.absolute())
         playsound(file, block=block)
@@ -43,13 +43,13 @@ if "windows" in PLATFORM or "nt" in PLATFORM:
 else:
     from boombox import BoomBox
 
-    def play_file(file: Path, block: bool = BLOCK_WHILE_PLAYING):
+    def play_file(file: str, block: bool = BLOCK_WHILE_PLAYING):
         """Play the delegated sound file (UNIX & DARWIN)"""
         player = BoomBox(file, wait=block)
         player.play()
 
 
-def play_loop(file: Path, block: bool = True):
+def play_loop(file: Union[Path, str], block: bool = True):
     """Loop the selected file"""
     try:
         while True:
@@ -61,7 +61,7 @@ def play_loop(file: Path, block: bool = True):
 
 @contextmanager
 def play_while_running(
-    file: Path, block: bool = BLOCK_WHILE_PLAYING, loop: bool = True
+    file: str, block: bool = BLOCK_WHILE_PLAYING, loop: bool = True
 ) -> ContextManager[Process]:
     """Do a playback while a task is running"""
     play_func = play_loop if loop else play_file
@@ -75,7 +75,7 @@ def play_while_running(
 
 
 @contextmanager
-def play_after(file: Path, block: bool = BLOCK_WHILE_PLAYING) -> ContextManager[Path]:
+def play_after(file: str, block: bool = BLOCK_WHILE_PLAYING) -> ContextManager[Path]:
     """Do a playback after a task is finished"""
     try:
         yield file
@@ -85,7 +85,7 @@ def play_after(file: Path, block: bool = BLOCK_WHILE_PLAYING) -> ContextManager[
 
 
 async def play_file_async(
-    file: Path,
+    file: str,
     block: bool = BLOCK_WHILE_PLAYING,
     loop: bool = False,
     interval: float = DEFAULT_WAIT,
@@ -107,7 +107,7 @@ async def play_file_async(
 
 @asynccontextmanager
 async def play_while_running_async(
-    file: Path, block: bool = BLOCK_WHILE_PLAYING, loop: bool = True
+    file: str, block: bool = BLOCK_WHILE_PLAYING, loop: bool = True
 ) -> AsyncContextManager[Process]:
     """Do a playback while running a task through asyncio"""
     play_func = play_loop if loop else play_file
@@ -122,7 +122,7 @@ async def play_while_running_async(
 
 @asynccontextmanager
 async def play_after_async(
-    file: Path,
+    file: str,
     block: bool = BLOCK_WHILE_PLAYING,
     loop: bool = False,
     interval: float = DEFAULT_WAIT,

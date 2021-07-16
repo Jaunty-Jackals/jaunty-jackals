@@ -7,7 +7,7 @@ from multiprocessing import Process
 from pathlib import Path
 from platform import platform
 from sys import exit
-from typing import Any, Callable, Optional, Set
+from typing import Any, Callable, Optional, Set, Union
 from weakref import finalize as finalizer
 
 PLATFORM: str = platform().lower()
@@ -20,7 +20,7 @@ Procs = Set[Process]
 
 
 def play_process(
-    file: Path,
+    file: Union[Path, str],
     target: Callable,
     *args,
     finalize: bool = True,
