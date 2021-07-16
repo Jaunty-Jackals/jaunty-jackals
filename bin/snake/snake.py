@@ -37,8 +37,6 @@ def game() -> None:
     remove = body[-1][:]
 
     while not dead:
-        length = len(body)
-
         while not apple:
             y = secrets.randbelow(dims[0] - 2) + 1
             x = secrets.randbelow(dims[1] - 2) + 1
@@ -84,6 +82,7 @@ def game() -> None:
         screen.refresh()
         time.sleep(speed)
 
+        
 game()
 
 curses.endwin()
