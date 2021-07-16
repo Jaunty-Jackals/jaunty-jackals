@@ -1,7 +1,5 @@
 import curses
 
-# import typing
-
 # environment after running demo.py
 screen = curses.initscr()
 curses.cbreak()
@@ -9,21 +7,17 @@ screen.keypad(1)
 curses.noecho()
 curses.curs_set(1)
 
-#from play_sounds import play_file as playsound
-
 class ConnectFour:
-    """A two-player connect four game.
-
-    It plays the logo & title screen once and initialises
-    the board size each run of the game.
-    """
+    """A two-player connect four game."""
 
     import time
 
     import numpy as np
-    import sound_paths as sp
-    import text_arts as ta
+    # import ConnectFour.sound_paths as sp
+    import ConnectFour.text_arts as ta
+
     from blessed import Terminal
+    # from play_sounds import play_file as playsound
 
     tm = Terminal()
     sty_default = tm.bright_white_on_blue2
@@ -373,7 +367,7 @@ class ConnectFour:
                 if i > 0:
                     print(disc_ers)
             else:
-                #playsound(sp.drop)
+                
                 break
         for i in reversed(range(self.nrow)):
             if self.mx[i][col] == 0:

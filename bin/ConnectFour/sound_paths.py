@@ -1,4 +1,4 @@
-path = "bin/utils/assets/sound/cnct4_"
+path = "bin/utils/sound/cnct4_"
 
 drop = path + "drop.wav"
-bad_col = path + "bad_col.wav"
+bad_col = path + "drop.wav"
