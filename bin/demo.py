@@ -103,7 +103,7 @@ menu_data = {
         {
             "title": "SNAKE",
             "type": COMMAND,
-            "command": "bin/snake/snake.py",
+            "command": "bin/snake.py",
         },
         # {
         #     "title": "CONTENT D - has submenus",
@@ -271,9 +271,11 @@ def processmenu(menu: dict, parent: Any = None) -> None:
             # run the command
             pythonpath = "venv/bin/python"
             if METADATA['os'] != 'WINDOWS':
+                os.system('reset')
                 os.system(f'{pythonpath} {menu["options"][getin]["command"]}')
             else:
-                pythonpath = "py"  # py3.9?
+                pythonpath = "python"
+
                 os.system(f'{pythonpath} {menu["options"][getin]["command"]}')
 
             # clear on keypress and update with new position
