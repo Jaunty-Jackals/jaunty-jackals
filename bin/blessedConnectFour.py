@@ -21,9 +21,9 @@ class ConnectFour:
     # from play_sounds import play_file as playsound
 
     tm = Terminal()
-    sty_default = tm.bright_white_on_blue2
-    sty_p1 = tm.bright_yellow_on_blue2
-    sty_p2 = tm.coral1_on_blue2
+    sty_default = tm.bright_white_on_blue
+    sty_p1 = tm.bright_yellow_on_blue
+    sty_p2 = tm.coral1_on_blue
     hgt = tm.height
     wth = tm.width
 
