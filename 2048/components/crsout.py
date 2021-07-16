@@ -386,9 +386,44 @@ class CursesOutput:
         def draw_line(line_text: Any):
             nonlocal draw_y
             # `insstr` needed because of the bottom line
-            self._window.insstr(draw_y, 0, line_text, curses.A_STANDOUT)
+            self._window.insstr(draw_y, 0, line_text, curses.A_BOLD)
             draw_y += 1
 
+        # out = ""
+        # out = out + " _____  _____    ___  _____ \n"
+        # out = out + "/ __  \|  _  |  /   ||  _  |\n"
+        # out = out + "`' / /'| |/' | / /| | \ V / \n"
+        # out = out + "  / /  |  /| |/ /_| | / _ \ \n"
+        # out = out + "./ /___\ |_/ /\___  || |_| |\n"
+        # out = out + "\_____/ \___/     |_/\_____/\n"
+        #    for i in range(0, 4):
+        #       for j in range(0, 4):
+        #     val = self.game_instance.game_board.board_positions[i][j]
+        #     self.positions[i][j].set_title(str(val))
+        #     if val == 0:
+        #         self.positions[i][j].set_color(py_cui.BLACK_ON_WHITE)
+        #     elif val == 2:
+        #         self.positions[i][j].set_color(py_cui.BLACK_ON_CYAN)
+        #     elif val == 4:
+        #         self.positions[i][j].set_color(py_cui.BLACK_ON_CYAN)
+        #     elif val == 8:
+        #         self.positions[i][j].set_color(py_cui.BLACK_ON_MAGENTA)
+        #     elif val == 16:
+        #         self.positions[i][j].set_color(py_cui.BLACK_ON_MAGENTA)
+        #     elif val == 32:
+        #         self.positions[i][j].set_color(py_cui.BLACK_ON_GREEN)
+        #     elif val == 64:
+        #         self.positions[i][j].set_color(py_cui.BLACK_ON_GREEN)
+        #     elif val == 128:
+        #         self.positions[i][j].set_color(py_cui.BLACK_ON_RED)
+        #     elif val == 256:
+        #         self.positions[i][j].set_color(py_cui.BLACK_ON_RED)
+        #     elif val == 512:
+        #         self.positions[i][j].set_color(py_cui.BLACK_ON_YELLOW)
+        #     elif val == 1024:
+        #         self.positions[i][j].set_color(py_cui.BLACK_ON_YELLOW)
+        #     elif val == 2048:
+        #         self.positions[i][j].set_color(py_cui.BLACK_ON_BLUE)
         # top info
         draw_line("2048")
         draw_line("Score: {}".format(self._score))
