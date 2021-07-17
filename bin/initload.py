@@ -144,9 +144,8 @@ def initialize(metadata: dict) -> dict:
                 "UNSUPPORTED OS DETECTED",
                 passed=False,
                 pos=[acpi_pos_y, acpi_pos_x],
-                sleep=5,
+                sleep=6.0,
             )
-            break
 
         # Check Python version
         status(screen, "PYTHON VERSION", passed=None, pos=[acpi_pos_y, acpi_pos_x])
@@ -200,21 +199,19 @@ def initialize(metadata: dict) -> dict:
                 playsound(warnsound, block=True)
                 status(
                     screen,
-                    "You must use Python 3.9+! Aborting...",
+                    "You must use Python 3.9+!",
                     passed=False,
                     pos=[acpi_pos_y, acpi_pos_x],
-                    sleep=4.0,
+                    sleep=6.0,
                 )
-                break
         else:
             status(
                 screen,
-                "Invalid Version of Python! Aborting...",
+                "Invalid Version of Python!",
                 passed=False,
                 pos=[acpi_pos_y, acpi_pos_x],
-                sleep=4.0,
+                sleep=6.0,
             )
-            break
 
         # Check if virtualenv
         is_venv = False
@@ -244,9 +241,8 @@ def initialize(metadata: dict) -> dict:
                 "you must be in a virtual environment!".upper(),
                 passed=False,
                 pos=[acpi_pos_y, acpi_pos_x],
-                sleep=5.0,
+                sleep=6.0,
             )
-            break
 
         # Detect screensize
         status(screen, "screen size".upper(), passed=None, pos=[acpi_pos_y, acpi_pos_x])
@@ -260,7 +256,7 @@ def initialize(metadata: dict) -> dict:
         status(
             screen,
             f"{screen_x} by {screen_y} detected     ".upper(),
-            passed=True,
+            passed=None,
             pos=[acpi_pos_y, acpi_pos_x],
             sleep=0.5,
         )
@@ -275,11 +271,11 @@ def initialize(metadata: dict) -> dict:
                 f'screen width of {screen_x} is smaller than the recommended {metadata["term_w_min"]}'.upper(),
                 passed=False,
                 pos=[acpi_pos_y, acpi_pos_x],
-                sleep=2.0,
+                sleep=600,
             )
             screen.refresh()
             acpi_pos_y += 1
-            break
+            time.sleep(6.0)
 
         # Width is too long
         elif screen_x > metadata["term_w_max"]:
@@ -302,11 +298,9 @@ def initialize(metadata: dict) -> dict:
                 f'screen height of {screen_y} is smaller than the recommended {metadata["term_h_min"]}'.upper(),
                 passed=False,
                 pos=[acpi_pos_y, acpi_pos_x],
-                sleep=2.0
+                sleep=6.0
             )
             screen.refresh()
-            acpi_pos_y += 1
-            break
 
         # Height is too long
         elif screen_y > metadata["term_h_max"]:
