@@ -24,7 +24,8 @@ a = curses.KEY_LEFT
 s = curses.KEY_DOWN
 d = curses.KEY_RIGHT
 
-def game(speed: int,process: multiprocessing.Process) -> None:
+
+def game(speed: int, process: multiprocessing.Process) -> None:
     """Snake game main code."""
     global action, SYSOS
     screen = curses.initscr()
@@ -92,7 +93,7 @@ def game(speed: int,process: multiprocessing.Process) -> None:
         if screen.inch(head[0], head[1]) != ord(" "):
             # Snake munched the yummy!
             if screen.inch(head[0], head[1]) in snake_yummy_stdout:
-                playsound(sfx_eat_path,0)
+                playsound(sfx_eat_path, 0)
                 apple = 0
                 body.append(body[-1])
             else:
@@ -104,15 +105,14 @@ def game(speed: int,process: multiprocessing.Process) -> None:
         time.sleep(speed)
         
 
-
 def new_game_init(curses_ctx: Any, speed: int) -> None:
     """Menu to start a new game"""
-    t1 = multiprocessing.Process(target=playsound,args=(sfx_ingame_path,1))
+    t1 = multiprocessing.Process(target=playsound,args=(sfx_ingame_path, 1))
     t1.start()
     curses.def_prog_mode()
     curses_ctx.clear()
     curses_ctx.refresh()
-    game(speed,t1)
+    game(speed, t1)
     curses_ctx.clear()
     curses.reset_prog_mode()  # reset to 'current' curses environment
     curses.curs_set(1)  # reset doesn't do this right
@@ -133,7 +133,7 @@ def main(curses_ctx: Any) -> None:
             return  # to load back main menu
         if selection == "PLAY":
             selection = open_menu(
-            curses_ctx, items=("EASY","NORMAL", "SNEK GO BRRR"), header="SPEED"
+            curses_ctx, items=("EASY", "NORMAL", "SNEK GO BRRR"), header="SPEED"
             )
             if selection == "EASY":
                 new_game_init(curses_ctx, speed=0.4)
