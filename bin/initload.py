@@ -66,7 +66,11 @@ def initialize(metadata: dict) -> dict:
         acpi_pos_x = 1
         curses.def_prog_mode()
 
-        # Check OS [ FAIL ]
+        # System environment settings
+        _envk = list(_env.keys())
+        _envv = list(_env.values())
+
+        # Check OS
         status(
             screen,
             "operating system".upper(),
@@ -87,8 +91,6 @@ def initialize(metadata: dict) -> dict:
             metadata["os"] = os_ver.upper()
 
             # Show some _env values
-            _envk = list(_env.keys())
-            _envv = list(_env.values())
             windows_terminal = []
 
             for key in _envk:
@@ -102,7 +104,7 @@ def initialize(metadata: dict) -> dict:
                     "windows terminal detected".upper(),
                     passed="Warn",
                     pos=[acpi_pos_y, acpi_pos_x],
-                    sleep=1.0
+                    sleep=1.0,
                 )
                 acpi_pos_y += 1
                 playsound(warnsound, block=True)
@@ -111,28 +113,29 @@ def initialize(metadata: dict) -> dict:
                     "users may not be able to change color themes".upper(),
                     passed="Warn",
                     pos=[acpi_pos_y, acpi_pos_x],
-                    sleep=2.0
+                    sleep=2.0,
                 )
                 acpi_pos_y += 1
 
             # Ensure position y is not overflowing
-            for i in range(10 - acpi_pos_y):
-                status(
-                    screen,
-                    f'{_envk[i]}',
-                    passed=None,
-                    pos=[acpi_pos_y, acpi_pos_x],
-                    sleep=0.1,
-                )
-                acpi_pos_y += 1
-                status(
-                    screen,
-                    f'{_envv[i]}',
-                    passed=True,
-                    pos=[acpi_pos_y, acpi_pos_x],
-                    sleep=0.1,
-                )
-                acpi_pos_y += 1
+            # for i in range(10 - acpi_pos_y):
+            #     status(
+            #         screen,
+            #         f'{_envk[i]}',
+            #         passed=None,
+            #         pos=[acpi_pos_y, acpi_pos_x],
+            #         sleep=0.1,
+            #     )
+            #     acpi_pos_y += 1
+            #     status(
+            #         screen,
+            #         f'{_envv[i]}',
+            #         passed=True,
+            #         pos=[acpi_pos_y, acpi_pos_x],
+            #         sleep=0.1,
+            #     )
+            #     acpi_pos_y += 1
+
         else:
             status(
                 screen,
@@ -210,6 +213,29 @@ def initialize(metadata: dict) -> dict:
                 sleep=4.0,
             )
             break
+
+        # Check if virtualenv
+        is_venv = False
+        for key in _envk:
+            if "VIRTUAL_ENV" in key:
+                is_venv = True
+
+        if is_venv:
+            status(
+                screen,
+                "virtual environment detected".upper(),
+                passed=True,
+                pos=[acpi_pos_y, acpi_pos_x],
+            )
+            acpi_pos_y += 1
+        elif is_venv is False:
+            status(
+                screen,
+                "no virtual environment detected".upper(),
+                passed="Warn",
+                pos=[acpi_pos_y, acpi_pos_x],
+                sleep=1.0,
+            )
 
         # Detect screensize
         status(screen, "screen size".upper(), passed=None, pos=[acpi_pos_y, acpi_pos_x])
