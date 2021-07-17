@@ -68,10 +68,7 @@ def open_menu(curse_context: Any, items: tuple, header: str = "") -> Any:
             if i == sel:
                 attr = curses.A_STANDOUT
             curse_context.addstr(
-                rect.y + 1 + i * 2,
-                center[0] - len(item) // 2 + 4,
-                item.upper(),
-                attr
+                rect.y + 1 + i * 2, center[0] - len(item) // 2 + 4, item.upper(), attr
             )
 
         c = curse_context.getch()
@@ -104,10 +101,7 @@ def open_menu_no_rect(curse_context: Any, items: tuple) -> Any:
             if i == sel:
                 attr = curses.A_STANDOUT
             curse_context.addstr(
-                curses.COLS // 2 - i * 2,
-                curses.LINES // 2,
-                item,
-                attr
+                curses.COLS // 2 - i * 2, curses.LINES // 2, item, attr
             )
 
         c = curse_context.getch()
