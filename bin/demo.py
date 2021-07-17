@@ -114,12 +114,28 @@ menu_data = {
             "subtitle": "select a theme".upper(),
             "options": [
                 {"title": "base16 3024 ".upper(), "type": SETTING, "command": "base16"},
-                {"title": "commodore 64".upper(), "type": SETTING, "command": "commodore"},
-                {"title": "dracula dark".upper(), "type": SETTING, "command": "dracula"},
+                {
+                    "title": "commodore 64".upper(),
+                    "type": SETTING,
+                    "command": "commodore",
+                },
+                {
+                    "title": "dracula dark".upper(),
+                    "type": SETTING,
+                    "command": "dracula",
+                },
                 {"title": "grooby box".upper(), "type": SETTING, "command": "gruvbox"},
                 {"title": "haxx0r green".upper(), "type": SETTING, "command": "hacker"},
-                {"title": "jackal original".upper(), "type": SETTING, "command": "jackal"},
-                {"title": "northern aurora".upper(), "type": SETTING, "command": "nord"},
+                {
+                    "title": "jackal original".upper(),
+                    "type": SETTING,
+                    "command": "jackal",
+                },
+                {
+                    "title": "northern aurora".upper(),
+                    "type": SETTING,
+                    "command": "nord",
+                },
             ],
         },
         {"title": "CREDITS", "type": COMMAND, "command": "bin/utils/macros/credits.py"},
@@ -163,8 +179,12 @@ def displaymenu(menu: dict, parent: Any) -> Any:
                 curses.color_pair(3),
             )
             # Subtitle
-            screen.addstr(4,
-                          curses.COLS // 2 - len(menu["subtitle"]) // 2, menu["subtitle"], curses.COLOR_MAGENTA)
+            screen.addstr(
+                4,
+                curses.COLS // 2 - len(menu["subtitle"]) // 2,
+                menu["subtitle"],
+                curses.COLOR_MAGENTA,
+            )
 
             # Display all the menu items, showing the 'pos' item highlighted
             for index in range(optioncount):
@@ -185,7 +205,7 @@ def displaymenu(menu: dict, parent: Any) -> Any:
             screen.addstr(
                 curses.LINES // 4 + 2 + optioncount * 3 + 1,
                 curses.COLS // 2 - len(lastoption) // 2,
-                f'{lastoption}',
+                f"{lastoption}",
                 textstyle,
             )
 

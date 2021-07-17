@@ -46,7 +46,7 @@ def game(speed: int, process: multiprocessing.Process) -> None:
     apple = 0
     remove = body[-1][:]
     yummy = "⬤"
-    if SYSOS == 'DARWIN':
+    if SYSOS == "DARWIN":
         yummy = "●"
 
     while not dead:
@@ -125,9 +125,7 @@ def main(curses_ctx: Any) -> None:
     curses.init_pair(2, 2, 0)  # snek
 
     while True:
-        selection = open_menu(
-            curses_ctx, items=("PLAY", "QUIT"), header="SNAKE"
-        )
+        selection = open_menu(curses_ctx, items=("PLAY", "QUIT"), header="SNAKE")
         if selection == "QUIT":
             return  # to load back main menu
         if selection == "PLAY":
@@ -139,7 +137,7 @@ def main(curses_ctx: Any) -> None:
             elif selection == "NORMAL":
                 new_game_init(curses_ctx, speed=0.1)
             else:
-                new_game_init(curses_ctx, speed=.3/9)
+                new_game_init(curses_ctx, speed=0.3 / 9)
 
 
 if __name__ == "__main__":

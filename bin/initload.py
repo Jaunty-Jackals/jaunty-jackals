@@ -298,7 +298,7 @@ def initialize(metadata: dict) -> dict:
                 f'screen height of {screen_y} is smaller than the recommended {metadata["term_h_min"]}'.upper(),
                 passed=False,
                 pos=[acpi_pos_y, acpi_pos_x],
-                sleep=6.0
+                sleep=6.0,
             )
             screen.refresh()
 

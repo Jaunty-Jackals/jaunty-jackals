@@ -220,7 +220,7 @@ class ConnectFour:
         for i in range(self.nrow):
             body_row_txt = ""  # * (WTH // 2 - (self.ncol * 4 + 1) // 2)
             for j in range(self.ncol):
-                body_row_txt += (STY_COL + f"│ {STY_DEF + str(self.mx[i][j])} ")
+                body_row_txt += STY_COL + f"│ {STY_DEF + str(self.mx[i][j])} "
             body_row_txt += STY_COL + "│\n" + STY_DEF
             body_row = (
                 tm.move_xy(
