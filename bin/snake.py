@@ -1,9 +1,9 @@
 """Snake."""
 
 import curses
+import multiprocessing
 import secrets
 import time
-import multiprocessing
 
 from platform import system
 from typing import Any
@@ -103,7 +103,7 @@ def game(speed: int, process: multiprocessing.Process) -> None:
                 dead = 1
         screen.refresh()
         time.sleep(speed)
-        
+
 
 def new_game_init(curses_ctx: Any, speed: int) -> None:
     """Menu to start a new game"""
