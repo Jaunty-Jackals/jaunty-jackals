@@ -8,8 +8,7 @@ from tetris.exceptions import CollisionError, GameOverError, OutOfBoundsError
 from tetris.utils import Window
 
 if TYPE_CHECKING:
-    from tetris.user_interface import \
-        UserInterface  # pylint: disable=cyclic-import
+    from tetris.user_interface import UserInterface  # pylint: disable=cyclic-import
 else:
     UserInterface = Any
 

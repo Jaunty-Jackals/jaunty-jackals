@@ -7,11 +7,7 @@ from play_sounds import play_file as playsound
 from play_sounds import play_while_running
 from tetris.core import Game
 from tetris.exceptions import CollisionError, OutOfBoundsError
-from tetris.user_interface import (
-    UserInterface,
-    create_screens,
-    make_color_pairs
-)
+from tetris.user_interface import UserInterface, create_screens, make_color_pairs
 from tetris.utils import Window
 
 if TYPE_CHECKING:
