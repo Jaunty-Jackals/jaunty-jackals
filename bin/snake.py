@@ -4,7 +4,6 @@ import curses
 import secrets
 import time
 
-# from multiprocessing.dummy import Pool as ThreadPool
 from platform import system
 from typing import Any
 
@@ -12,14 +11,13 @@ from minesweep.minesweep_utils import open_menu
 from play_sounds import play_file as playsound
 from play_sounds import play_while_running
 
-# pool = ThreadPool(4)
-
 SYSOS = system().upper()
 
 sfxpath = "bin/utils/sound/sfx_snake_"
 sfx_ingame_path = sfxpath + "ingame.wav"
 sfx_nav_path = sfxpath + "nav.wav"
 sfx_eat_path = sfxpath + "yummy.wav"
+sfx_stop = "bin/utils/sound/sfx_shutup"
 
 action = "d"
 w = curses.KEY_UP
@@ -37,6 +35,7 @@ def game(speed: float) -> None:
     screen.keypad(1)
     curses.noecho()
     curses.cbreak()
+    curses.curs_set(0)
     curses.start_color()
     curses.can_change_color()
     screen.keypad(True)
