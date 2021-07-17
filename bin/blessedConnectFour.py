@@ -13,7 +13,7 @@ screen = curses.initscr()
 curses.cbreak()
 curses.noecho()
 screen.keypad(1)
-curses.curs_set(1)
+curses.curs_set(0)
 
 tm = Terminal()
 HGT = tm.height
@@ -57,11 +57,11 @@ class ConnectFour:
         print(tm.home + STY_DEF + tm.clear)
 
         with tm.cbreak(), tm.hidden_cursor():
+            curses.halfdelay(5)
+            screen.getch()
+
             # clear the screen
             print(tm.home + STY_DEF + tm.clear)
-
-
-            #screen.getch()
 
             for i in range(len(LOGO_TXT)):
                 logo_part = (
@@ -99,7 +99,10 @@ class ConnectFour:
             start = tm.move_xy(WTH // 2 - 8, HGT * 3 // 4) + "Press S to start"
             start_ers = tm.move_xy(WTH // 2 - 8, HGT * 3 // 4) + 16 * " "
             while True:
-                choice_sym = screen.getkey()
+                try:
+                    choice_sym = screen.getkey()
+                except:
+                    choice_sym = "0"
                 if choice_sym == "s":
                     break
                 if not start_txt:
@@ -109,6 +112,7 @@ class ConnectFour:
                     print(start_ers, end="", flush=True)
                     start_txt = False
             play_sfx(sp.drop, block=False)
+            curses.cbreak()
 
         print(tm.home + STY_DEF + tm.clear)
         self.nrow, self.ncol = self.get_nrow_ncol()
@@ -117,6 +121,7 @@ class ConnectFour:
 
     def get_nrow_ncol(self) -> (int, int):
         """Get a user input for board size"""
+        curses.curs_set(1)
         nrow, ncol = None, None
         size_prpt = (
             tm.move_xy(WTH // 2 - 26, HGT // 3)
@@ -203,6 +208,7 @@ class ConnectFour:
                 continue
             else:
                 break
+        curses.curs_set(0)
         play_sfx(sp.drop, block=False)
         return nrow, ncol
 
@@ -401,10 +407,6 @@ class ConnectFour:
     def drop(self, cur_player: int, col: int) -> int:
         """Drops a disc in a column"""
         for i in range(self.nrow):
-            choice_sym = screen.getkey(0.01)
-            # just to use choice_sym somehow so flake8 is happy
-            if choice_sym:
-                pass
             time.sleep(0.067)
             if cur_player == 1:
                 disc_text = STY_P1("1")
@@ -490,6 +492,7 @@ if __name__ == "__main__":
             time.sleep(0.5)
             connectFour = ConnectFour()
             play = connectFour.start()
+        curses.cbreak()
     print(
         tm.home
         + tm.clear
