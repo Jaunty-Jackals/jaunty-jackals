@@ -3,12 +3,6 @@ import time
 from random import randint
 from typing import Any
 
-from play_sounds import play_file as play
-
-sound_path = "bin/utils/sound/sfx_logo_"
-opening = sound_path + "01.wav"
-closing = sound_path + "02.wav"
-
 jackal_ascii_medium = [
     " ╒╖_                                  ▄π ",
     " ÑÑ▌v_                            ▄φ▓▒▌ ",
@@ -117,10 +111,6 @@ def jackal_logo(metadata: dict) -> None:
         mypad_pos += 1
         mypad.refresh(mypad_pos, 0, 5, 5, 40, 120)
         time.sleep(0.1)
-        if _ == 17:
-            play(opening, block=False)
-        elif _ == 22:
-            play(closing, block=False)
 
 
 rsleep = float(randint(-10, 10) / 10)
