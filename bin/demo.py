@@ -275,7 +275,8 @@ def processmenu(menu: dict, parent: Any = None) -> None:
                     screen.refresh()
 
                 # Execute
-                os.system(f'{pythonpath} {menu["options"][getin]["command"]}')
+                if menu["options"][getin]["title"] != "CONNECT FOUR":
+                    os.system(f'{pythonpath} {menu["options"][getin]["command"]}')
             else:
                 os.system(f'{pythonpath} {menu["options"][getin]["command"]}')
 
