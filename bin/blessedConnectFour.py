@@ -45,7 +45,11 @@ COL_SYMS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 
 class ConnectFour:
-    """A two-player connect four game."""
+    """A two-player connect four game.
+
+    The algorithm is based on ConnectFour by AlexZzander
+    https://github.com/AlexZzander/ConnectFour
+    """
 
     def __init__(self):
         """Initialises board size"""
