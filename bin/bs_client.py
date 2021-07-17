@@ -1,4 +1,5 @@
 import logging
+import time
 
 import bs_game
 from battleship.console import console
@@ -70,8 +71,10 @@ def main():
 
         if player_won:
             console.print("You won!")
+            time.sleep(3)
         else:
             console.print("You lost!")
+            time.sleep(3)
 
 
 if __name__ == "__main__":
