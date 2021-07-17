@@ -102,12 +102,12 @@ $ source venv/bin/activate
 ## Asset Credits
 
 - Shane Iveson (Logo)
-- Juhani Junkala (Menu sound effects)
-- BoxCat Games (Menu music)
+- Juhani Junkala ([SFX](https://juhanijunkala.com/))
+- BoxCat Games ([Music](https://freemusicarchive.org/music/BoxCat_Games))
 - dpren ([In-game music](https://freesound.org/people/dpren/sounds/320685/), CC BY 3.0 License)
 - Tissman (In-game sfx [1](https://freesound.org/people/Tissman/sounds/534815/) & [2](https://freesound.org/people/Tissman/sounds/534823/), CC0 1.0 License)
-- F.M.Audio ([In-game sfx](https://freesound.org/people/F.M.Audio/sounds/557141/), CC BY 3.0 License)
-- gamer127 ([In-game sfx](https://freesound.org/people/gamer127/sounds/457547/), CC0 1.0 License)
-- Lightning Editor ([In-game sfx](https://www.youtube.com/watch?v=HTXiJpCDiH4), CC BY License)
-- Free Sounds Library ([In-game sfx](https://www.youtube.com/watch?v=DroVubuGaGk), CC BY License)
+- F.M.Audio ([In-game SFX](https://freesound.org/people/F.M.Audio/sounds/557141/), CC BY 3.0 License)
+- gamer127 ([In-game SFX](https://freesound.org/people/gamer127/sounds/457547/), CC0 1.0 License)
+- Lightning Editor ([In-game SFX](https://www.youtube.com/watch?v=HTXiJpCDiH4), CC BY License)
+- Free Sounds Library ([In-game SFX](https://www.youtube.com/watch?v=DroVubuGaGk), CC BY License)
 - Bogozi ([In-game music](https://commons.wikimedia.org/wiki/File:Tetris_theme.ogg), CC0 3.0 License)
