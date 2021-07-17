@@ -18,12 +18,9 @@ playsound
 
 # Requirements for frameworks
 blessed~=1.18.1
-prompt_toolkit~=3.0.19
-urwid~=2.1.2
+# prompt_toolkit~=3.0.19 # nobody used it, i'll comment it for now - aph
+# urwid~=2.1.2 # nobody used it, i'll comment it for now - aph
 rich~=10.4.0
 
 # Requirements for ConnectFour
 numpy~=1.21
-
-# Requirements for Snake
-keyboard

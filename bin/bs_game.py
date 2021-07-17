@@ -6,7 +6,9 @@ from dataclasses import dataclass
 from itertools import chain, repeat
 from typing import Any, List, Tuple
 
-from console import console
+from battleship.console import console
+from play_sounds import play_file as playsound
+from play_sounds import play_while_running
 from rich.layout import Layout
 from rich.panel import Panel
 from rich.prompt import Prompt
@@ -24,10 +26,15 @@ SHIP_NAMES = {
 }
 PLAYER_SHIPS = [BATTLESHIP, SUBMARINE]  # Change this according to your needs.
 
+PATH = "bin/utils/sound/sfx_battleship_"
+sfx_explosion_path = PATH + "explosion.wav"
+sfx_splash_path = PATH + "water_splash.wav"
+
 
 layout = Layout(name="root")
 layout.split_column(
     Layout(name="adjust", size=1),
+    Layout(name="legend", size=3),
     Layout(name="header", size=3),
     Layout(name="main"),
     Layout(name="footer", size=3, visible=False)
@@ -40,7 +47,19 @@ layout["main"].split_row(
     Layout(name="left"),
     Layout(name="right")
 )
+
+# Insert blank line at the top to compensate for input line at the bottom
 layout["adjust"].update(Text(" "))
+
+# Key
+text = Text("Own Ship: \u2588 | Own Ship Hit: X | Enemy Ship Hit: \u2588 | Enemy Ship Miss: \u2588", justify="center")
+text.stylize("green on green", 10, 11)
+text.stylize("red on green", 28, 29)
+text.stylize("red on red", 48, 49)
+text.stylize("yellow on yellow", 69, 70)
+layout["legend"].update(
+    Panel(text, title="KEY")
+)
 
 
 class Error(ValueError):
@@ -197,8 +216,10 @@ def update_enemy_board(shot: Shot, board: Board):
     field = board[y][x]
 
     if shot.last_shot_hit or field == ENEMY_SHIP_HIT:
+        playsound(sfx_explosion_path, block=False)
         board[y][x] = ENEMY_SHIP_HIT
     else:
+        playsound(sfx_splash_path, block=False)
         board[y][x] = MISS
 
 
