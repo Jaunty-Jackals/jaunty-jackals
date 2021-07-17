@@ -8,7 +8,7 @@ from typing import Any, Generator, Union
 
 from minesweep.minesweep_utils import Rect, draw_rect, minmax, open_menu
 from play_sounds import play_file as playsound
-from play_sounds import play_while_running
+# from play_sounds import play_while_running
 
 path = "bin/utils/sound/sfx_minesweeper_"
 sfx_nav_path = path + "nav.wav"
@@ -209,25 +209,23 @@ class MineSweeper:
 
 def start_new_game(curse_context: Any) -> None:
     """Menu to start a new game"""
-    with play_while_running(sfx_bgm_path, block=True):
-        boxes = int(
-            open_menu(
-                curse_context, items=("100", "400", "625"), header="Number of Boxes"
-            )
+    boxes = int(
+        open_menu(
+            curse_context, items=("100", "400", "625"), header="Number of Boxes"
         )
-        mine_percents = [0.1, 0.2, 0.4, 0.6]
-        mines = [str(int(boxes * mp)) for mp in mine_percents]
-        sel_mines = int(
-            float(
-                open_menu(curse_context, items=tuple(mines), header="Number of Mines")
-            )
+    )
+    mine_percents = [0.1, 0.2, 0.4, 0.6]
+    mines = [str(int(boxes * mp)) for mp in mine_percents]
+    sel_mines = int(
+        float(
+            open_menu(curse_context, items=tuple(mines), header="Number of Mines")
         )
+    )
 
-        final_cols = int(minmax(sqrt(boxes), 0, curses.COLS - 3))
-        final_rows = int(minmax(sqrt(boxes), 0, curses.LINES - 5))
+    final_cols = int(minmax(sqrt(boxes), 0, curses.COLS - 3))
+    final_rows = int(minmax(sqrt(boxes), 0, curses.LINES - 5))
 
-    with play_while_running(sfx_ingame_path, block=True):
-        start_game(curse_context, final_cols, final_rows, sel_mines)
+    start_game(curse_context, final_cols, final_rows, sel_mines)
 
 
 def cursor_to_index(cursor_pos: Any, game_rect: Rect) -> Any:
