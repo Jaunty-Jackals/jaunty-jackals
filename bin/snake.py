@@ -107,7 +107,7 @@ def game(speed: int, process: multiprocessing.Process) -> None:
 
 def new_game_init(curses_ctx: Any, speed: int) -> None:
     """Menu to start a new game"""
-    t1 = multiprocessing.Process(target=playsound,args=(sfx_ingame_path, 1))
+    t1 = multiprocessing.Process(target=playsound, args=(sfx_ingame_path, 1))
     t1.start()
     curses.def_prog_mode()
     curses_ctx.clear()
@@ -133,7 +133,7 @@ def main(curses_ctx: Any) -> None:
             return  # to load back main menu
         if selection == "PLAY":
             selection = open_menu(
-            curses_ctx, items=("EASY", "NORMAL", "SNEK GO BRRR"), header="SPEED"
+                curses_ctx, items=("EASY", "NORMAL", "SNEK GO BRRR"), header="SPEED"
             )
             if selection == "EASY":
                 new_game_init(curses_ctx, speed=0.4)
@@ -142,6 +142,7 @@ def main(curses_ctx: Any) -> None:
             else:
                 new_game_init(curses_ctx, speed=.3/9)
 
+                
 if __name__ == "__main__":
     curses.wrapper(main)
     curses.endwin()
