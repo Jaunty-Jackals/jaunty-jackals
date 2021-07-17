@@ -19,10 +19,11 @@ tm = Terminal()
 HGT = tm.height
 WTH = tm.width
 
-STY_DEF = tm.bright_white_on_blue
-STY_ESC = tm.blue_on_bright_white
-STY_P1 = tm.bright_yellow_on_blue
-STY_P2 = tm.coral1_on_blue
+STY_DEF = tm.bright_white_on_black
+STY_ESC = tm.black_on_deepskyblue
+STY_COL = tm.deepskyblue_on_black
+STY_P1 = tm.gold_on_black
+STY_P2 = tm.tomato_on_black
 
 if HGT < 11 or WTH < 60:
     TITLE_TXT = ta.TITLE_S
@@ -209,13 +210,13 @@ class ConnectFour:
             )
             + head_row_txt
         )
-        print(head_row, end="", flush=True)
+        print(STY_COL + head_row + STY_DEF, end="", flush=True)
 
         for i in range(self.nrow):
             body_row_txt = ""  # * (WTH // 2 - (self.ncol * 4 + 1) // 2)
             for j in range(self.ncol):
-                body_row_txt += f"│ {self.mx[i][j]} "
-            body_row_txt += "│\n"
+                body_row_txt += (STY_COL + f"│ {STY_DEF + str(self.mx[i][j])} ")
+            body_row_txt += STY_COL + "│\n" + STY_DEF
             body_row = (
                 tm.move_xy(
                     WTH // 2 - (self.ncol * 4 + 1) // 2,
@@ -235,7 +236,7 @@ class ConnectFour:
             )
             + foot_row_txt
         )
-        print(foot_row, end="", flush=True)
+        print(STY_COL + foot_row + STY_DEF, end="", flush=True)
 
     def start(self) -> bool:
         """Plays game of set size"""
