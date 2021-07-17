@@ -259,16 +259,6 @@ def processmenu(menu: dict, parent: Any = None) -> None:
 
                 # Execute
                 os.system(f'{pythonpath} {menu["options"][getin]["command"]}')
-
-                # Reset terminal
-                os.system("reset")
-
-                # Inherit from selected base colour
-                curclrs = METADATA["palette"].alias
-                for i in range(len(curclrs)):
-                    _RGB = METADATA["palette"].to_rgb(curclrs[i], curses=True)
-                    curses.init_color(i, _RGB[0], _RGB[1], _RGB[2])
-                    screen.refresh()
             else:
                 pythonpath = "python"
                 os.system(f'{pythonpath} {menu["options"][getin]["command"]}')
