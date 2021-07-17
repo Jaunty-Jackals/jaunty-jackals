@@ -1,18 +1,14 @@
 """Snake."""
 
 import curses
+import multiprocessing
 import secrets
 import time
-
-# from multiprocessing.dummy import Pool as ThreadPool
 from platform import system
 from typing import Any
 
 from minesweep.minesweep_utils import open_menu
 from play_sounds import play_file as playsound
-from play_sounds import play_while_running
-
-# pool = ThreadPool(4)
 
 SYSOS = system().upper()
 
@@ -28,10 +24,9 @@ s = curses.KEY_DOWN
 d = curses.KEY_RIGHT
 
 
-def game(speed: float) -> None:
+def game(speed: int, process: multiprocessing.Process) -> None:
     """Snake game main code."""
     global action, SYSOS
-
     screen = curses.initscr()
     screen.nodelay(1)
     screen.keypad(1)
@@ -39,15 +34,12 @@ def game(speed: float) -> None:
     curses.cbreak()
     curses.start_color()
     curses.can_change_color()
-    screen.keypad(True)
-    screen.border(0)
 
-    dims = (
-        (screen.getmaxyx())[0],
-        (screen.getmaxyx())[1],
-    )  # ensure map size = terminal size
+    dims = screen.getmaxyx()
+
     head = [1, 1]
     body = [head[:]] * 5
+
     screen.border()
     direction = 0
     dead = 0
@@ -70,6 +62,8 @@ def game(speed: float) -> None:
                 remove[1],
                 " ",
             )
+            curses.curs_set(0)
+            screen.refresh()
         screen.addch(head[0], head[1], "■", curses.color_pair(2))
         action = screen.getch()
         if action == d and direction != 2:
@@ -92,32 +86,32 @@ def game(speed: float) -> None:
         for i in range(len(body) - 1, 0, -1):
             body[i] = body[i - 1][:]
         body[0] = head[:]
-        screen.refresh()
 
         snake_yummy_stdout = (16788260, 9679, 11044)
 
         if screen.inch(head[0], head[1]) != ord(" "):
             # Snake munched the yummy!
             if screen.inch(head[0], head[1]) in snake_yummy_stdout:
-                playsound(sfx_eat_path, block=False)
+                playsound(sfx_eat_path, 0)
                 apple = 0
                 body.append(body[-1])
             else:
+                process.terminate()
                 screen.clear()
                 screen.refresh()
                 dead = 1
-        screen.move(dims[0] - 1, dims[1] - 1)
         screen.refresh()
         time.sleep(speed)
 
 
-def new_game_init(curses_ctx: Any, speed: float) -> None:
+def new_game_init(curses_ctx: Any, speed: int) -> None:
     """Menu to start a new game"""
-    # with play_while_running(sfx_ingame_path, block=True): #problem cause
+    t1 = multiprocessing.Process(target=playsound, args=(sfx_ingame_path, 1))
+    t1.start()
     curses.def_prog_mode()
     curses_ctx.clear()
     curses_ctx.refresh()
-    game(speed)
+    game(speed, t1)
     curses_ctx.clear()
     curses.reset_prog_mode()  # reset to 'current' curses environment
     curses.curs_set(1)  # reset doesn't do this right
@@ -131,21 +125,19 @@ def main(curses_ctx: Any) -> None:
     curses.init_pair(2, 2, 0)  # snek
 
     while True:
-        selection = open_menu(curses_ctx, items=("PLAY", "EXIT"), header=" SNAKE ")
-        if selection == "EXIT":
+        selection = open_menu(curses_ctx, items=("PLAY", "QUIT"), header="SNAKE")
+        if selection == "QUIT":
             return  # to load back main menu
         if selection == "PLAY":
             selection = open_menu(
-                curses_ctx,
-                items=("EASY", "NORMAL", "SNEK GO BRRR"),
-                header=" DIFFICULTY ",
+                curses_ctx, items=("EASY", "NORMAL", "SNEK GO BRRR"), header="SPEED"
             )
             if selection == "EASY":
                 new_game_init(curses_ctx, speed=0.4)
             elif selection == "NORMAL":
                 new_game_init(curses_ctx, speed=0.1)
             else:
-                new_game_init(curses_ctx, speed=0.033)
+                new_game_init(curses_ctx, speed=0.3 / 9)
 
 
 if __name__ == "__main__":
