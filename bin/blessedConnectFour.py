@@ -11,8 +11,8 @@ from play_sounds import play_while_running as play_bgm
 # environment after running demo.py
 screen = curses.initscr()
 curses.cbreak()
-screen.keypad(1)
 curses.noecho()
+screen.keypad(1)
 curses.curs_set(1)
 
 tm = Terminal()
@@ -60,6 +60,9 @@ class ConnectFour:
             # clear the screen
             print(tm.home + STY_DEF + tm.clear)
 
+
+            #screen.getch()
+
             for i in range(len(LOGO_TXT)):
                 logo_part = (
                     tm.move_xy(
@@ -96,7 +99,7 @@ class ConnectFour:
             start = tm.move_xy(WTH // 2 - 8, HGT * 3 // 4) + "Press S to start"
             start_ers = tm.move_xy(WTH // 2 - 8, HGT * 3 // 4) + 16 * " "
             while True:
-                choice_sym = tm.inkey(timeout=0.75)
+                choice_sym = screen.getkey()
                 if choice_sym == "s":
                     break
                 if not start_txt:
@@ -127,20 +130,20 @@ class ConnectFour:
             try:
                 size_input = ""
                 while True:
-                    choice_sym = tm.inkey(timeout=0.25)
+                    choice_sym = screen.getch()
                     if not choice_sym:
                         continue
-                    elif choice_sym == chr(13):
+                    elif choice_sym in [10, 13]:
                         break
-                    elif choice_sym in [chr(8), chr(127)]:
+                    elif choice_sym in [8, 127]:
                         size_input = size_input[:-1]
                         mod_size_pd = tm.move_xy(
                             WTH // 2 - 2 + len(size_input), HGT // 2
                         )
                         print(mod_size_pd + " " + mod_size_pd, end="", flush=True)
-                    elif choice_sym.isdigit() or choice_sym in " x":
-                        print(choice_sym, end="", flush=True)
-                        size_input += choice_sym
+                    elif choice_sym in (list(range(48, 58)) + [32, 120]):
+                        print(chr(choice_sym), end="", flush=True)
+                        size_input += chr(choice_sym)
                 nrow, ncol = size_input.split("x", 2)
             except ValueError:
                 size_prpt = (
@@ -310,33 +313,33 @@ class ConnectFour:
 
                 while not valid:
                     try:
-                        choice_sym = tm.inkey(timeout=0.5)
+                        choice_sym = screen.getch()
                         if not choice_sym:
                             continue
-                        elif choice_sym == chr(27):
+                        elif choice_sym == 27:
                             print(
                                 prpt1_ers + prpt1_esc + prpt2_ers + prpt2_esc,
                                 end="",
                                 flush=True,
                             )
                             while True:
-                                choice_sym = tm.inkey(timeout=0.5)
+                                choice_sym = screen.getch()
                                 if not choice_sym:
                                     continue
-                                elif choice_sym == chr(13):
+                                elif choice_sym in [10, 13]:
                                     # press RETURN to continue
                                     if cur_player == 1:
                                         print(prpt1_ers + prpt1_p1, end="", flush=True)
                                     else:
                                         print(prpt1_ers + prpt1_p2, end="", flush=True)
                                     break
-                                elif choice_sym == "r":
+                                elif choice_sym == 114:
                                     # press R to restart
                                     return True
-                                elif choice_sym == chr(27):
+                                elif choice_sym == 27:
                                     # press ESC to quit
                                     return False
-                        choice = int(COL_SYMS.index(choice_sym.upper()))
+                        choice = int(COL_SYMS.index(chr(choice_sym).upper()))
 
                     except ValueError:
                         print(prpt2_ers + prpt2_err, end="", flush=True)
@@ -370,7 +373,7 @@ class ConnectFour:
 
             print(prpt2_ers + prpt2_end, end="", flush=True)
             while True:
-                choice_sym = tm.inkey(timeout=0.5)
+                choice_sym = screen.getkey()
                 if choice_sym == "r":
                     return True
                 if choice_sym == "q":
@@ -398,7 +401,7 @@ class ConnectFour:
     def drop(self, cur_player: int, col: int) -> int:
         """Drops a disc in a column"""
         for i in range(self.nrow):
-            choice_sym = tm.inkey(0.01)
+            choice_sym = screen.getkey(0.01)
             # just to use choice_sym somehow so flake8 is happy
             if choice_sym:
                 pass
