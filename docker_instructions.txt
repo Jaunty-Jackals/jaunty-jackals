@@ -1,0 +1,2 @@
+1) docker build  -t jaunty-jackals .
+2) docker run -it --name jaunty --env="DISPLAY"  jaunty-jackals
