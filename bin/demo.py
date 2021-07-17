@@ -5,8 +5,6 @@ from typing import Any
 
 from initload import initialize
 from play_sounds import play_file as playsound
-from play_sounds import play_loop
-from utils.macros.handy import jackal_logo
 from utils.palettes import palettes
 
 # Curses setup
@@ -30,12 +28,6 @@ METADATA = {
     "term_w_min": 122,
     "palette": palettes.Jackal(),
 }
-
-
-logo_sfx_path = "bin/utils/sound/sfx_logo_"
-intro_sfx = logo_sfx_path + "00.wav"
-intro_persistent = logo_sfx_path + "00b.wav"
-proc_intro = Process(target=play_loop, args=(intro_persistent, 1))
 
 # Import a colour palette as desired; see bin/utils/palettes/palettes.py
 # METADATA["palette"] = palettes.Gruvbox()
@@ -70,7 +62,7 @@ def colorinit(scr: Any, metadata: dict) -> None:
 
 # Change this to use different colors when highlighting
 curses.init_pair(3, 3, 0)  # menu title
-curses.init_pair(4, 1, 0)  # menu subtitle
+curses.init_pair(4, 5, 0)  # menu subtitle
 curses.init_pair(16, 10, 0)  # menu highlighted item
 curses.init_pair(17, 7, 0)  # menu normal item
 
@@ -143,7 +135,7 @@ def wipe(metadata: dict) -> None:
         os.system("clear")
 
 
-def displaymenu(menu: dict, parent: Any, bgm: Process) -> Any:
+def displaymenu(menu: dict, parent: Any) -> Any:
     """Displays the appropriate menu and returns the option selected"""
     # work out what text to display as the last menu option
     if parent is None:
@@ -166,13 +158,13 @@ def displaymenu(menu: dict, parent: Any, bgm: Process) -> Any:
             # Title
             screen.addstr(
                 1,  # y
-                2,  # x
+                curses.COLS // 2 - len(menu["title"]) // 2,  # x
                 menu["title"],
                 curses.color_pair(3),
             )
             # Subtitle
             screen.addstr(4,
-                          curses.COLS // 2 - len(menu["subtitle"]) // 2, menu["subtitle"], curses.color_pair(4))
+                          curses.COLS // 2 - len(menu["subtitle"]) // 2, menu["subtitle"], curses.COLOR_MAGENTA)
 
             # Display all the menu items, showing the 'pos' item highlighted
             for index in range(optioncount):
@@ -180,7 +172,7 @@ def displaymenu(menu: dict, parent: Any, bgm: Process) -> Any:
                 if pos == index:
                     textstyle = selected
                 screen.addstr(
-                    6 + index * 2,  # y
+                    curses.LINES // 4 + 2 + index * 3,  # y
                     curses.COLS // 2 - len(menu["options"][index]["title"]) // 2,  # x
                     f'{menu["options"][index]["title"]}',
                     textstyle,
@@ -191,7 +183,7 @@ def displaymenu(menu: dict, parent: Any, bgm: Process) -> Any:
             if pos == optioncount:
                 textstyle = selected
             screen.addstr(
-                5 + optioncount * 2 + 1,
+                curses.LINES // 4 + 2 + optioncount * 3 + 1,
                 curses.COLS // 2 - len(lastoption) // 2,
                 f'{lastoption}',
                 textstyle,
@@ -229,14 +221,14 @@ def displaymenu(menu: dict, parent: Any, bgm: Process) -> Any:
     return pos
 
 
-def processmenu(menu: dict, bgm: Process = None, parent: Any = None) -> None:
+def processmenu(menu: dict, parent: Any = None) -> None:
     """Calls Showmenu and acts on the selected item"""
     global METADATA
     optioncount = len(menu["options"])
     exitmenu = False
 
     while not exitmenu:
-        getin = displaymenu(menu, proc_intro, parent)
+        getin = displaymenu(menu, parent)
 
         if getin == optioncount:
             exitmenu = True
@@ -263,12 +255,8 @@ def processmenu(menu: dict, bgm: Process = None, parent: Any = None) -> None:
                     screen.refresh()
 
                 # Execute
-                if bgm is not None:
-                    bgm.terminate()
                 os.system(f'{pythonpath} {menu["options"][getin]["command"]}')
             else:
-                if bgm is not None:
-                    bgm.terminate()
                 os.system(f'{pythonpath} {menu["options"][getin]["command"]}')
 
             # clear on keypress and update with new position
@@ -310,7 +298,7 @@ def processmenu(menu: dict, bgm: Process = None, parent: Any = None) -> None:
 
         elif menu["options"][getin]["type"] == MENU:
             screen.clear()
-            processmenu(menu["options"][getin], proc_intro, menu)
+            processmenu(menu["options"][getin], menu)
             screen.clear()
             curses.curs_set(1)  # reset doesn't do this right
             curses.curs_set(0)
@@ -323,15 +311,9 @@ if __name__ == "__main__":
     # Run initload
     METADATA = initialize(METADATA)
     wipe(METADATA)
-
-    # Run logo sequence
-    playsound(intro_sfx)
-    proc_intro.start()
-    jackal_logo(METADATA)
     screen.clear()
 
     # Do menu things
-    processmenu(menu_data, proc_intro)
-    proc_intro.terminate()
+    processmenu(menu_data)
     curses.endwin()
     wipe(METADATA)
