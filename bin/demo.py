@@ -1,10 +1,12 @@
 import curses
 import os
+from os import environ as _env
 from typing import Any
 
 from initload import initialize
 from play_sounds import play_file as playsound
-from play_sounds import play_while_running
+
+# from play_sounds import play_while_running
 from utils.palettes import palettes
 
 # Curses setup
@@ -25,7 +27,7 @@ METADATA = {
     "term_w_cur": None,
     "term_w_max": 106,
     "term_w_min": 80,
-    "palette": palettes.Base16(),
+    "palette": palettes.Jackal(),
 }
 
 # Run initload
@@ -36,7 +38,7 @@ screen.clear()
 # p = palettes.Gruvbox()
 
 
-def colorinit(scr: object, metadata: dict) -> None:
+def colorinit(scr: Any, metadata: dict) -> None:
     """Changes the colour theme of the screen."""
     curclrs = metadata["palette"].alias  # contains the list of colour name aliases
 
@@ -251,31 +253,31 @@ def processmenu(menu: dict, parent: Any = None) -> None:
         if getin == optioncount:
             exitmenu = True
 
-        # elif menu["options"][getin]["type"] == PYCOMMAND:
-        #     if menu["options"][getin]["title"].lower == 'minesweeper':
-        #         curses.reset_prog_mode()
-        #         wipe(METADATA)
-        #         curses.wrapper(minesweep.main)
-        #         screen.clear()
-        #         curses.curs_set(1)
-        #         curses.curs_set(0)
-
         elif menu["options"][getin]["type"] == COMMAND:
-            # save curent curses environment
+            # Save curent curses environment
             curses.def_prog_mode()
             wipe(METADATA)
 
-            # clears previous screen
+            # Clears previous screen
             screen.clear()
 
             # run the command
             pythonpath = "venv/bin/python"
-            if METADATA['os'] != 'WINDOWS':
-                os.system('reset')
+            if METADATA["os"] != "WINDOWS":
+                # Reset terminal
+                os.system("reset")
+
+                # Inherit from selected base colour
+                curclrs = METADATA["palette"].alias
+                for i in range(len(curclrs)):
+                    _RGB = METADATA["palette"].to_rgb(curclrs[i], curses=True)
+                    curses.init_color(i, _RGB[0], _RGB[1], _RGB[2])
+                    screen.refresh()
+
+                # Execute
                 os.system(f'{pythonpath} {menu["options"][getin]["command"]}')
             else:
                 pythonpath = "python"
-
                 os.system(f'{pythonpath} {menu["options"][getin]["command"]}')
 
             # clear on keypress and update with new position
