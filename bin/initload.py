@@ -23,6 +23,7 @@ def initialize(metadata: dict) -> dict:
     curses.can_change_color()
     screen.keypad(True)
     screen.border(0)
+    curses.curs_set(0)
 
     # Happy sound
     initsound = "bin/utils/sound/sfx_init.wav"
