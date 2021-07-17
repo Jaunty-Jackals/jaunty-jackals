@@ -1,10 +1,10 @@
 import curses
 import locale
-import sys
 from typing import TYPE_CHECKING, Any, Callable, Dict
 
-from play_sounds import play_file as playsound
-from play_sounds import play_while_running
+from multiprocessing import Process
+from play_sounds import play_file as sfx
+from play_sounds import play_while_running as bgm
 from tetris.core import Game
 from tetris.exceptions import CollisionError, OutOfBoundsError
 from tetris.user_interface import UserInterface, create_screens, make_color_pairs
@@ -27,9 +27,16 @@ KEY_BINDINGS: KeyBindings = {
     ord("d"): lambda tetromino: tetromino.rotate("right"),
 }
 
+sfxpath = "bin/utils/sound/sfx_tetris_"
+ingame = sfxpath + "theme.wav"
+silence = "bin/utils/sound/sfx_shutup.wav"
+
+ingame_play = Process(target=sfx, args=(ingame, ))
+
 
 def main(stdscr: Window) -> None:
     """Main function called from outside with all attributes"""
+    global ingame_play
     locale.setlocale(locale.LC_ALL, "")
     stdscr.nodelay(True)
     curses.curs_set(False)
@@ -46,6 +53,7 @@ def main(stdscr: Window) -> None:
 
     user_interface = UserInterface(stdscr, inner_screen)
     game = Game(inner_screen, user_interface)
+    ingame_play.start()
 
     while True:
         for screen in (inner_screen, border_screen, stdscr):
@@ -71,18 +79,24 @@ def main(stdscr: Window) -> None:
         except curses.error:
             continue
         except KeyboardInterrupt:
-            sys.exit()
+            sfx(silence, block=True)
+            ingame_play.terminate()
+            return
 
         if user_input == ord("p"):
             game.pause()
 
         elif user_input == ord("q"):
+            sfx(silence, block=True)
+            ingame_play.terminate()
             return
 
         elif not game.paused and user_input in KEY_BINDINGS:
             try:
                 KEY_BINDINGS[user_input](game.tetromino)
             except (CollisionError, OutOfBoundsError):
+                sfx(silence, block=True)
+                ingame_play.terminate()
                 continue
 
 
