@@ -3,19 +3,12 @@ import time
 from random import randint
 from typing import Any
 
-jackal_ascii_small = (
-    "...                  `..`\n"
-    "` :s:`             .o+`` \n"
-    " ` .do.         ``om/ `` \n"
-    " `` /o/ ``    `` /h:```  \n"
-    "  `` ``          `` ``   \n"
-    "   .  `..-. ` .--.` ``   \n"
-    "   `  ``-:.   .--.` ``   \n"
-    "   ``` `  `   ````.`.`   \n"
-    " ```.```..`:h/``.``` ` ``\n"
-    ".`  ``....-:s::.-...``  .\n"
-    " ` ```             ``````\n"
-)
+from play_sounds import play_file as play
+
+sound_path = "bin/utils/sound/sfx_logo_"
+opening = sound_path + "01.wav"
+closing = sound_path + "02.wav"
+
 jackal_ascii_medium = [
     " ╒╖_                                  ▄π ",
     " ÑÑ▌v_                            ▄φ▓▒▌ ",
@@ -37,9 +30,97 @@ jackal_ascii_medium = [
 ]
 
 
-def jackal_logo(screen: Any) -> None:
+def jackal_logo(metadata: dict) -> None:
     """Jaunty Jackals logo"""
-    pass
+    screen = curses.initscr()
+    curses.noecho()
+    curses.cbreak()
+    curses.start_color()
+    curses.can_change_color()
+    curses.curs_set(0)
+    screen.keypad(True)
+    screen.border(0)
+
+    # max_y = metadata["term_h_max"]
+    # max_x = metadata["term_w_max"]
+
+    # mypad = curses.newpad(max_y, max_x)
+    mypad = curses.newpad(120, 120)
+    mypad_pos = 0
+
+    credit_text = """\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                    ╒╖_                                  ▄π
+                                     ÑÑ▌v_                            ▄φ▓▒▌
+                                     ▌▒▒▌_▀▄                       ▄∞│▄▒▒▐
+                                     ╫î▒▒█⌐ █W▄                 _█▀ *█▒▒LΓ
+                                      ▌Ü▒▒▀⌐ ▀╙W            ,_m▒█▄ ▄█▒▒▒▀
+                                      ╙▄Ü▒▓▌└█▀░╙M█▀▒▒╙└└╙╙▀▄░░▀╝ ▄▒▒▒▒▀
+                                       ╙▌▒▒▒█▄Z░░░░░░░░░░░░░░░░▀▀¢▒▒▒▒▀
+                                        ▀▀▒▒└░░░░░░░░░░░░░░░░░░░░│▒┴▒╞
+                                         └▒░░░▄ª  ⁿªj░░¿░░╒`└▄__ª¿░░Γ▌
+                                          ▌░░░▒µ███▒▀░░╚░░j▀██▌█▒░░░▒▌
+                                          ╞▒░░▐`└"╩└┌▒░░░░░▌╙^└ ╘W░░yL
+                                          ╒▌▒░░½...▒M▒▒▒▒▒░▒...⌂▒│░▄▀
+                                         _█▄▌▒▒TY>≈┌"▒▒▄▄▄▒ ╘▒▒▄⌂"█▀╩▒▒▒½▄
+                                      ▄Φ└░▄╜``j═#M▄ - ████─ .▄▄z≈    "┤░░└W
+                                      Ö░░░└L.╕ `²╙▒Ay▄▄╣▀▄▄▄∞╙ _.«╖▄J▌░░░░j┘
+                                     ╪░░░░░┘░█└     ` ⁿ╜╝╜``  ` ``_▌░░░░░░j─
+                                     ╘▄░░░░▄¥                      └╜▒▄▄▄4╜
+
+
+
+
+
+                                     ██╗ █████╗  ██████╗██╗  ██╗ █████╗ ██╗
+                                     ██║██╔══██╗██╔════╝██║ ██╔╝██╔══██╗██║
+                                     ██║███████║██║     █████╔╝ ███████║██║
+                                ██   ██║██╔══██║██║     ██╔═██╗ ██╔══██║██║
+                                ╚█████╔╝██║  ██║╚██████╗██║  ██╗██║  ██║███████╗
+                                 ╚════╝ ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝
+
+                                 ██████╗  █████╗ ███╗   ███╗██╗███╗   ██╗ ██████╗
+                                ██╔════╝ ██╔══██╗████╗ ████║██║████╗  ██║██╔════╝
+                                ██║  ███╗███████║██╔████╔██║██║██╔██╗ ██║██║  ███╗
+                                ██║   ██║██╔══██║██║╚██╔╝██║██║██║╚██╗██║██║   ██║
+                                ╚██████╔╝██║  ██║██║ ╚═╝ ██║██║██║ ╚████║╚██████╔╝
+                                 ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝
+
+
+
+
+
+
+    """
+    mypad.addstr(credit_text)
+    mypad.refresh(mypad_pos, 0, 5, 5, 40, 120)
+    # play(opening, block=True)
+    # play(closing, block=False)
+
+    for _ in range(80):
+        mypad_pos += 1
+        mypad.refresh(mypad_pos, 0, 5, 5, 40, 120)
+        time.sleep(0.1)
+        if _ == 17:
+            play(opening, block=False)
+        elif _ == 22:
+            play(closing, block=False)
 
 
 rsleep = float(randint(-10, 10) / 10)
