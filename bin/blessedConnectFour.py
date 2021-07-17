@@ -95,7 +95,10 @@ class ConnectFour:
             start_txt = False
             start = tm.move_xy(WTH // 2 - 8, HGT * 3 // 4) + "Press S to start"
             start_ers = tm.move_xy(WTH // 2 - 8, HGT * 3 // 4) + 16 * " "
-            while tm.inkey(timeout=0.75) != "s":
+            while True:
+                choice_sym = tm.inkey(timeout=0.75)
+                if choice_sym == "s":
+                    break
                 if not start_txt:
                     print(start, end="", flush=True)
                     start_txt = True
