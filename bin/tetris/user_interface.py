@@ -55,7 +55,9 @@ class UserInterface:
         x = (curses.COLS - SCREEN_WIDTH) // 2 - 1
         self.stdscr.addstr(y, x, f" SCORE: {score} ", curses.A_BOLD)
 
-    def render_next_tetromino(self, tetromino: Tetromino) -> None:  # pylint: disable=no-self-use
+    def render_next_tetromino(
+        self, tetromino: Tetromino
+    ) -> None:  # pylint: disable=no-self-use
         """Renders incoming tetromino at the right-hand side of the play field."""
         y = (curses.LINES - SCREEN_HEIGHT) // 2
         x = (curses.COLS - SCREEN_WIDTH) // 2
@@ -89,7 +91,9 @@ class UserInterface:
         idx = 2
         for name, control in controls:
             self.stdscr.addstr(y + idx, x + SCREEN_WIDTH + 6, name, curses.A_DIM)
-            self.stdscr.addstr(y + idx, x + SCREEN_WIDTH + 8 + len(name), control, curses.A_DIM)
+            self.stdscr.addstr(
+                y + idx, x + SCREEN_WIDTH + 8 + len(name), control, curses.A_DIM
+            )
             idx += 2
 
     def render_landed_tetrominos(self, grid: List[List[List[Optional[int]]]]) -> None:

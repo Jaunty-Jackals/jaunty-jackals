@@ -8,6 +8,7 @@ from typing import Any, Generator, Union
 
 from minesweep.minesweep_utils import Rect, draw_rect, minmax, open_menu
 from play_sounds import play_file as playsound
+
 # from play_sounds import play_while_running
 
 path = "bin/utils/sound/sfx_minesweeper_"
@@ -210,16 +211,12 @@ class MineSweeper:
 def start_new_game(curse_context: Any) -> None:
     """Menu to start a new game"""
     boxes = int(
-        open_menu(
-            curse_context, items=("100", "400", "625"), header="Number of Boxes"
-        )
+        open_menu(curse_context, items=("100", "400", "625"), header="Number of Boxes")
     )
     mine_percents = [0.1, 0.2, 0.4, 0.6]
     mines = [str(int(boxes * mp)) for mp in mine_percents]
     sel_mines = int(
-        float(
-            open_menu(curse_context, items=tuple(mines), header="Number of Mines")
-        )
+        float(open_menu(curse_context, items=tuple(mines), header="Number of Mines"))
     )
 
     final_cols = int(minmax(sqrt(boxes), 0, curses.COLS - 3))

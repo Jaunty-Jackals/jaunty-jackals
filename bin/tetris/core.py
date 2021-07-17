@@ -8,7 +8,8 @@ from tetris.exceptions import CollisionError, GameOverError, OutOfBoundsError
 from tetris.utils import Window
 
 if TYPE_CHECKING:
-    from tetris.user_interface import UserInterface  # pylint: disable=cyclic-import
+    from tetris.user_interface import \
+        UserInterface  # pylint: disable=cyclic-import
 else:
     UserInterface = Any
 
@@ -135,7 +136,10 @@ class Tetromino:
                     y, x = self.topleft
                     if colidx + x + DIRECTIONS[direction] not in range(GRID_WIDTH):
                         raise OutOfBoundsError
-                    if self.grid[rowidx + y][colidx + x + DIRECTIONS[direction]][0] != 0:
+                    if (
+                        self.grid[rowidx + y][colidx + x + DIRECTIONS[direction]][0]
+                        != 0
+                    ):
                         raise CollisionError
 
         self.topleft[1] += DIRECTIONS[direction]

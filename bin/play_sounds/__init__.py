@@ -9,8 +9,7 @@ from .base import (
     play_file,
     play_file_async,
     play_while_running,
-    play_while_running_async,
+    play_while_running_async
 )
-
 # export bell
 from .bell import bell, bell_after

@@ -68,7 +68,7 @@ def initialize(metadata: dict) -> dict:
 
         # System environment settings
         _envk = list(_env.keys())
-        _envv = list(_env.values())
+        # _envv = list(_env.values())
 
         # Check OS
         status(
@@ -236,6 +236,15 @@ def initialize(metadata: dict) -> dict:
                 pos=[acpi_pos_y, acpi_pos_x],
                 sleep=1.0,
             )
+            acpi_pos_y += 1
+            status(
+                screen,
+                "you must be in a virtual environment!".upper(),
+                passed=False,
+                pos=[acpi_pos_y, acpi_pos_x],
+                sleep=5.0,
+            )
+            break
 
         # Detect screensize
         status(screen, "screen size".upper(), passed=None, pos=[acpi_pos_y, acpi_pos_x])
