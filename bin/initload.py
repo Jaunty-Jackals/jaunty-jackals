@@ -1,9 +1,10 @@
 import curses
+import time
 from os import environ as _env
 from platform import python_version, system
 
 from play_sounds import play_file as playsound
-from utils.macros.handy import status
+from utils.macros.handy import jackal_logo, status
 from utils.palettes import palettes
 
 
@@ -156,7 +157,7 @@ def initialize(metadata: dict) -> dict:
                 if int(py_ver[2]) == 9 and int(py_ver[4]) in (2, 5, 6):
                     status(
                         screen,
-                        f"Python {py_ver} DETECTED    ",
+                        f"Python {py_ver} DETECTED    ".upper(),
                         passed=True,
                         pos=[acpi_pos_y, acpi_pos_x],
                     )
@@ -165,7 +166,7 @@ def initialize(metadata: dict) -> dict:
                 else:
                     status(
                         screen,
-                        f"Python {py_ver} DETECTED    ",
+                        f"Python {py_ver} DETECTED    ".upper(),
                         passed=True,
                         pos=[acpi_pos_y, acpi_pos_x],
                     )
@@ -271,12 +272,13 @@ def initialize(metadata: dict) -> dict:
             status(
                 screen,
                 f'screen width of {screen_x} is smaller than the recommended {metadata["term_w_min"]}'.upper(),
-                passed="warn",
+                passed=False,
                 pos=[acpi_pos_y, acpi_pos_x],
-                sleep=0.5,
+                sleep=2.0,
             )
             screen.refresh()
             acpi_pos_y += 1
+            break
 
         # Width is too long
         elif screen_x > metadata["term_w_max"]:
@@ -297,11 +299,13 @@ def initialize(metadata: dict) -> dict:
             status(
                 screen,
                 f'screen height of {screen_y} is smaller than the recommended {metadata["term_h_min"]}'.upper(),
-                passed="warn",
+                passed=False,
                 pos=[acpi_pos_y, acpi_pos_x],
+                sleep=2.0
             )
             screen.refresh()
             acpi_pos_y += 1
+            break
 
         # Height is too long
         elif screen_y > metadata["term_h_max"]:
@@ -314,7 +318,10 @@ def initialize(metadata: dict) -> dict:
                 sleep=1.0,
             )
             screen.refresh()
-            acpi_pos_y += 1
+
+        time.sleep(1.0)
+        screen.clear()
+        jackal_logo(metadata)
 
         complete = True
 
