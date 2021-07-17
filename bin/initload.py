@@ -30,7 +30,7 @@ def initialize(metadata: dict) -> dict:
 
     while not complete:
 
-        p = palettes.Base16()
+        p = palettes.Jackal()
         curclrs = p.alias
 
         for i in range(len(curclrs)):
@@ -89,9 +89,33 @@ def initialize(metadata: dict) -> dict:
             # Show some _env values
             _envk = list(_env.keys())
             _envv = list(_env.values())
+            windows_terminal = []
+
+            for key in _envk:
+                if "WT_" in key:
+                    windows_terminal.append(key)
+
+            if len(windows_terminal) != 0:
+                playsound(warnsound, block=True)
+                status(
+                    screen,
+                    "windows terminal detected".upper(),
+                    passed="Warn",
+                    pos=[acpi_pos_y, acpi_pos_x],
+                    sleep=1.0
+                )
+                acpi_pos_y += 1
+                playsound(warnsound, block=True)
+                status(
+                    screen,
+                    "users may not be able to change color themes".upper(),
+                    passed="Warn",
+                    pos=[acpi_pos_y, acpi_pos_x],
+                    sleep=2.0
+                )
+                acpi_pos_y += 1
 
             # Ensure position y is not overflowing
-
             for i in range(10 - acpi_pos_y):
                 status(
                     screen,
