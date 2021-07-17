@@ -103,3 +103,7 @@ $ source venv/bin/python
 - Shane Iveson (Logo)
 - Juhani Junkala (Menu sound effects)
 - BoxCat Games (Menu music)
+- dpren ([In-game music](https://freesound.org/people/dpren/sounds/320685/), CC BY 3.0 License)
+- Tissman (In-game sfx [1](https://freesound.org/people/Tissman/sounds/534815/) & [2](https://freesound.org/people/Tissman/sounds/534823/), CC0 1.0 License)
+- F.M.Audio ([In-game sfx](https://freesound.org/people/F.M.Audio/sounds/557141/), CC BY 3.0 License)
+- gamer127 ([In-game sfx](https://freesound.org/people/gamer127/sounds/457547/), CC0 1.0 License)
