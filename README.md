@@ -39,7 +39,7 @@ C:~\jaunty-jackals\> python -m venv venv
 C:~\jaunty-jackals\> .\venv\Scripts\activate
 
 # Install requirements
-(venv) C:~\jaunty-jackals\> pip install -r requirements/windows.txt
+(venv) C:~\jaunty-jackals\> pip install -r requirements.txt
 ```
 
 #### macOS <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Apple_Computer_Logo_rainbow.svg" width="16">
@@ -55,7 +55,7 @@ $ python -m venv venv
 $ source venv/bin/activate
 
 # Install requirements
-(venv) $ pip install -r requirements/macos.txt
+(venv) $ pip install -r requirements.txt
 ```
 
 #### Linux <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Tux_Classic_flat_look_3D.svg/1920px-Tux_Classic_flat_look_3D.svg.png" width="16">
@@ -71,7 +71,7 @@ $ python -m venv venv
 $ source venv/bin/activate
 
 # Install the requirements
-(venv) $ python -m pip install -r requirements/dev-requirements.txt
+(venv) $ pip install -r requirements.txt
 ```
 
 ### 3. Run the app
