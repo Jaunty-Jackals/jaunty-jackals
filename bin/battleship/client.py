@@ -19,8 +19,14 @@ def main():
     player_turn = not is_server
 
     if not is_server:
-        host = Prompt.ask("Enter hostname (default: localhost)", default="localhost", show_default=False)
-        port = IntPrompt.ask("Enter port (default: 5000)", default=5000, show_default=False)
+        host = Prompt.ask(
+            "Enter hostname (default: localhost)",
+            default="localhost",
+            show_default=False,
+        )
+        port = IntPrompt.ask(
+            "Enter port (default: 5000)", default=5000, show_default=False
+        )
 
     with game.Network(host, port, is_server) as net:
         # Initialise

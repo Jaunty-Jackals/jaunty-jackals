@@ -14,8 +14,20 @@ from rich.table import Table
 from rich.text import Text
 
 PERMITTED_LETTERS = "abcdefghij0123456789-"
-FIELDS = [EMPTY, OWN_SHIP, OWN_SHIP_HIT, ENEMY_SHIP_HIT, MISS, OWN_SHIP_ENEMY_SHIP_HIT] = 0, 1, 2, 3, 4, 5
-SHIP_TYPES = [BATTLESHIP, CRUISER, DESTROYER, SUBMARINE] = 5, 4, 3, 2  # Supported ship types.
+FIELDS = [
+    EMPTY,
+    OWN_SHIP,
+    OWN_SHIP_HIT,
+    ENEMY_SHIP_HIT,
+    MISS,
+    OWN_SHIP_ENEMY_SHIP_HIT,
+] = (0, 1, 2, 3, 4, 5)
+SHIP_TYPES = [BATTLESHIP, CRUISER, DESTROYER, SUBMARINE] = (
+    5,
+    4,
+    3,
+    2,
+)  # Supported ship types.
 SHIP_NAMES = {
     BATTLESHIP: "Battleship",
     CRUISER: "Cruiser",
@@ -31,29 +43,24 @@ layout.split_column(
     Layout(name="legend", size=3),
     Layout(name="header", size=3),
     Layout(name="main"),
-    Layout(name="footer", size=3, visible=False)
+    Layout(name="footer", size=3, visible=False),
 )
-layout["header"].split_row(
-    Layout(name="header_left"),
-    Layout(name="header_right")
-)
-layout["main"].split_row(
-    Layout(name="left"),
-    Layout(name="right")
-)
+layout["header"].split_row(Layout(name="header_left"), Layout(name="header_right"))
+layout["main"].split_row(Layout(name="left"), Layout(name="right"))
 
 # Insert blank line at the top to compensate for input line at the bottom
 layout["adjust"].update(Text(" "))
 
 # Key
-text = Text("Own Ship: \u2588 | Own Ship Hit: X | Enemy Ship Hit: \u2588 | Enemy Ship Miss: \u2588", justify="center")
+text = Text(
+    "Own Ship: \u2588 | Own Ship Hit: X | Enemy Ship Hit: \u2588 | Enemy Ship Miss: \u2588",
+    justify="center",
+)
 text.stylize("green on green", 10, 11)
 text.stylize("red on green", 28, 29)
 text.stylize("red on red", 48, 49)
 text.stylize("yellow on yellow", 69, 70)
-layout["legend"].update(
-    Panel(text, title="KEY")
-)
+layout["legend"].update(Panel(text, title="KEY"))
 
 
 class Error(ValueError):
@@ -154,13 +161,21 @@ def print_boards(board: Board, enemy_board: Board) -> None:
     layout["left"].update(Panel(your_table, expand=False))
     layout["right"].update(Panel(enemy_table, expand=False))
 
-    layout["header_left"].update(Panel(Text(
-        f"Your Score: {list(chain.from_iterable(enemy_board)).count(ENEMY_SHIP_HIT)}/{sum(PLAYER_SHIPS)}",
-        justify="center"))
+    layout["header_left"].update(
+        Panel(
+            Text(
+                f"Your Score: {list(chain.from_iterable(enemy_board)).count(ENEMY_SHIP_HIT)}/{sum(PLAYER_SHIPS)}",
+                justify="center",
+            )
+        )
     )
-    layout["header_right"].update(Panel(Text(
-        f"Enemy Score: {list(chain.from_iterable(board)).count(OWN_SHIP_HIT)}/{sum(PLAYER_SHIPS)}",
-        justify="center"))
+    layout["header_right"].update(
+        Panel(
+            Text(
+                f"Enemy Score: {list(chain.from_iterable(board)).count(OWN_SHIP_HIT)}/{sum(PLAYER_SHIPS)}",
+                justify="center",
+            )
+        )
     )
 
     # Clear the screen on Windows
