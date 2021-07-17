@@ -8,8 +8,7 @@ from typing import Any, Generator, Union
 
 from minesweep.minesweep_utils import Rect, draw_rect, minmax, open_menu
 from play_sounds import play_file as playsound
-
-# from play_sounds import play_while_running
+from play_sounds import play_while_running
 
 path = "bin/utils/sound/sfx_minesweeper_"
 sfx_nav_path = path + "nav.wav"
@@ -221,8 +220,8 @@ def start_new_game(curse_context: Any) -> None:
 
     final_cols = int(minmax(sqrt(boxes), 0, curses.COLS - 3))
     final_rows = int(minmax(sqrt(boxes), 0, curses.LINES - 5))
-
-    start_game(curse_context, final_cols, final_rows, sel_mines)
+    with play_while_running(sfx_ingame_path):
+        start_game(curse_context, final_cols, final_rows, sel_mines)
 
 
 def cursor_to_index(cursor_pos: Any, game_rect: Rect) -> Any:
@@ -233,9 +232,9 @@ def cursor_to_index(cursor_pos: Any, game_rect: Rect) -> Any:
 def get_header(curse_context: Any, game: Any) -> Rect:
     """Returns the header for the game"""
     if game.is_solved():
-        text = "Congratulations, You Won!"
+        text = "VICTORY!"
     elif game.is_lost():
-        text = "You Lost!"
+        text = "GAME OVER!"
     else:
         remaining = game.mines.count(True) - game.flags.count(Flags.MARKED)
         text = "Remaining Mines: {0}".format(remaining)
@@ -249,10 +248,10 @@ def get_footer(curse_context: Any, game: Any) -> Rect:
         controls = [("Press any key to continue", "")]
     else:
         controls = [
-            ("Navigate:", "\u2190 \u2192 \u2191 \u2193"),
-            ("Reveal:", "Space \u2423"),
-            ("Toggle Mark:", "Enter \u23CE"),
-            ("Menu:", "Escape Esc"),
+            ("Navigate:".upper(), "\u2190 \u2192 \u2191 \u2193"),
+            ("Reveal:".upper(), "Space \u2423"),
+            ("Toggle Mark:".upper(), "Enter \u23CE"),
+            ("Menu:".upper(), "Escape Esc"),
         ]
     offset = 0
     for name, control in controls:
