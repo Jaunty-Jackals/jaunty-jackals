@@ -15,6 +15,8 @@ if TYPE_CHECKING:
 else:
     Tetromino = Any
 
+sound_path = "bin/utils/sound/sfx_tetris_"
+sfx_ingame_path = sound_path + "theme.wav"
 
 KeyBindings = Dict[int, Callable[[Tetromino], None]]
 
@@ -26,6 +28,12 @@ KEY_BINDINGS: KeyBindings = {
     ord("a"): lambda tetromino: tetromino.rotate("left"),
     ord("d"): lambda tetromino: tetromino.rotate("right"),
 }
+
+
+def start_new_game(curse_context: Window) -> None:
+    """Prompt to start a new game"""
+    with play_while_running(sfx_ingame_path):
+        main(curse_context)
 
 
 def main(stdscr: Window) -> None:
@@ -87,5 +95,5 @@ def main(stdscr: Window) -> None:
 
 
 if __name__ == "__main__":
-    curses.wrapper(main)
+    curses.wrapper(start_new_game)
     curses.endwin()
