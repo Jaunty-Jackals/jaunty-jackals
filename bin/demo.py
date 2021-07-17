@@ -107,6 +107,11 @@ menu_data = {
             "type": COMMAND,
             "command": "bin/snake.py",
         },
+        {
+            "title": "TETRIS",
+            "type": COMMAND,
+            "command": "bin/tetris.py",
+        },
         # {
         #     "title": "CONTENT D - has submenus",
         #     "type": MENU,

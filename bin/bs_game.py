@@ -6,7 +6,9 @@ from dataclasses import dataclass
 from itertools import chain, repeat
 from typing import Any, List, Tuple
 
-from console import console
+from battleship.console import console
+from play_sounds import play_file as playsound
+from play_sounds import play_while_running
 from rich.layout import Layout
 from rich.panel import Panel
 from rich.prompt import Prompt
@@ -35,6 +37,10 @@ SHIP_NAMES = {
     SUBMARINE: "Submarine",
 }
 PLAYER_SHIPS = [BATTLESHIP, SUBMARINE]  # Change this according to your needs.
+
+PATH = "bin/utils/sound/sfx_battleship_"
+sfx_explosion_path = PATH + "explosion.wav"
+sfx_splash_path = PATH + "water_splash.wav"
 
 
 layout = Layout(name="root")
@@ -225,8 +231,10 @@ def update_enemy_board(shot: Shot, board: Board):
     field = board[y][x]
 
     if shot.last_shot_hit or field == ENEMY_SHIP_HIT:
+        playsound(sfx_explosion_path, block=False)
         board[y][x] = ENEMY_SHIP_HIT
     else:
+        playsound(sfx_splash_path, block=False)
         board[y][x] = MISS
 
 

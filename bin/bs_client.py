@@ -1,7 +1,7 @@
 import logging
 
-import game
-from console import console
+import bs_game
+from battleship.console import console
 from rich.prompt import IntPrompt, Prompt
 
 logging.basicConfig(filename="log.log", level=logging.DEBUG)
@@ -28,22 +28,22 @@ def main():
             "Enter port (default: 5000)", default=5000, show_default=False
         )
 
-    with game.Network(host, port, is_server) as net:
+    with bs_game.Network(host, port, is_server) as net:
         # Initialise
-        player_board = game.create_empty_board()
-        enemy_board = game.create_empty_board()
+        player_board = bs_game.create_empty_board()
+        enemy_board = bs_game.create_empty_board()
 
-        game.place_ships(player_board, enemy_board)
+        bs_game.place_ships(player_board, enemy_board)
 
         console.print("Okay, let's start:")
-        game.print_boards(player_board, enemy_board)
+        bs_game.print_boards(player_board, enemy_board)
 
         # Game on
-        while not game.player_lost(player_board):
+        while not bs_game.player_lost(player_board):
 
             if player_turn:
-                x, y = game.ask_player_for_shot()
-                last_move = game.Shot(x, y, last_shot_hit)
+                x, y = bs_game.ask_player_for_shot()
+                last_move = bs_game.Shot(x, y, last_shot_hit)
                 net.send(bytes(last_move))
 
             else:
@@ -53,16 +53,16 @@ def main():
                     player_won = True
                     break
 
-                enemy_shot = game.Shot.decode(data)
+                enemy_shot = bs_game.Shot.decode(data)
 
                 # True if enemy hit player
-                last_shot_hit = game.update_player_board(enemy_shot, player_board)
+                last_shot_hit = bs_game.update_player_board(enemy_shot, player_board)
 
                 if last_move:
                     last_move.last_shot_hit = enemy_shot.last_shot_hit
-                    game.update_enemy_board(last_move, enemy_board)
+                    bs_game.update_enemy_board(last_move, enemy_board)
 
-            game.print_boards(player_board, enemy_board)
+            bs_game.print_boards(player_board, enemy_board)
             player_turn = not player_turn
 
         if player_won:
