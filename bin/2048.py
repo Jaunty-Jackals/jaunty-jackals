@@ -2,18 +2,16 @@ import curses
 import os
 from typing import Any
 
-import components.crsin
-import components.crsout
-import components.gamectrl
+from twentyfortyeight.components import crsin, crsout, gamectrl
 
 
 def main(stdscr: Any):
     """Runs the 2048 program."""
     curses.curs_set(0)
 
-    gc = components.gamectrl.GameController()
-    co = components.crsout.CursesOutput(stdscr, gc)
-    ci = components.crsin.CursesInput(stdscr, gc, co)
+    gc = gamectrl.GameController()
+    co = crsout.CursesOutput(stdscr, gc)
+    ci = crsin.CursesInput(stdscr, gc, co)
 
     gc.resume_game()
 
@@ -26,3 +24,4 @@ if __name__ == "__main__":
     os.environ["ESCDELAY"] = "10"
 
     curses.wrapper(main)
+    curses.endwin()

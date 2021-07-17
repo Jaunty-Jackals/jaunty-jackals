@@ -327,7 +327,7 @@ class CursesOutput:
         self._game_ctrl = game_ctrl
         self._game_ctrl.attach_output(self)
 
-        self._status_line_text = "by Jaunty Jacklas"
+        self._status_line_text = "by Jaunty Jackals"
 
         self._board = _BoardWindow(
             0,
