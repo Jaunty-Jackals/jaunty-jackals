@@ -8,6 +8,7 @@ from .base import (
     play_after_async,
     play_file,
     play_file_async,
+    play_loop,
     play_while_running,
     play_while_running_async,
 )
