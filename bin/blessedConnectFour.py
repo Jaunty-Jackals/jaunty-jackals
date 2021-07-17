@@ -47,8 +47,9 @@ COL_SYMS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 class ConnectFour:
     """A two-player connect four game.
 
-    The algorithm is based on ConnectFour by AlexZzander
-    https://github.com/AlexZzander/ConnectFour
+    The ConnectFour class, class functions and algorithm are 
+    taken from ConnectFour by AlexZzander (https://github.com/AlexZzander/ConnectFour).
+    TUI features and function modifications are completed by vguo2037.
     """
 
     def __init__(self):
