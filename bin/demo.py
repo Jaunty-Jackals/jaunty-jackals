@@ -1,12 +1,12 @@
 import curses
 import os
-from os import environ as _env
+from multiprocessing import Process
 from typing import Any
 
 from initload import initialize
 from play_sounds import play_file as playsound
-
-# from play_sounds import play_while_running
+from play_sounds import play_loop
+from utils.macros.handy import jackal_logo
 from utils.palettes import palettes
 
 # Curses setup
@@ -31,9 +31,12 @@ METADATA = {
     "palette": palettes.Jackal(),
 }
 
-# Run initload
-METADATA = initialize(METADATA)
-screen.clear()
+
+logo_sfx_path = "bin/utils/sound/sfx_logo_"
+intro_sfx = logo_sfx_path + "00.wav"
+intro_persistent = logo_sfx_path + "00b.wav"
+proc_intro = Process(target=play_loop, args=(intro_persistent, 1))
+
 # Import a colour palette as desired; see bin/utils/palettes/palettes.py
 # METADATA["palette"] = palettes.Gruvbox()
 # p = palettes.Gruvbox()
@@ -140,7 +143,7 @@ def wipe(metadata: dict) -> None:
         os.system("clear")
 
 
-def displaymenu(menu: dict, parent: Any) -> Any:
+def displaymenu(menu: dict, parent: Any, bgm: Process) -> Any:
     """Displays the appropriate menu and returns the option selected"""
     # work out what text to display as the last menu option
     if parent is None:
@@ -226,14 +229,14 @@ def displaymenu(menu: dict, parent: Any) -> Any:
     return pos
 
 
-def processmenu(menu: dict, parent: Any = None) -> None:
+def processmenu(menu: dict, bgm: Process = None, parent: Any = None) -> None:
     """Calls Showmenu and acts on the selected item"""
     global METADATA
     optioncount = len(menu["options"])
     exitmenu = False
 
     while not exitmenu:
-        getin = displaymenu(menu, parent)
+        getin = displaymenu(menu, proc_intro, parent)
 
         if getin == optioncount:
             exitmenu = True
@@ -247,7 +250,7 @@ def processmenu(menu: dict, parent: Any = None) -> None:
             screen.clear()
 
             # run the command
-            pythonpath = "venv/bin/python"
+            pythonpath = "python"
             if METADATA["os"] != "WINDOWS":
                 # Reset terminal
                 os.system("reset")
@@ -260,9 +263,12 @@ def processmenu(menu: dict, parent: Any = None) -> None:
                     screen.refresh()
 
                 # Execute
+                if bgm is not None:
+                    bgm.terminate()
                 os.system(f'{pythonpath} {menu["options"][getin]["command"]}')
             else:
-                pythonpath = "python"
+                if bgm is not None:
+                    bgm.terminate()
                 os.system(f'{pythonpath} {menu["options"][getin]["command"]}')
 
             # clear on keypress and update with new position
@@ -304,7 +310,7 @@ def processmenu(menu: dict, parent: Any = None) -> None:
 
         elif menu["options"][getin]["type"] == MENU:
             screen.clear()
-            processmenu(menu["options"][getin], menu)
+            processmenu(menu["options"][getin], proc_intro, menu)
             screen.clear()
             curses.curs_set(1)  # reset doesn't do this right
             curses.curs_set(0)
@@ -313,7 +319,19 @@ def processmenu(menu: dict, parent: Any = None) -> None:
             exitmenu = True
 
 
-# Main program
-processmenu(menu_data)
-curses.endwin()  # closes out the menu system and returns you to the bash prompt.
-wipe(METADATA)
+if __name__ == "__main__":
+    # Run initload
+    METADATA = initialize(METADATA)
+    wipe(METADATA)
+
+    # Run logo sequence
+    playsound(intro_sfx)
+    proc_intro.start()
+    jackal_logo(METADATA)
+    screen.clear()
+
+    # Do menu things
+    processmenu(menu_data, proc_intro)
+    proc_intro.terminate()
+    curses.endwin()
+    wipe(METADATA)
