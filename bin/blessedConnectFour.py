@@ -99,13 +99,7 @@ class ConnectFour:
             play_sfx(sp.drop, block=False)
 
         print(tm.home + STY_DEF + tm.clear)
-        # curses.echo()
-        curses.nocbreak()
-        curses.raw()
         self.nrow, self.ncol = self.get_nrow_ncol()
-        curses.noraw()
-        curses.cbreak()
-        # curses.noecho()
         self.avail_choices = set(range(self.ncol))
         self.mx = np.zeros((self.nrow, self.ncol), np.int8)
 
@@ -122,7 +116,23 @@ class ConnectFour:
         while True:
             print(size_prpt + size_pd, end="", flush=True)
             try:
-                nrow, ncol = input("").split("x", 2)
+                size_input = ""
+                while True:
+                    choice_sym = tm.inkey(timeout=0.25)
+                    if not choice_sym:
+                        continue
+                    elif choice_sym == chr(13):
+                        break
+                    elif choice_sym in [chr(8), chr(127)]:
+                        size_input = size_input[:-1]
+                        mod_size_pd = tm.move_xy(
+                            WTH // 2 - 2 + len(size_input), HGT // 2
+                        )
+                        print(mod_size_pd + " " + mod_size_pd, end="", flush=True)
+                    elif choice_sym.isdigit() or choice_sym in " x":
+                        print(choice_sym, end="", flush=True)
+                        size_input += choice_sym
+                nrow, ncol = size_input.split("x", 2)
             except ValueError:
                 size_prpt = (
                     tm.move_xy(WTH // 2 - 18, HGT // 3)
