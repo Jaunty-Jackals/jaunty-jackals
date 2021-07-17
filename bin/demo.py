@@ -96,7 +96,7 @@ menu_data = {
         {
             "title": "CONNECT FOUR",
             "type": COMMAND,
-            "command": "bin/blessedConnectFour.py" if str(os.name).lower() != "nt" else "bin/bluscreenofdeath.py",
+            "command": "bin/blessedConnectFour.py" if str(os.name).lower() != "nt" else "bin/bluescreenofdeath.py",
         },
         {
             "title": "SNAKE",
