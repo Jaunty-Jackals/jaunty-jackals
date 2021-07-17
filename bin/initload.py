@@ -4,7 +4,7 @@ from os import environ as _env
 from platform import python_version, system
 
 from play_sounds import play_file as playsound
-from utils.macros.handy import jackal_logo, status
+from utils.macros.handy import status
 from utils.palettes import palettes
 
 
@@ -318,11 +318,7 @@ def initialize(metadata: dict) -> dict:
                 sleep=1.0,
             )
             screen.refresh()
-
         time.sleep(1.0)
-        screen.clear()
-        jackal_logo(metadata)
-
         complete = True
 
     return metadata
