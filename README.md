@@ -51,7 +51,7 @@ $ cd jaunty-jackals
 $ python -m venv venv
 
 # Enter virtual environment
-$ source venv/bin/python
+$ source venv/bin/activate
 
 # Install requirements
 (venv) $ pip install -r requirements/macos.txt
