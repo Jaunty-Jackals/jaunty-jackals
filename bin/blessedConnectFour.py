@@ -5,7 +5,8 @@ import ConnectFour.sound_paths as sp
 import ConnectFour.text_arts as ta
 import numpy as np
 from blessed import Terminal
-from play_sounds import play_file as playsound
+from play_sounds import play_file as play_sfx
+from play_sounds import play_while_running as play_bgm
 
 # environment after running demo.py
 screen = curses.initscr()
@@ -91,6 +92,7 @@ class ConnectFour:
             else:
                 print(start_ers, end="", flush=True)
                 start_txt = False
+        play_sfx(sp.drop, block=False)
 
     print(tm.home + tm.clear)
 
@@ -127,6 +129,7 @@ class ConnectFour:
                     tm.move_xy(wth // 2 - 18, hgt // 3)
                     + "Please use the format HEIGHT x WIDTH."
                 )
+                play_sfx(sp.badcol, block=False)
                 print(tm.home + tm.clear)
                 print(error, end="", flush=True)
                 continue
@@ -138,6 +141,7 @@ class ConnectFour:
                     + "Both height and width must be integer values."
                 )
                 nrow, ncol = None, None
+                play_sfx(sp.badcol, block=False)
                 print(tm.home + tm.clear)
                 print(error, end="", flush=True)
                 continue
@@ -147,6 +151,7 @@ class ConnectFour:
                     + "Please use the format HEIGHT x WIDTH."
                 )
                 nrow, ncol = None, None
+                play_sfx(sp.badcol, block=False)
                 print(tm.home + tm.clear)
                 print(error, end="", flush=True)
                 continue
@@ -157,6 +162,7 @@ class ConnectFour:
                     + f"must be at least {self.min_nRow_nCol}."
                 )
                 nrow, ncol = None, None
+                play_sfx(sp.badcol, block=False)
                 print(tm.home + tm.clear)
                 print(error, end="", flush=True)
                 continue
@@ -166,6 +172,7 @@ class ConnectFour:
                     + f"Width must be no more than {self.max_nCol}."
                 )
                 nrow, ncol = None, None
+                play_sfx(sp.badcol, block=False)
                 print(tm.home + tm.clear)
                 print(error, end="", flush=True)
                 continue
@@ -175,11 +182,13 @@ class ConnectFour:
                     + f"Height must be no more than {self.max_nRow}."
                 )
                 nrow, ncol = None, None
+                play_sfx(sp.badcol, block=False)
                 print(tm.home + tm.clear)
                 print(error, end="", flush=True)
                 continue
             else:
                 break
+        play_sfx(sp.drop, block=False)
         return nrow, ncol
 
     def start(self) -> bool:
@@ -232,12 +241,10 @@ class ConnectFour:
 
         prpt_pd = hgt // 4 + self.nrow + 3
         prpt1_p1 = (
-            tm.move_xy(wth // 2 - 8, prpt_pd)
-            + f"Player {sty_p1('1')+sty_def}'s turn."
+            tm.move_xy(wth // 2 - 8, prpt_pd) + f"Player {sty_p1('1')+sty_def}'s turn."
         )
         prpt1_p2 = (
-            tm.move_xy(wth // 2 - 8, prpt_pd)
-            + f"Player {sty_p2('2')+sty_def}'s turn."
+            tm.move_xy(wth // 2 - 8, prpt_pd) + f"Player {sty_p2('2')+sty_def}'s turn."
         )
         prpt1_wn1 = (
             tm.move_xy(wth // 2 - 8, prpt_pd)
@@ -317,6 +324,7 @@ class ConnectFour:
 
                     except ValueError:
                         print(prpt2_ers + prpt2_err, end="", flush=True)
+                        play_sfx(sp.badcol, block=False)
                         continue
                     valid = self.check_choice(choice, prpt2_ers, prpt2_err, prpt2_ful)
 
@@ -362,9 +370,11 @@ class ConnectFour:
         """Check if a chosen column is within the board"""
         if choice not in self.avail_choices:
             print(p_ers + p_err, end="", flush=True)
+            play_sfx(sp.badcol, block=False)
             return False
         if self.col_full(choice):
             print(p_ers + p_ful, end="", flush=True)
+            play_sfx(sp.badcol, block=False)
             return False
         return True
 
@@ -375,7 +385,7 @@ class ConnectFour:
             # just to use choice_sym somehow so flake8 is happy
             if choice_sym:
                 pass
-            time.sleep(max(0.25 - 0.02 * i, 0.01))
+            time.sleep(0.067)
             if cur_player == 1:
                 disc_text = sty_p1("1")
             else:
@@ -396,6 +406,7 @@ class ConnectFour:
             )
             if self.mx[i][col] == 0:
                 print(disc)
+                play_sfx(sp.boop, block=False)
                 if i > 0:
                     print(disc_ers)
             else:
@@ -404,6 +415,7 @@ class ConnectFour:
             if self.mx[i][col] == 0:
                 self.mx[i][col] = cur_player
                 break
+        play_sfx(sp.drop, block=False)
         print(sty_def)
         return i
 
@@ -453,6 +465,7 @@ class ConnectFour:
 
 if __name__ == "__main__":
     play = True
+    # with play_bgm(sp.bgm, block=False):
     while play:
         connectFour = ConnectFour()
         play = connectFour.start()
