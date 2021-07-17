@@ -1,6 +1,6 @@
-# flake8: noqa
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# flake8: noqa
 import os
 
 os.system("mode.com 200,100")
