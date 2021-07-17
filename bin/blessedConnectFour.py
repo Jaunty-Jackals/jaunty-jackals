@@ -99,13 +99,13 @@ class ConnectFour:
             play_sfx(sp.drop, block=False)
 
         print(tm.home + STY_DEF + tm.clear)
+        # curses.echo()
         curses.nocbreak()
-        screen.keypad(0)
-        curses.echo()
+        curses.raw()
         self.nrow, self.ncol = self.get_nrow_ncol()
+        curses.noraw()
         curses.cbreak()
-        screen.keypad(1)
-        curses.noecho()
+        # curses.noecho()
         self.avail_choices = set(range(self.ncol))
         self.mx = np.zeros((self.nrow, self.ncol), np.int8)
 
@@ -117,73 +117,67 @@ class ConnectFour:
             + "Please enter the size of the board as HEIGHT x WIDTH.\n"
         )
         print(size_prpt, end="", flush=True)
-        size_pd = tm.move_y(HGT // 2) + f"\n{' '*(WTH//2-2)}"
+        size_pd = tm.move_xy(WTH // 2 - 2, HGT // 2)
 
         while True:
+            print(size_prpt + size_pd, end="", flush=True)
             try:
-                print(size_pd, end="", flush=True)
                 nrow, ncol = input("").split("x", 2)
             except ValueError:
-                error = (
+                size_prpt = (
                     tm.move_xy(WTH // 2 - 18, HGT // 3)
                     + "Please use the format HEIGHT x WIDTH."
                 )
                 play_sfx(sp.badcol, block=False)
-                print(tm.home + STY_DEF + tm.clear)
-                print(error, end="", flush=True)
+                print(tm.home + STY_DEF + tm.clear, end="", flush=True)
                 continue
             try:
                 nrow, ncol = int(nrow), int(ncol)
             except ValueError:
-                error = (
+                size_prpt = (
                     tm.move_xy(WTH // 2 - 22, HGT // 3)
                     + "Both height and width must be integer values."
                 )
                 nrow, ncol = None, None
                 play_sfx(sp.badcol, block=False)
-                print(tm.home + STY_DEF + tm.clear)
-                print(error, end="", flush=True)
+                print(tm.home + STY_DEF + tm.clear, end="", flush=True)
                 continue
             except TypeError:
-                error = (
+                size_prpt = (
                     tm.move_xy(WTH // 2 - 18, HGT // 3)
                     + "Please use the format HEIGHT x WIDTH."
                 )
                 nrow, ncol = None, None
                 play_sfx(sp.badcol, block=False)
-                print(tm.home + STY_DEF + tm.clear)
-                print(error, end="", flush=True)
+                print(tm.home + STY_DEF + tm.clear, end="", flush=True)
                 continue
             if nrow < MIN_NROW_NCOL or ncol < MIN_NROW_NCOL:
-                error = (
+                size_prpt = (
                     tm.move_xy(WTH // 2 - 20, HGT // 3)
                     + "Both height and width "
                     + f"must be at least {MIN_NROW_NCOL}."
                 )
                 nrow, ncol = None, None
                 play_sfx(sp.badcol, block=False)
-                print(tm.home + STY_DEF + tm.clear)
-                print(error, end="", flush=True)
+                print(tm.home + STY_DEF + tm.clear, end="", flush=True)
                 continue
             elif ncol > MAX_NCOL:
-                error = (
+                size_prpt = (
                     tm.move_xy(WTH // 2 - 15, HGT // 3)
                     + f"Width must be no more than {MAX_NCOL}."
                 )
                 nrow, ncol = None, None
                 play_sfx(sp.badcol, block=False)
-                print(tm.home + STY_DEF + tm.clear)
-                print(error, end="", flush=True)
+                print(tm.home + STY_DEF + tm.clear, end="", flush=True)
                 continue
             elif nrow > MAX_NROW:
-                error = (
+                size_prpt = (
                     tm.move_xy(WTH // 2 - 15, HGT // 3)
                     + f"Height must be no more than {MAX_NROW}."
                 )
                 nrow, ncol = None, None
                 play_sfx(sp.badcol, block=False)
-                print(tm.home + STY_DEF + tm.clear)
-                print(error, end="", flush=True)
+                print(tm.home + STY_DEF + tm.clear, end="", flush=True)
                 continue
             else:
                 break
@@ -193,7 +187,7 @@ class ConnectFour:
     def print_board(self):
         """Prints the playing screen"""
         print(tm.home + STY_DEF + tm.clear)
-        print("   " + STY_ESC + "ESC" + STY_DEF + "  Pause")
+        print("   " + STY_ESC + "ESC" + STY_DEF + " Pause")
 
         head_row_txt = f"  {COL_SYMS[0]}"
         for i in range(1, self.ncol):
@@ -340,6 +334,7 @@ class ConnectFour:
 
                 number_of_moves += 1
                 if self.check_win(cur_player, choice, row):
+                    play_sfx(sp.win, block=False)
                     if cur_player == 1:
                         print(prpt1_wn1, end="", flush=True)
                     else:
@@ -468,9 +463,9 @@ class ConnectFour:
 
 if __name__ == "__main__":
     play = True
-    while play:
-        with play_bgm(sp.bgm, block=True):
-            time.sleep(1)
+    with play_bgm(sp.bgm, block=True):
+        while play:
+            time.sleep(0.5)
             connectFour = ConnectFour()
             play = connectFour.start()
     print(
