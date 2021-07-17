@@ -3,15 +3,13 @@
 import curses
 import secrets
 import time
-
+from multiprocessing.dummy import Pool as ThreadPool
 from platform import system
 from typing import Any
 
 from minesweep.minesweep_utils import open_menu
 from play_sounds import play_file as playsound
 from play_sounds import play_while_running
-
-from multiprocessing.dummy import Pool as ThreadPool
 
 pool = ThreadPool(4)
 
@@ -125,7 +123,7 @@ def main(curses_ctx: Any) -> None:
             return  # to load back main menu
         if selection == "PLAY":
             selection = open_menu(
-            curses_ctx, items=("1 - BAD PLAYER","0.1 - NORMAL", "0.01 - SNEK"), header="SPEED"
+                curses_ctx, items=("1 - BAD PLAYER", "0.1 - NORMAL", "0.01 - SNEK"), header="SPEED"
             )
             if selection == "1 - BAD PLAYER":
                 new_game_init(curses_ctx, speed=1)
@@ -134,7 +132,7 @@ def main(curses_ctx: Any) -> None:
             else:
                 new_game_init(curses_ctx, speed=0.01)
 
-                
+
 if __name__ == "__main__":
     curses.wrapper(main)
     curses.endwin()
