@@ -36,7 +36,7 @@ screen.keypad(1)
 curses.start_color()
 
 
-def game(speed) -> None:
+def game(speed: int) -> None:
     """Snake game main code."""
     global action, SYSOS
     dims = (21, 41)
@@ -128,12 +128,13 @@ def main(curses_ctx: Any) -> None:
             curses_ctx, items=("1 - BAD PLAYER","0.1 - NORMAL", "0.01 - SNEK"), header="SPEED"
             )
             if selection == "1 - BAD PLAYER":
-                new_game_init(curses_ctx,speed=1)
+                new_game_init(curses_ctx, speed=1)
             elif selection == "0.1 - NORMAL":
-                new_game_init(curses_ctx,speed=0.1)
+                new_game_init(curses_ctx, speed=0.1)
             else:
-                new_game_init(curses_ctx,speed=0.01)
+                new_game_init(curses_ctx, speed=0.01)
 
+                
 if __name__ == "__main__":
     curses.wrapper(main)
     curses.endwin()
