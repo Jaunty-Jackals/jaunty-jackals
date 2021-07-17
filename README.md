@@ -11,6 +11,7 @@ Work in progress!
 ## Requirements
 
 - Python 3.9.5+
+- pulseaudio-utils
 - Functional speakers
 
 ## Setting up & Running the App
@@ -67,7 +68,7 @@ $ cd jaunty-jackals
 $ python -m venv venv
 
 # Enter virtual environment
-$ source venv/bin/python
+$ source venv/bin/activate
 
 # Install the requirements
 (venv) $ python -m pip install -r requirements/dev-requirements.txt
