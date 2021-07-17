@@ -95,7 +95,7 @@ menu_data = {
         {
             "title": "BATTLESHIP",
             "type": COMMAND,
-            "command": "bin/battleship/client.py",
+            "command": "bin/bs_client.py",
         },
         {
             "title": "CONNECT FOUR",
@@ -112,29 +112,7 @@ menu_data = {
             "type": COMMAND,
             "command": "bin/tetris.py",
         },
-        # {
-        #     "title": "CONTENT D - has submenus",
-        #     "type": MENU,
-        #     "subtitle": "Please select an option...",
-        #     "options": [
-        #         {
-        #             "title": "Midnight Rescue",
-        #             "type": COMMAND,
-        #             "command": "dosbox /media/samba/Apps/dosbox/doswin/games/SSR/SSR.EXE -exit",
-        #         },
-        #         {
-        #             "title": "Outnumbered",
-        #             "type": COMMAND,
-        #             "command": "dosbox /media/samba/Apps/dosbox/doswin/games/SSO/SSO.EXE -exit",
-        #         },
-        #         {
-        #             "title": "Treasure Mountain",
-        #             "type": COMMAND,
-        #             "command": "dosbox /media/samba/Apps/dosbox/doswin/games/SST/SST.EXE -exit",
-        #         },
-        #     ],
-        # },
-        {"title": "CREDITS", "type": COMMAND, "command": "some command"},
+        # {"title": "CREDITS", "type": COMMAND, "command": "some command"},
         {
             "title": "change theme".upper(),
             "type": MENU,
