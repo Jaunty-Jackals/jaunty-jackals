@@ -3,6 +3,7 @@
 import curses
 import secrets
 import time
+
 from platform import system
 from typing import Any
 
@@ -10,7 +11,9 @@ from minesweep.minesweep_utils import open_menu
 from play_sounds import play_file as playsound
 from play_sounds import play_while_running
 
-speed = 0.1
+from multiprocessing.dummy import Pool as ThreadPool
+
+pool = ThreadPool(4)
 
 SYSOS = system().upper()
 
@@ -33,7 +36,7 @@ screen.keypad(1)
 curses.start_color()
 
 
-def game() -> None:
+def game(speed) -> None:
     """Snake game main code."""
     global action, SYSOS
     dims = (21, 41)
@@ -92,16 +95,20 @@ def game() -> None:
                 apple = 0
                 body.append(body[-1])
             else:
+                screen.clear()
+                screen.refresh()
                 dead = 1
         screen.move(dims[0] - 1, dims[1] - 1)
         screen.refresh()
         time.sleep(speed)
 
 
-def new_game_init(curses_ctx: Any) -> None:
+def new_game_init(curses_ctx: Any, speed: int) -> None:
     """Menu to start a new game"""
-    with play_while_running(sfx_ingame_path, block=True):
-        game()
+    # with play_while_running(sfx_ingame_path, block=True): #problem cause
+    screen.clear()
+    screen.refresh()
+    game(speed)
 
 
 def main(curses_ctx: Any) -> None:
@@ -114,11 +121,18 @@ def main(curses_ctx: Any) -> None:
         selection = open_menu(
             curses_ctx, items=("PLAY", "QUIT"), header="SNAKE"
         )
-        if selection == "BYE SNEK":
+        if selection == "QUIT":
             return  # to load back main menu
-        if selection == "PLAY AGAIN":
-            new_game_init(curses_ctx)
-
+        if selection == "PLAY":
+            selection = open_menu(
+            curses_ctx, items=("1 - BAD PLAYER","0.1 - NORMAL", "0.01 - SNEK"), header="SPEED"
+            )
+            if selection == "1 - BAD PLAYER":
+                new_game_init(curses_ctx,speed=1)
+            elif selection == "0.1 - NORMAL":
+                new_game_init(curses_ctx,speed=0.1)
+            else:
+                new_game_init(curses_ctx,speed=0.01)
 
 if __name__ == "__main__":
     curses.wrapper(main)
