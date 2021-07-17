@@ -16,90 +16,89 @@ curses.noecho()
 curses.curs_set(1)
 
 tm = Terminal()
-hgt = tm.height
-wth = tm.width
+HGT = tm.height
+WTH = tm.width
 
-sty_def = tm.bright_white_on_blue
-sty_esc = tm.blue_on_bright_white
-sty_p1 = tm.bright_yellow_on_blue
-sty_p2 = tm.coral1_on_blue
+STY_DEF = tm.bright_white_on_blue
+STY_ESC = tm.blue_on_bright_white
+STY_P1 = tm.bright_yellow_on_blue
+STY_P2 = tm.coral1_on_blue
+
+if HGT < 11 or WTH < 60:
+    TITLE_TXT = ta.TITLE_S
+    LOGO_TXT = ta.LOGO_S
+    NAME_TXT = ta.NAME_S
+elif HGT < 24 or WTH < 80:
+    TITLE_TXT = ta.TITLE_M
+    LOGO_TXT = ta.LOGO_M
+    NAME_TXT = ta.NAME_M
+else:
+    TITLE_TXT = ta.TITLE_L
+    LOGO_TXT = ta.LOGO_L
+    NAME_TXT = ta.NAME_L
+
+MIN_NROW_NCOL = 0
+MAX_NCOL = min(26, WTH // 4 - 1)
+MAX_NROW = HGT // 4
+COL_SYMS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 
 class ConnectFour:
     """A two-player connect four game."""
 
-    if hgt < 11 or wth < 60:
-        TITLE_TXT = ta.TITLE_S
-        LOGO_TXT = ta.LOGO_S
-        NAME_TXT = ta.NAME_S
-    elif hgt < 24 or wth < 80:
-        TITLE_TXT = ta.TITLE_M
-        LOGO_TXT = ta.LOGO_M
-        NAME_TXT = ta.NAME_M
-    else:
-        TITLE_TXT = ta.TITLE_L
-        LOGO_TXT = ta.LOGO_L
-        NAME_TXT = ta.NAME_L
-
-    min_nRow_nCol = 0
-    max_nCol = min(26, wth // 4 - 1)
-    max_nRow = hgt // 4
-    COL_SYMS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
-    ################################################################
-    with tm.cbreak(), tm.hidden_cursor():
-        # clear the screen
-        print(tm.home + sty_def + tm.clear)
-
-        for i in range(len(LOGO_TXT)):
-            logo_part = (
-                tm.move_xy(
-                    wth // 2 - len(LOGO_TXT[0]) // 2,
-                    (hgt // 4 - len(LOGO_TXT) // 4) + i,
-                )
-                + LOGO_TXT[i]
-            )
-            print(logo_part, end="", flush=True)
-        for i in range(len(NAME_TXT)):
-            logo_part = (
-                tm.move_xy(
-                    wth // 2 - len(NAME_TXT[0]) // 2,
-                    (hgt // 4 - len(LOGO_TXT) // 4) + 2 + len(LOGO_TXT) + i,
-                )
-                + NAME_TXT[i]
-            )
-            print(logo_part, end="", flush=True)
-        time.sleep(3.5)
-        print(tm.home + sty_def + tm.clear)
-
-        for i in range(len(TITLE_TXT)):
-            title_part = (
-                tm.move_xy(
-                    wth // 2 - len(TITLE_TXT[0]) // 2,
-                    hgt // 2 - len(TITLE_TXT) // 2 + i,
-                )
-                + TITLE_TXT[i]
-            )
-            print(title_part, end="", flush=True)
-
-        start_txt = False
-        start = tm.move_xy(wth // 2 - 8, hgt * 3 // 4) + "Press S to start"
-        start_ers = tm.move_xy(wth // 2 - 8, hgt * 3 // 4) + 16 * " "
-        while tm.inkey(timeout=0.75) != "s":
-            if not start_txt:
-                print(start, end="", flush=True)
-                start_txt = True
-            else:
-                print(start_ers, end="", flush=True)
-                start_txt = False
-        play_sfx(sp.drop, block=False)
-
-    print(tm.home + tm.clear)
-
-    ################################################################
     def __init__(self):
         """Initialises board size"""
-        print(tm.home + tm.clear)
+        print(tm.home + STY_DEF + tm.clear)
+
+        with tm.cbreak(), tm.hidden_cursor():
+            # clear the screen
+            print(tm.home + STY_DEF + tm.clear)
+
+            for i in range(len(LOGO_TXT)):
+                logo_part = (
+                    tm.move_xy(
+                        WTH // 2 - len(LOGO_TXT[0]) // 2,
+                        (HGT // 4 - len(LOGO_TXT) // 4) + i,
+                    )
+                    + LOGO_TXT[i]
+                )
+                print(logo_part, end="", flush=True)
+            for i in range(len(NAME_TXT)):
+                logo_part = (
+                    tm.move_xy(
+                        WTH // 2 - len(NAME_TXT[0]) // 2,
+                        (HGT // 4 - len(LOGO_TXT) // 4) + 2 + len(LOGO_TXT) + i,
+                    )
+                    + NAME_TXT[i]
+                )
+                print(logo_part, end="", flush=True)
+            time.sleep(3.5)
+
+            print(tm.home + STY_DEF + tm.clear)
+
+            for i in range(len(TITLE_TXT)):
+                title_part = (
+                    tm.move_xy(
+                        WTH // 2 - len(TITLE_TXT[0]) // 2,
+                        HGT // 2 - len(TITLE_TXT) // 2 + i,
+                    )
+                    + TITLE_TXT[i]
+                )
+                print(title_part, end="", flush=True)
+
+            start_txt = False
+            start = tm.move_xy(WTH // 2 - 8, HGT * 3 // 4) + "Press S to start"
+            start_ers = tm.move_xy(WTH // 2 - 8, HGT * 3 // 4) + 16 * " "
+            while tm.inkey(timeout=0.75) != "s":
+                if not start_txt:
+                    print(start, end="", flush=True)
+                    start_txt = True
+                else:
+                    print(start_ers, end="", flush=True)
+                    start_txt = False
+            play_sfx(sp.drop, block=False)
+
+        print(tm.home + STY_DEF + tm.clear)
         curses.nocbreak()
         screen.keypad(0)
         curses.echo()
@@ -114,11 +113,11 @@ class ConnectFour:
         """Get a user input for board size"""
         nrow, ncol = None, None
         size_prpt = (
-            tm.move_xy(wth // 2 - 26, hgt // 3)
+            tm.move_xy(WTH // 2 - 26, HGT // 3)
             + "Please enter the size of the board as HEIGHT x WIDTH.\n"
         )
         print(size_prpt, end="", flush=True)
-        size_pd = tm.move_y(hgt // 2) + f"\n{' '*(wth//2-2)}"
+        size_pd = tm.move_y(HGT // 2) + f"\n{' '*(WTH//2-2)}"
 
         while True:
             try:
@@ -126,64 +125,64 @@ class ConnectFour:
                 nrow, ncol = input("").split("x", 2)
             except ValueError:
                 error = (
-                    tm.move_xy(wth // 2 - 18, hgt // 3)
+                    tm.move_xy(WTH // 2 - 18, HGT // 3)
                     + "Please use the format HEIGHT x WIDTH."
                 )
                 play_sfx(sp.badcol, block=False)
-                print(tm.home + tm.clear)
+                print(tm.home + STY_DEF + tm.clear)
                 print(error, end="", flush=True)
                 continue
             try:
                 nrow, ncol = int(nrow), int(ncol)
             except ValueError:
                 error = (
-                    tm.move_xy(wth // 2 - 22, hgt // 3)
+                    tm.move_xy(WTH // 2 - 22, HGT // 3)
                     + "Both height and width must be integer values."
                 )
                 nrow, ncol = None, None
                 play_sfx(sp.badcol, block=False)
-                print(tm.home + tm.clear)
+                print(tm.home + STY_DEF + tm.clear)
                 print(error, end="", flush=True)
                 continue
             except TypeError:
                 error = (
-                    tm.move_xy(wth // 2 - 18, hgt // 3)
+                    tm.move_xy(WTH // 2 - 18, HGT // 3)
                     + "Please use the format HEIGHT x WIDTH."
                 )
                 nrow, ncol = None, None
                 play_sfx(sp.badcol, block=False)
-                print(tm.home + tm.clear)
+                print(tm.home + STY_DEF + tm.clear)
                 print(error, end="", flush=True)
                 continue
-            if nrow < self.min_nRow_nCol or ncol < self.min_nRow_nCol:
+            if nrow < MIN_NROW_NCOL or ncol < MIN_NROW_NCOL:
                 error = (
-                    tm.move_xy(wth // 2 - 20, hgt // 3)
+                    tm.move_xy(WTH // 2 - 20, HGT // 3)
                     + "Both height and width "
-                    + f"must be at least {self.min_nRow_nCol}."
+                    + f"must be at least {MIN_NROW_NCOL}."
                 )
                 nrow, ncol = None, None
                 play_sfx(sp.badcol, block=False)
-                print(tm.home + tm.clear)
+                print(tm.home + STY_DEF + tm.clear)
                 print(error, end="", flush=True)
                 continue
-            elif ncol > self.max_nCol:
+            elif ncol > MAX_NCOL:
                 error = (
-                    tm.move_xy(wth // 2 - 15, hgt // 3)
-                    + f"Width must be no more than {self.max_nCol}."
+                    tm.move_xy(WTH // 2 - 15, HGT // 3)
+                    + f"Width must be no more than {MAX_NCOL}."
                 )
                 nrow, ncol = None, None
                 play_sfx(sp.badcol, block=False)
-                print(tm.home + tm.clear)
+                print(tm.home + STY_DEF + tm.clear)
                 print(error, end="", flush=True)
                 continue
-            elif nrow > self.max_nRow:
+            elif nrow > MAX_NROW:
                 error = (
-                    tm.move_xy(wth // 2 - 15, hgt // 3)
-                    + f"Height must be no more than {self.max_nRow}."
+                    tm.move_xy(WTH // 2 - 15, HGT // 3)
+                    + f"Height must be no more than {MAX_NROW}."
                 )
                 nrow, ncol = None, None
                 play_sfx(sp.badcol, block=False)
-                print(tm.home + tm.clear)
+                print(tm.home + STY_DEF + tm.clear)
                 print(error, end="", flush=True)
                 continue
             else:
@@ -191,95 +190,101 @@ class ConnectFour:
         play_sfx(sp.drop, block=False)
         return nrow, ncol
 
-    def start(self) -> bool:
-        """Plays game of set size"""
-        print(tm.home + tm.clear)
-        cur_player = 1
-        end = False
-        number_of_moves = 0
-        total_moves = self.nrow * self.ncol
+    def print_board(self):
+        """prints the playing screen"""
 
-        print("   " + sty_esc + "ESC" + sty_def + "  Pause")
+        print(tm.home + STY_DEF + tm.clear)
+        print("   " + STY_ESC + "ESC" + STY_DEF + "  Pause")
 
-        head_row_txt = f"  {self.COL_SYMS[0]}"
+        head_row_txt = f"  {COL_SYMS[0]}"
         for i in range(1, self.ncol):
-            head_row_txt += f"   {self.COL_SYMS[i]}"
+            head_row_txt += f"   {COL_SYMS[i]}"
         head_row = (
             tm.move_xy(
-                wth // 2 - (self.ncol * 4 + 1) // 2,
-                hgt // 4,
+                WTH // 2 - (self.ncol * 4 + 1) // 2,
+                HGT // 4,
             )
             + head_row_txt
         )
         print(head_row, end="", flush=True)
 
         for i in range(self.nrow):
-            body_row_txt = ""  # * (wth // 2 - (self.ncol * 4 + 1) // 2)
+            body_row_txt = ""  # * (WTH // 2 - (self.ncol * 4 + 1) // 2)
             for j in range(self.ncol):
                 body_row_txt += f"│ {self.mx[i][j]} "
             body_row_txt += "│\n"
             body_row = (
                 tm.move_xy(
-                    wth // 2 - (self.ncol * 4 + 1) // 2,
-                    hgt // 4 + 1 + i,
+                    WTH // 2 - (self.ncol * 4 + 1) // 2,
+                    HGT // 4 + 1 + i,
                 )
                 + body_row_txt
             )
             print(body_row, end="", flush=True)
 
         foot_row_txt = "⎺" * (self.ncol * 4 + 1)
-        # + "" * (wth // 2 - (self.ncol * 4 + 1) // 2) + \
+        # + "" * (WTH // 2 - (self.ncol * 4 + 1) // 2) + \
 
         foot_row = (
             tm.move_xy(
-                wth // 2 - (self.ncol * 4 + 1) // 2,
-                hgt // 4 + self.nrow + 1,
+                WTH // 2 - (self.ncol * 4 + 1) // 2,
+                HGT // 4 + self.nrow + 1,
             )
             + foot_row_txt
         )
         print(foot_row, end="", flush=True)
 
-        prpt_pd = hgt // 4 + self.nrow + 3
+    def start(self) -> bool:
+        """Plays game of set size"""
+
+        cur_player = 1
+        end = False
+        number_of_moves = 0
+        total_moves = self.nrow * self.ncol
+
+        prpt_pd = HGT // 4 + self.nrow + 3
         prpt1_p1 = (
-            tm.move_xy(wth // 2 - 8, prpt_pd) + f"Player {sty_p1('1')+sty_def}'s turn."
+            tm.move_xy(WTH // 2 - 8, prpt_pd) + f"Player {STY_P1('1')+STY_DEF}'s turn."
         )
         prpt1_p2 = (
-            tm.move_xy(wth // 2 - 8, prpt_pd) + f"Player {sty_p2('2')+sty_def}'s turn."
+            tm.move_xy(WTH // 2 - 8, prpt_pd) + f"Player {STY_P2('2')+STY_DEF}'s turn."
         )
         prpt1_wn1 = (
-            tm.move_xy(wth // 2 - 8, prpt_pd)
-            + f"Player {sty_p1('1') + sty_def} has won!"
+            tm.move_xy(WTH // 2 - 8, prpt_pd)
+            + f"Player {STY_P1('1') + STY_DEF} has won!"
         )
         prpt1_wn2 = (
-            tm.move_xy(wth // 2 - 8, prpt_pd)
-            + f"Player {sty_p2('2') + sty_def} has won!"
+            tm.move_xy(WTH // 2 - 8, prpt_pd)
+            + f"Player {STY_P2('2') + STY_DEF} has won!"
         )
-        prpt1_drw = tm.move_xy(wth // 2 - 2, prpt_pd) + "Draw!"
-        prpt1_esc = tm.move_xy(wth // 2 - 6, prpt_pd) + "Game paused."
-        prpt1_ers = tm.move_xy(wth // 2 - 8, prpt_pd) + 18 * " "
+        prpt1_drw = tm.move_xy(WTH // 2 - 2, prpt_pd) + "Draw!"
+        prpt1_esc = tm.move_xy(WTH // 2 - 6, prpt_pd) + "Game paused."
+        prpt1_ers = tm.move_xy(WTH // 2 - 8, prpt_pd) + 18 * " "
 
-        last_col = self.COL_SYMS[self.ncol - 1]
+        last_col = COL_SYMS[self.ncol - 1]
         prpt2 = (
-            tm.move_xy(wth // 2 - 18, prpt_pd + 2)
+            tm.move_xy(WTH // 2 - 18, prpt_pd + 2)
             + "Choose a column by typing its letter."
         )
         prpt2_err = (
-            tm.move_xy(wth // 2 - 21, prpt_pd + 2)
+            tm.move_xy(WTH // 2 - 21, prpt_pd + 2)
             + f"Invalid column. Choose a column from A to {last_col}"
         )
         prpt2_ful = (
-            tm.move_xy(wth // 2 - 23, prpt_pd + 2)
+            tm.move_xy(WTH // 2 - 23, prpt_pd + 2)
             + f"Column is full. Choose a column from A to {last_col}"
         )
         prpt2_esc = (
-            tm.move_xy(wth // 2 - 30, prpt_pd + 2)
+            tm.move_xy(WTH // 2 - 30, prpt_pd + 2)
             + "Press ESC again to quit, R to restart, or RETURN to continue."
         )
         prpt2_end = (
-            tm.move_xy(wth // 2 - 18, prpt_pd + 2)
+            tm.move_xy(WTH // 2 - 18, prpt_pd + 2)
             + "Press R to restart, press Q to quit."
         )
-        prpt2_ers = tm.move_xy(wth // 2 - 31, prpt_pd + 2) + 62 * " "
+        prpt2_ers = tm.move_xy(WTH // 2 - 31, prpt_pd + 2) + 62 * " "
+
+        self.print_board()
 
         with tm.cbreak(), tm.hidden_cursor():
             print()
@@ -320,7 +325,7 @@ class ConnectFour:
                                 elif choice_sym == chr(27):
                                     # press ESC to quit
                                     return False
-                        choice = int(self.COL_SYMS.index(choice_sym.upper()))
+                        choice = int(COL_SYMS.index(choice_sym.upper()))
 
                     except ValueError:
                         print(prpt2_ers + prpt2_err, end="", flush=True)
@@ -387,22 +392,22 @@ class ConnectFour:
                 pass
             time.sleep(0.067)
             if cur_player == 1:
-                disc_text = sty_p1("1")
+                disc_text = STY_P1("1")
             else:
-                disc_text = sty_p2("2")
+                disc_text = STY_P2("2")
             disc = (
                 tm.move_xy(
-                    wth // 2 - (self.ncol * 4 + 1) // 2 + 2 + 4 * col,
-                    hgt // 4 + 1 + i,
+                    WTH // 2 - (self.ncol * 4 + 1) // 2 + 2 + 4 * col,
+                    HGT // 4 + 1 + i,
                 )
                 + disc_text
             )
             disc_ers = (
                 tm.move_xy(
-                    wth // 2 - (self.ncol * 4 + 1) // 2 + 2 + 4 * col,
-                    hgt // 4 + i,
+                    WTH // 2 - (self.ncol * 4 + 1) // 2 + 2 + 4 * col,
+                    HGT // 4 + i,
                 )
-                + sty_def("0")
+                + STY_DEF("0")
             )
             if self.mx[i][col] == 0:
                 print(disc)
@@ -416,7 +421,7 @@ class ConnectFour:
                 self.mx[i][col] = cur_player
                 break
         play_sfx(sp.drop, block=False)
-        print(sty_def)
+        print(STY_DEF)
         return i
 
     def check_win(self, cur_player: int, col: int, row: int) -> bool:
@@ -465,14 +470,15 @@ class ConnectFour:
 
 if __name__ == "__main__":
     play = True
-    # with play_bgm(sp.bgm, block=False):
     while play:
-        connectFour = ConnectFour()
-        play = connectFour.start()
+        with play_bgm(sp.bgm, block=True):
+            time.sleep(1)
+            connectFour = ConnectFour()
+            play = connectFour.start()
     print(
         tm.home
         + tm.clear
-        + tm.move_xy(wth // 2 - 12, hgt // 2)
+        + tm.move_xy(WTH // 2 - 12, HGT // 2)
         + "Returning to main menu..."
     )
-    time.sleep(1.5)
+    time.sleep(1)
