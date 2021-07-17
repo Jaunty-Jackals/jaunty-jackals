@@ -191,8 +191,7 @@ class ConnectFour:
         return nrow, ncol
 
     def print_board(self):
-        """prints the playing screen"""
-
+        """Prints the playing screen"""
         print(tm.home + STY_DEF + tm.clear)
         print("   " + STY_ESC + "ESC" + STY_DEF + "  Pause")
 
@@ -236,7 +235,6 @@ class ConnectFour:
 
     def start(self) -> bool:
         """Plays game of set size"""
-
         cur_player = 1
         end = False
         number_of_moves = 0
