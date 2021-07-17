@@ -1,3 +1,11 @@
+"""
+2048
+
+inspired by : Marko Oklobdžija
+link : https://github.com/kibihrchak/2048-python-copy
+
+"""
+
 import curses
 import os
 from typing import Any
