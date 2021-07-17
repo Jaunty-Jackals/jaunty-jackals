@@ -2,9 +2,12 @@ import logging
 
 import bs_game
 from battleship.console import console
+from play_sounds import play_while_running
 from rich.prompt import IntPrompt, Prompt
 
 logging.basicConfig(filename="log.log", level=logging.DEBUG)
+
+SFX_INGAME_PATH = "bin/utils/sound/sfx_battleship_soundtrack.wav"
 
 
 def main():
@@ -28,7 +31,7 @@ def main():
             "Enter port (default: 5000)", default=5000, show_default=False
         )
 
-    with bs_game.Network(host, port, is_server) as net:
+    with bs_game.Network(host, port, is_server) as net, play_while_running(SFX_INGAME_PATH):
         # Initialise
         player_board = bs_game.create_empty_board()
         enemy_board = bs_game.create_empty_board()

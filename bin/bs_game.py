@@ -8,7 +8,6 @@ from typing import Any, List, Tuple
 
 from battleship.console import console
 from play_sounds import play_file as playsound
-from play_sounds import play_while_running
 from rich.layout import Layout
 from rich.panel import Panel
 from rich.prompt import Prompt
@@ -16,27 +15,16 @@ from rich.table import Table
 from rich.text import Text
 
 PERMITTED_LETTERS = "abcdefghij0123456789-"
-FIELDS = [
-    EMPTY,
-    OWN_SHIP,
-    OWN_SHIP_HIT,
-    ENEMY_SHIP_HIT,
-    MISS,
-    OWN_SHIP_ENEMY_SHIP_HIT,
-] = (0, 1, 2, 3, 4, 5)
-SHIP_TYPES = [BATTLESHIP, CRUISER, DESTROYER, SUBMARINE] = (
-    5,
-    4,
-    3,
-    2,
-)  # Supported ship types.
+
+FIELDS = [EMPTY, OWN_SHIP, OWN_SHIP_HIT, ENEMY_SHIP_HIT, MISS, OWN_SHIP_ENEMY_SHIP_HIT] = (0, 1, 2, 3, 4, 5)
+SHIP_TYPES = [BATTLESHIP, CRUISER, DESTROYER, SUBMARINE] = (5, 4, 3, 2)  # Supported ship types.
 SHIP_NAMES = {
     BATTLESHIP: "Battleship",
     CRUISER: "Cruiser",
     DESTROYER: "Destroyer",
     SUBMARINE: "Submarine",
 }
-PLAYER_SHIPS = [BATTLESHIP, SUBMARINE]  # Change this according to your needs.
+PLAYER_SHIPS = [BATTLESHIP, DESTROYER, SUBMARINE]  # Change this according to your needs.
 
 PATH = "bin/utils/sound/sfx_battleship_"
 sfx_explosion_path = PATH + "explosion.wav"
@@ -387,7 +375,7 @@ def ask_player_for_ship(ship_type: int):
     length = ship_type
     while True:
         ship_input = Prompt.ask(
-            f"Place your {SHIP_NAMES.get(ship_type)} (length: {length}) formatted as XY - XY (e.g. A1-A5)"
+            f"Place your {SHIP_NAMES.get(ship_type)} (length: {length}) formatted as XY - XY (e.g. A1-A{length})"
         )
         # Assume the following format: XX - YY and ask until the user enters something valid.
         try:
