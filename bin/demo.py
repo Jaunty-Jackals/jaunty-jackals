@@ -16,17 +16,18 @@ curses.noecho()
 curses.start_color()
 curses.can_change_color()
 screen.keypad(1)
+curses.curs_set(0)
 
 # Player metadata
 METADATA = {
     "os": None,
     "py_version": False,
     "term_h_cur": None,
-    "term_h_max": 32,
-    "term_h_min": 32,
+    "term_h_max": 41,
+    "term_h_min": 41,
     "term_w_cur": None,
-    "term_w_max": 106,
-    "term_w_min": 80,
+    "term_w_max": 122,
+    "term_w_min": 122,
     "palette": palettes.Jackal(),
 }
 
@@ -66,7 +67,7 @@ def colorinit(scr: Any, metadata: dict) -> None:
 
 # Change this to use different colors when highlighting
 curses.init_pair(3, 3, 0)  # menu title
-curses.init_pair(4, 6, 0)  # menu subtitle
+curses.init_pair(4, 1, 0)  # menu subtitle
 curses.init_pair(16, 10, 0)  # menu highlighted item
 curses.init_pair(17, 7, 0)  # menu normal item
 
@@ -112,21 +113,21 @@ menu_data = {
             "type": COMMAND,
             "command": "bin/tetris.py",
         },
-        # {"title": "CREDITS", "type": COMMAND, "command": "some command"},
         {
             "title": "change theme".upper(),
             "type": MENU,
             "subtitle": "select a theme".upper(),
             "options": [
-                {"title": "base16".upper(), "type": SETTING, "command": "base16"},
-                {"title": "commodore".upper(), "type": SETTING, "command": "commodore"},
-                {"title": "dracula".upper(), "type": SETTING, "command": "dracula"},
-                {"title": "gruvbox".upper(), "type": SETTING, "command": "gruvbox"},
-                {"title": "haxx0r".upper(), "type": SETTING, "command": "hacker"},
-                {"title": "jackal".upper(), "type": SETTING, "command": "jackal"},
-                {"title": "nord".upper(), "type": SETTING, "command": "nord"},
+                {"title": "base16 3024 ".upper(), "type": SETTING, "command": "base16"},
+                {"title": "commodore 64".upper(), "type": SETTING, "command": "commodore"},
+                {"title": "dracula dark".upper(), "type": SETTING, "command": "dracula"},
+                {"title": "grooby box".upper(), "type": SETTING, "command": "gruvbox"},
+                {"title": "haxx0r green".upper(), "type": SETTING, "command": "hacker"},
+                {"title": "jackal original".upper(), "type": SETTING, "command": "jackal"},
+                {"title": "northern aurora".upper(), "type": SETTING, "command": "nord"},
             ],
         },
+        {"title": "CREDITS", "type": COMMAND, "command": "bin/utils/macros/credits.py"},
     ],
 }
 
@@ -167,7 +168,8 @@ def displaymenu(menu: dict, parent: Any) -> Any:
                 curses.color_pair(3),
             )
             # Subtitle
-            screen.addstr(4, 4, menu["subtitle"], curses.color_pair(4))
+            screen.addstr(4,
+                          curses.COLS // 2 - len(menu["subtitle"]) // 2, menu["subtitle"], curses.color_pair(4))
 
             # Display all the menu items, showing the 'pos' item highlighted
             for index in range(optioncount):
@@ -175,21 +177,21 @@ def displaymenu(menu: dict, parent: Any) -> Any:
                 if pos == index:
                     textstyle = selected
                 screen.addstr(
-                    5 + index,  # y
-                    4,  # x
-                    f'{index + 1} - {menu["options"][index]["title"]}',
+                    6 + index * 2,  # y
+                    curses.COLS // 2 - len(menu["options"][index]["title"]) // 2,  # x
+                    f'{menu["options"][index]["title"]}',
                     textstyle,
                 )
 
-            # Now display Exit/Return at bottom of menu
+            # Show Exit/Return at bottom of menu
             textstyle = idled
             if pos == optioncount:
                 textstyle = selected
             screen.addstr(
-                5 + optioncount,
-                4,
-                "%d - %s" % (optioncount + 1, lastoption),
-                textstyle,  # TODO: fstring
+                5 + optioncount * 2 + 1,
+                curses.COLS // 2 - len(lastoption) // 2,
+                f'{lastoption}',
+                textstyle,
             )
 
             # update screen
