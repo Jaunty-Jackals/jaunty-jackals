@@ -14,7 +14,7 @@ BLOCK_WHILE_PLAYING: bool = True
 DEFAULT_WAIT: float = 0.25
 
 
-def get_assets_dir() -> Path:
+def get_assets_dir() -> Union[Path, str]:
     """Get the asset"""
     filename = __loader__.get_filename()
     return Path(filename).parent / "assets"
