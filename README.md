@@ -96,7 +96,7 @@ $ source venv/bin/activate
 | [NoblySP](https://github.com/NoblySP) |<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Windows_logo_-_2021.svg/1920px-Windows_logo_-_2021.svg.png" width="24">| Battleship|
 | [vguo2037](https://github.com/vguo2037) |<img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Apple_Computer_Logo_rainbow.svg" width="24">| ConnectFour |
 | [aphkyle](https://github.com/aphkyle) |<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Windows_logo_-_2021.svg/1920px-Windows_logo_-_2021.svg.png" width="24">| Snake |
-| [sapgan](https://github.com/sapgan) |<img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Kali_Linux_2.0_wordmark.svg" height="24">| Minesweeper |
+| [sapgan](https://github.com/sapgan) |<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/UbuntuCoF.svg/2048px-UbuntuCoF.svg.png" width="24"><img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Kali_Linux_2.0_wordmark.svg" height="24">| Minesweeper |
 | [edwin10151](https://github.com/edwin10151) |<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Windows_logo_-_2021.svg/1920px-Windows_logo_-_2021.svg.png" width="24">| 2048 |
 
 ## Asset Credits
