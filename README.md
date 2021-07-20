@@ -41,6 +41,8 @@ C:~\jaunty-jackals\> .\venv\Scripts\activate
 # Install requirements
 (venv) C:~\jaunty-jackals\> pip install -r requirements.txt
 ```
+If you're having issues setting up venv in powershell, see this link:
+https://stackoverflow.com/a/18713789/13884898
 
 #### macOS <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Apple_Computer_Logo_rainbow.svg" width="16">
 
