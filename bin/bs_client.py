@@ -1,3 +1,8 @@
+"""
+Battlesip Game
+
+Based on: https://github.com/M0r13n/battleships
+"""
 import logging
 import time
 
